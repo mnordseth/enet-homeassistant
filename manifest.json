@@ -1,0 +1,13 @@
+{
+  "domain": "enet",
+  "name": "Enet Smart Home",
+  "config_flow": true,
+  "documentation": "https://www.home-assistant.io/integrations/enet",
+  "requirements": [],
+  "ssdp": [],
+  "zeroconf": [],
+  "homekit": {},
+  "dependencies": [],
+  "codeowners": ["@mnordseth"],
+  "iot_class": "local_polling"
+}
