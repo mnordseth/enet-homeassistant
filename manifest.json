@@ -8,6 +8,7 @@
   "zeroconf": [],
   "homekit": {},
   "dependencies": [],
+  "version":"0.1", 
   "codeowners": ["@mnordseth"],
   "iot_class": "local_polling"
 }

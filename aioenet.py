@@ -21,6 +21,8 @@ class EnetClient:
     def __init__(self, url, user, passwd, sslverify=True):
         self.user = user
         self.passwd = passwd
+        if url.endswith("/"):
+            url = url[:-1]
         self.baseurl = url
         jar = aiohttp.CookieJar(unsafe=True)
         self._session = aiohttp.ClientSession(cookie_jar=jar)
