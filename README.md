@@ -1,2 +1,6 @@
-# hass-enet
-Enet Smart Home integration for Home Assistant
+# Enet Smart Home integration for Home Assistant
+
+Install by cloning this repository into your custom_components folder.
+
+
+
