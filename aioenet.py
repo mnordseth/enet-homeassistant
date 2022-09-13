@@ -89,119 +89,15 @@ class EnetClient:
             URL_MANAGEMENT, "setClientRole", dict(clientRole="CR_VISU")
         )
 
-    def setup_telegram_recording(
-        self, deviceUID="83ec3031-f8f0-4972-a92b-2df300001ced", channel=1
-    ):
-        self.request(URL_MANAGEMENT, "setClientRole", dict(clientRole="CR_IBN"))
-        params = dict(
-            deviceUID=deviceUID, channelNumber=channel, addAssignedChannels=False
-        )
-        r = self.request(URL_TELEGRAM, "addDeviceChannelToFilter", params)
-
-    def get_telegrams(self, since=None):
-        if not self._last_telegram_ts:
-            # get curretn time from server
-            r = self.request(
-                URL_VIZ,
-                "getValueFromConfigurationParameter",
-                {
-                    "configurationUID": "30c89d5b-1794-4ca7-82f2-199e38f2af1d",
-                    "parameterID": "P_CFG_TIME",
-                },
-            )
-
-            self._last_telegram_ts = r["value"]
-
-        params = dict(timeStamp=self._last_telegram_ts)
-        r = self.request(URL_TELEGRAM, "getTelegramsSince", params)
-        return r
-        example = """{
-            "jsonrpc": "2.0",
-            "result": {
-                "telegrams": [
-                    {
-                        "deviceUID": "83ec3031-f8f0-4972-a92b-2df300001ced",
-                        "deviceTypeID": "DVT_WS4BJF50CL",
-                        "channelNumber": 2,
-                        "timeStamp": {
-                            "day": 27,
-                            "month": 7,
-                            "year": 2021,
-                            "hour": 14,
-                            "minute": 40,
-                            "second": 52,
-                            "millisecond": 820,
-                        },
-                        "isReceivedViaRepeater": false,
-                    },
-                    {
-                        "deviceUID": "83ec3031-f8f0-4972-a92b-2df300001ced",
-                        "deviceTypeID": "DVT_WS4BJF50CL",
-                        "channelNumber": 2,
-                        "timeStamp": {
-                            "day": 27,
-                            "month": 7,
-                            "year": 2021,
-                            "hour": 14,
-                            "minute": 40,
-                            "second": 53,
-                            "millisecond": 3,
-                        },
-                        "isReceivedViaRepeater": false,
-                    },
-                ]
-            },
-            "id": "170",
-        }"""
-
-    def get_links(self, deviceUIDs=list()):
-        r = self.request(URL_MANAGEMENT, "setClientRole", dict(clientRole="CR_IBN"))
-
-        # devices = self.request(URL_VIZ, "getDeviceUIDs")
-        # deviceUIDs = [i["deviceUID"] for i in devices["deviceUIDs"]]
-        params = {"deviceUIDs": deviceUIDs}
-        result = self.request(URL_COM, "getLinksFromDevices", params)
-        return result
-
-    def applyDevicesBecomeReadyToReceive(self, deviceUIDs):
-        params = dict(deviceUIDs=deviceUIDs)
-        self.request(URL_COM, "applyDevicesBecomeReadyToReceive", params)
-
-    def request_events(self):
-        return self.request(URL_VIZ, "requestEvents", {})
-
     def get_account(self):
         return self.request(URL_MANAGEMENT, "getAccount", {})
 
-    def get_event_id(self, devUID=["83ec3031-f8f0-4972-a92b-2df300000213"]):
-        if type(devUID) is not type([]):
-            devUID = [devUID]
-        params = {
-            "deviceUIDs": devUID,
-            "filter": ".+\\\\.(SCV1|SCV2|SNA|PSN)\\\\[(.|1.|2.|3.)\\\\]+",
-        }
-        return self.request(URL_VIZ, "getDevicesWithParameterFilter", params)
 
     async def get_current_values(self, output_device_uid):
         params = {"deviceFunctionUID": output_device_uid}
         return await self.request(
             URL_VIZ, "getCurrentValuesFromOutputDeviceFunction", params
         )
-
-    def get_devices_and_links(self):
-        devices = self.request(URL_VIZ, "getDeviceUIDs", ())
-        deviceUIDs = [i["deviceUID"] for i in devices["deviceUIDs"]]
-        params = {
-            "deviceUIDs": deviceUIDs,
-            "filter": ".+\\\\.(SCV1|SCV2|SNA|PSN)\\\\[(.|1.|2.|3.)\\\\]+",
-        }
-        result = self.request(URL_VIZ, "getDevicesWithParameterFilter", params)
-        devices = result["devices"]
-
-        links = self.get_links(deviceUIDs)
-        links_by_devuid = {l["uid"]: l for l in links["devices"]}
-        for device in devices:
-            device.update(links_by_devuid[device["uid"]])
 
     async def get_devices(self):
         device_locations = await self.get_device_locations()
@@ -231,100 +127,6 @@ class EnetClient:
         result = await self.request(URL_VIZ, "getLocations", params)
         return result["locations"]
 
-    def get_events(self):
-        result = {self.request(URL_VIZ, "requestEvents", {})}
-        log.debug("get_events(): %s", result)
-
-    # getSceneActionLocation
-    # getSceneActionName
-    # getSceneActionParameters
-    # getSceneActions
-    # getSceneActionsFromLocation
-    # getSceneActionUIDs
-
-    def get_scenes(self):
-        result = self.request(URL_SCENE, "getSceneActionUIDs", {})
-        scenes = result["sceneActionUIDs"]
-
-        return scenes
-
-        # result = e.request(URL_VIZ+"/app_scene", "getSceneActions", params=dict(sceneActionUIDs=["83ec3031-f8f0-4972-a92b-2df300002510"]))
-
-    def get_scene_actions(self, sceneActionUID):
-        params = dict(sceneActionUIDs=[sceneActionUID])
-        result = self.request(URL_SCENE, "getSceneActions", params)
-        scene_actions = result["sceneActions"]
-
-        return scene_actions
-        example = """{
-            "sceneActions": [
-                {
-                    "uid": "83ec3031-f8f0-4972-a92b-2df300002510",
-                    "name": "[libenet:18]Hjemme",
-                    "statusValue": {
-                        "valueUID": "83ec3031-f8f0-4972-a92b-2df300002511",
-                        "valueTypeID": "SceneStatusValue",
-                        "value": True,
-                    },
-                    "deviceChannels": [
-                        {
-                            "deviceUID": "83ec3031-f8f0-4972-a92b-2df3000002f6",
-                            "channelNumber": 1,
-                            "sceneParameters": [
-                                {
-                                    "deviceParameterUID": "83ec3031-f8f0-4972-a92b-2df30000033d",
-                                    "deviceParameterTypeID": "PT_INDA.SCV1[2]",
-                                },
-                                {
-                                    "deviceParameterUID": "83ec3031-f8f0-4972-a92b-2df3000003c7",
-                                    "deviceParameterTypeID": "PT_INDA.SNA[2]",
-                                },
-                            ],
-                        },
-                        {
-                            "deviceUID": "83ec3031-f8f0-4972-a92b-2df3000004b0",
-                            "channelNumber": 1,
-                            "sceneParameters": [
-                                {
-                                    "deviceParameterUID": "83ec3031-f8f0-4972-a92b-2df3000004f7",
-                                    "deviceParameterTypeID": "PT_INDA.SCV1[2]",
-                                },
-                                {
-                                    "deviceParameterUID": "83ec3031-f8f0-4972-a92b-2df300000581",
-                                    "deviceParameterTypeID": "PT_INDA.SNA[2]",
-                                },
-                            ],
-                        },
-                    ],
-                }
-            ]
-        }"""
-
-    def set_scene(self):
-        boxuid = self.request(URL_COM, "getBoxDeviceUID", {})["deviceUID"]
-        outputfunctions = self.request(
-            URL_VIZ,
-            "getOutputDeviceFunctionsFromDevice",
-            dict(deviceUID=boxuid, channelNumber=0),
-        )
-
-        inputfunctions = self.request(
-            URL_VIZ,
-            "getInputDeviceFunctionsFromDevice",
-            {"deviceUID": boxuid, "channelNumber": 0},
-        )
-
-        return dict(
-            boxuid=boxuid,
-            outputfunctions=outputfunctions,
-            inputfunctions=inputfunctions,
-        )
-
-        self.request(
-            URL_VIZ,
-            "getDeviceParametersFromDevice",
-            {"deviceUID": boxuid, "channelNumber": 0},
-        )
 
     async def get_device_locations(self):
         locations = await self.get_locations()
@@ -526,18 +328,3 @@ class Channel:
             self.__class__.__name__, self.name, self.channel_type, self.get_value()
         )
 
-
-# import enet2mqtt
-
-# SCENES
-# IBOX
-# {"jsonrpc":"2.0", "method":"getInputDeviceFunctionsFromDevice", "params":{"deviceUID":"83ec3031-f8f0-4972-a92b-2df300000001", "channelNumber":0}, "id":"47"}
-# {"jsonrpc":"2.0","result":{"inputDeviceFunctions":[{"uid":"83ec3031-f8f0-4972-a92b-2df300000005","typeID":"IBOX_INScS.SSGI","active":true,"deviceFunctionDependency":null}]},"id":"47"}
-
-# {"jsonrpc":"2.0", "method":"getOutputDeviceFunctionsFromDevice", "params":{"deviceUID":"83ec3031-f8f0-4972-a92b-2df300000001", "channelNumber":0}, "id":"50"}
-# {"jsonrpc":"2.0","result":{"outputDeviceFunctions":[{"uid":"83ec3031-f8f0-4972-a92b-2df300000008","typeID":"IBOX_INScS.SC","active":true,"currentValues":[{"value":0,"valueTypeID":"VT_SCENE_NUMBER","valueUID":"83ec3031-f8f0-4972-a92b-2df300000006"},{"value":"ACTIVATE","valueTypeID":"VT_IN_SCENE_CONTROL","valueUID":"83ec3031-f8f0-4972-a92b-2df300000007"}],"deviceFunctionDependency":null},{"uid":"83ec3031-f8f0-4972-a92b-2df300000011","typeID":"IBOX_INScS.SSGET","active":true,"currentValues":[{"value":0,"valueTypeID":"VT_SSGET_CONNECTION_CODE","valueUID":"83ec3031-f8f0-4972-a92b-2df300000009"},{"value":0,"valueTypeID":"VT_SSGET_SEQUENCE_NUMBER","valueUID":"83ec3031-f8f0-4972-a92b-2df30000000a"},{"value":0,"valueTypeID":"VT_SSGET_COMMAND","valueUID":"83ec3031-f8f0-4972-a92b-2df30000000b"},{"value":0,"valueTypeID":"VT_SSGET_GROUP_ADDRESS","valueUID":"83ec3031-f8f0-4972-a92b-2df30000000c"},{"value":0,"valueTypeID":"VT_SSGET_SERIAL_NUMBER","valueUID":"83ec3031-f8f0-4972-a92b-2df30000000d"},{"value":"SUMSTATUS_GET","valueTypeID":"VT_SSGET_REQUEST_TYPE","valueUID":"83ec3031-f8f0-4972-a92b-2df30000000e"},{"value":false,"valueTypeID":"VT_SSGET_NO_COMMAND_FLAG","valueUID":"83ec3031-f8f0-4972-a92b-2df30000000f"},{"value":false,"valueTypeID":"VT_SSGET_REPEAT_FLAG","valueUID":"83ec3031-f8f0-4972-a92b-2df300000010"}],"deviceFunctionDependency":null}]},"id":"50"}
-
-params = {
-    "deviceFunctionUID": "83ec3031-f8f0-4972-a92b-2df300000005",
-    "values": [{"valueTypeID": "VT_SCENE_NUMBER", "value": 0}],
-}
