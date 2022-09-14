@@ -73,6 +73,7 @@ class EnetLight(LightEntity):
     def supported_features(self):
         if self.channel.has_brightness:
             return SUPPORT_BRIGHTNESS
+        return 0
 
     async def async_device_update(self, *args, **kwargs):
         if self._no_updates_until > dt_util.utcnow():

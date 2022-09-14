@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import logging
-
 import aiohttp
 
 log = logging.getLogger(__name__)
@@ -26,7 +25,6 @@ class EnetClient:
         self.baseurl = url
         jar = aiohttp.CookieJar(unsafe=True)
         self._session = aiohttp.ClientSession(cookie_jar=jar)
-        # self._session.verify = sslverify
         self._debug_requests = False
         self._api_counter = 1
         self._cookie = ""
@@ -42,7 +40,6 @@ class EnetClient:
                 self.simple_login()
 
             return func(self, *args, **kwargs)
-
         return auth_wrapper
 
     @auth_if_needed
@@ -92,13 +89,6 @@ class EnetClient:
     def get_account(self):
         return self.request(URL_MANAGEMENT, "getAccount", {})
 
-
-    async def get_current_values(self, output_device_uid):
-        params = {"deviceFunctionUID": output_device_uid}
-        return await self.request(
-            URL_VIZ, "getCurrentValuesFromOutputDeviceFunction", params
-        )
-
     async def get_devices(self):
         device_locations = await self.get_device_locations()
         deviceUIDs = list(device_locations.keys())
@@ -112,15 +102,6 @@ class EnetClient:
         for device in devices:
             device.location = device_locations[device.uid]
         return devices
-
-    async def set_value(self, device_function_uid, value):
-        params = {
-            "deviceFunctionUID": device_function_uid,
-            "values": [{"valueTypeID": "VT_SCALING_RANGE_0_100_DEF_0", "value": value}],
-        }
-        result = await self.request(URL_VIZ, "callInputDeviceFunction", params)
-        log.debug("set_value(): %s", result)
-        return result
 
     async def get_locations(self):
         params = {"locationUIDs": []}
@@ -180,6 +161,45 @@ known_sensors = [
     "DVT_SF1S",  # eNet light sensor
     "DVT_WS4BJ",
 ]  # eNet radio transmitter module 4-gang
+
+channelconfig = {'CT_1F01': {'control': 'FT_INSA.SOO',   # Switch
+                             'info': 'FT_INSA.IOO'},
+                 'CT_1F01_DUMMY': {'control': 'FT_INSA.SOO',
+                                   'info': 'FT_INSA.IOO'},
+                 'CT_1F02': {'control': 'FT_INDA.ASC', # Dimmer
+                             'info': 'FT_INDA.ADV'},
+                 'CT_1F03': {'control': 'FT_INBA.SAPBP', # Blinds
+                             'info': 'FT_INBA.CAPBP'},
+                 'CT_1F05': {'control': 'FT_INSArGO.SOO',
+                             'info': 'FT_INSArGO.IOO'},
+                 'CT_1F08': {'control': 'FT_INSAv2.SOO',
+                             'info': 'FT_INSAv2.IOO'},
+                 'CT_1F09': {'control': 'FT_INSAv3.SOO',
+                             'info': 'FT_INSAv3.IOO'},
+                 'CT_1F0B': {'control': 'FT_INLAv2_SA.SOO',
+                             'info': 'FT_INLAv2_SA.IOO'},
+                 'CT_1F0C': {'control': 'FT_INLAv2_DA.ASC',
+                             'info': 'FT_INLAv2_DA.ADV'},
+                 'CT_1F0D': {'control': 'FT_INLAv2_SAS.SOO',
+                             'info': 'FT_INLAv2_SAS.IOO'},
+                 'CT_1F0E': {'control':'FT_INLNS3.ASC',
+                             'info': ''},
+                 'CT_1F0E_SA': {'control': 'FT_INLNS3_SA.SOO',
+                                'info': ''},
+                 'CT_1F10': {'control': 'FT_INBAv3.SAPBP',
+                             'info': 'FT_INBAv3.CAPBP'},
+                 'CT_1F18': {'control': '',
+                             'info': 'FT_INThScS.CAVTH1'},
+                 'CT_1F19': {'control': '',
+                             'info': 'FT_INES.ABAE'},
+                 'CT_1F1B': {'control': '',
+                             'info': 'FT_INMOVS.BA'},
+                 'CT_TADO_ZH': {'control': 'FT_TADOZH.SET_OVERLAY',
+                                'info': 'FT_TADOZH.INSIDE_TEMP'},
+                 'CT_TADO_ZAC': {'control': 'FT_TADOZAC.SET_OVERLAY',
+                                 'info': 'FT_TADOZAC.INSIDE_TEMP'},
+                 'CT_TADO_ZHW': {'control': 'FT_TADOZHW.SET_OVERLAY',
+                                 'info': 'FT_TADOZHW.INSIDE_TEMP'}}
 
 
 def Device(client, raw):
@@ -251,80 +271,96 @@ class Light(BaseEnetDevice):
 
 
 class Channel:
-    def __init__(
-        self, device, raw_channel
-    ):  # config_group_index = 1, channel_index=0, output_device_function=1):
+    def __init__(self, device, raw_channel):  
         self._device = device
         self.channel = raw_channel
+        self.has_brightness = False
         self.uid = f"{self._device.uid}-{self.channel['no']}"
         self.channel_type = self.channel["channelTypeID"]
-        self._output_device_function = 1
-        self._input_device_function = 2
+        self._output_device_function = self._find_output_function()
+        self._input_device_function = self._find_input_function()
+        self._value_template = self._build_value_template()
         self.name = self.channel["effectArea"]
-        self.has_brightness = False
-        self.state = 0
-        self._iterate_output_functions()
 
-    def _iterate_output_functions(self):
+        self.state = 0
+
+
+    def _build_value_template(self):
+        value_template = self._output_device_function["currentValues"][0]
+        del value_template["valueUID"]
+        return value_template
+
+
+    def _find_output_function(self):
+        main_func = None
         for odf, output_func in enumerate(self.channel["outputDeviceFunctions"]):
-            type_id = output_func["currentValues"][0]["valueTypeID"]
-            value = output_func["currentValues"][0]["value"]
-            print(f"    odf: {odf} type: {type_id} value: {value}")
-            if type_id == "VT_SCALING_RANGE_0_100_DEF_0":
+            type_id = output_func["typeID"]
+            value_type_id = output_func['currentValues'][0]['valueTypeID']
+            value = output_func['currentValues'][0]['value']
+            main = channelconfig.get(self.channel_type).get("info") == type_id
+
+            if value_type_id == "VT_SCALING_RANGE_0_100_DEF_0":
                 self.has_brightness = True
                 self.state = value
+            if main:
+                main_func = output_func
+                print(f"    odf: {odf} {type_id} value type: {value_type_id} value: {value} main: {main}")
 
-    def _iterate_input_functions(self):
+        return main_func
+
+    
+    def _find_input_function(self):
+        main_func = None
         for idf, input_func in enumerate(self.channel["inputDeviceFunctions"]):
-            type_id = input_func["currentValues"][0]["valueTypeID"]
-            print(f"    idf: {idf} type: {type_id}")
-            if type_id == "VT_SCALING_RANGE_0_100_DEF_0":
-                self.has_brightness = True
+            type_id = input_func['typeID']
+            main = channelconfig.get(self.channel_type).get("control") == type_id
+            if main:
+                print(f"    idf: {idf} type: {type_id} main: {main}")
+                main_func = input_func
+        return main_func
+
 
     async def get_value(self):
-        output_function = self.channel["outputDeviceFunctions"][
-            self._output_device_function
-        ]["uid"]
-        current_value = await self._device.client.get_current_values(output_function)
+        params = {"deviceFunctionUID": self._output_device_function["uid"]}
+        current_value = await self._device.client.request(
+            URL_VIZ, "getCurrentValuesFromOutputDeviceFunction", params
+        )
+
         value = current_value["currentValues"][0]["value"]
         log.info("%s get_value() returned %s", self.name, value)
         self._last_value = value
         return value
 
+
     async def set_value(self, value):
-        input_function = self.channel["inputDeviceFunctions"][
-            self._input_device_function
-        ]["uid"]
-        log.info("%s set_value()  %s", self.name, value)
-        self.state = value
-        await self._device.client.set_value(input_function, value)
+        input_function = self._input_device_function["uid"]
+        value_param = self._value_template.copy()
+        # try to cast to correct type...
+        _type = type(value_param["value"])
+        casted_value =  _type(value)
+        value_param["value"] = casted_value
+        params = {
+            "deviceFunctionUID": input_function,
+            "values": [value_param],
+        }
+
+        self.state = casted_value
+        print("set_value()", params)
+        await self._device.client.request(URL_VIZ, "callInputDeviceFunction", params)
+
 
     async def turn_off(self):
-        params = {
-            "deviceFunctionUID": self.channel["inputDeviceFunctions"][0]["uid"],
-            "values": [{"valueTypeID": "VT_SWITCH", "value": False}],
-        }
-        result = await self._device.client.request(
-            URL_VIZ, "callInputDeviceFunction", params
-        )
         log.info("%s turn_off()", self.name)
-        self.state = 0
-        return result
+        await self.set_value(0)
+
 
     async def turn_on(self):
-        params = {
-            "deviceFunctionUID": self.channel["inputDeviceFunctions"][0]["uid"],
-            "values": [{"valueTypeID": "VT_SWITCH", "value": True}],
-        }
-        result = await self._device.client.request(
-            URL_VIZ, "callInputDeviceFunction", params
-        )
         log.info("%s turn_on()", self.name)
-        self.state = 100
-        return result
+        await self.set_value(100)
+
 
     def __repr__(self):
         return "{}(Name: {} Type: {} Value: {})".format(
-            self.__class__.__name__, self.name, self.channel_type, self.get_value()
+            self.__class__.__name__, self.name, self.channel_type, self.state
         )
 
