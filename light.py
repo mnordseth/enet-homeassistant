@@ -33,6 +33,7 @@ class EnetLight(LightEntity):
             "name": self.channel._device.name,
             "manufacturer": "",
             "model": self.channel._device.device_type,
+            "suggested_area": self.channel._device.location.replace("My home:",""),
         }
 
     @property

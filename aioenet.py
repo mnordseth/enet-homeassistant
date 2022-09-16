@@ -29,6 +29,7 @@ class EnetClient:
         self._api_counter = 1
         self._cookie = ""
         self._last_telegram_ts = {}
+        self._raw_json = {}
         self.devices = []
 
     def auth_if_needed(func):
@@ -98,6 +99,7 @@ class EnetClient:
         }
         result = await self.request(URL_VIZ, "getDevicesWithParameterFilter", params)
         devices = result["devices"]
+        self._raw_json = devices
         devices = [Device(self, dev) for dev in devices if dev]
         for device in devices:
             device.location = device_locations[device.uid]
