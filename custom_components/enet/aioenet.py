@@ -102,7 +102,7 @@ class EnetClient:
         self._raw_json = devices
         devices = [Device(self, dev) for dev in devices if dev]
         for device in devices:
-            device.location = device_locations[device.uid]
+            device.location = device_locations.get(device.uid, "")
         return devices
 
     async def get_locations(self):
