@@ -140,6 +140,8 @@ known_actuators = [
     "DVT_DA1R",  # 1 channel dimming actuator rail mount
     "DVT_SJAR",  # 8 channel switch actuator
     "DVT_SA2M",  # Gira 2-gang switching actuator https://katalog.gira.de/en/datenblatt.html?id=635918
+    "DVT_S2A1",
+
 ]
 
 known_sensors = [
@@ -154,7 +156,6 @@ known_sensors = [
     "DVT_WS3BG",
     "DVT_RPZS",
     "DVT_SJA1",
-    "DVT_S2A1",
     "DVT_HS2",
     "DVT_HS4",
     "DVT_WS3BJF50CL",
@@ -289,7 +290,8 @@ class Channel:
 
     def _build_value_template(self):
         value_template = self._output_device_function["currentValues"][0]
-        del value_template["valueUID"]
+        if "valueUID" in value_template:
+            del value_template["valueUID"]
         return value_template
 
 
