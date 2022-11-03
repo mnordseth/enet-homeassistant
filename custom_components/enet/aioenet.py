@@ -98,11 +98,16 @@ class EnetClient:
             "filter": ".+\\\\.(SCV1|SCV2|SNA|PSN)\\\\[(.|1.|2.|3.)\\\\]+",
         }
         result = await self.request(URL_VIZ, "getDevicesWithParameterFilter", params)
-        devices = result["devices"]
-        self._raw_json = devices
-        devices = [Device(self, dev) for dev in devices if dev]
-        for device in devices:
+        raw_devices = result["devices"]
+        self._raw_json = raw_devices
+        devices = []
+        for raw_device in raw_devices:
+            device = Device(self, raw_device)
+            if not device:
+                continue
             device.location = device_locations.get(device.uid, "")
+            devices.append(device)
+
         return devices
 
     async def get_locations(self):
@@ -141,7 +146,7 @@ known_actuators = [
     "DVT_SJAR",  # 8 channel switch actuator
     "DVT_SA2M",  # Gira 2-gang switching actuator https://katalog.gira.de/en/datenblatt.html?id=635918
     "DVT_S2A1",
-
+    "DVT_SA1M",
 ]
 
 known_sensors = [
@@ -152,10 +157,8 @@ known_sensors = [
     "DVT_WS4BJF50",
     "DVT_US2M",
     "DVT_WS1BG",
-    "DVT_SA1M",
     "DVT_WS3BG",
     "DVT_RPZS",
-    "DVT_SJA1",
     "DVT_HS2",
     "DVT_HS4",
     "DVT_WS3BJF50CL",
