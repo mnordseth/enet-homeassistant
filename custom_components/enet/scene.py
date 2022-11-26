@@ -1,10 +1,6 @@
 """Support for Enet scenes"""
 import logging
 from homeassistant.components.scene import Scene as SceneEntity
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import entity_platform
-from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.helpers.entity import DeviceInfo
 
 from .const import DOMAIN

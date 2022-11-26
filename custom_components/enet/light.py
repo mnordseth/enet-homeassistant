@@ -33,11 +33,11 @@ class EnetLight(LightEntity):
     @property
     def device_info(self):
         return {
-            "identifiers": {(DOMAIN, self.channel._device.uid)},
-            "name": self.channel._device.name,
+            "identifiers": {(DOMAIN, self.channel.device.uid)},
+            "name": self.channel.device.name,
             "manufacturer": "",
-            "model": self.channel._device.device_type,
-            "suggested_area": self.channel._device.location.replace("My home:", ""),
+            "model": self.channel.device.device_type,
+            "suggested_area": self.channel.device.location.replace("My home:", ""),
         }
 
     @property

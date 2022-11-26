@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+"""async library for communicating with a Enet Smart Home server from Jung / Gira"""
 
 import logging
 import aiohttp
@@ -17,7 +17,9 @@ class AuthError(Exception):
 
 
 class EnetClient:
-    def __init__(self, url, user, passwd, sslverify=True):
+    """Client for communicating with a Enet Smart Home Server from Jung / Gira"""
+
+    def __init__(self, url, user, passwd):
         self.user = user
         self.passwd = passwd
         if url.endswith("/"):
@@ -82,6 +84,7 @@ class EnetClient:
         return json["result"]
 
     async def simple_login(self):
+        """Login to the Enet Server"""
         params = dict(userName=self.user, userPassword=self.passwd)
         await self._do_request(URL_MANAGEMENT, "userLogin", params)
         await self._do_request(
@@ -89,9 +92,11 @@ class EnetClient:
         )
 
     def get_account(self):
+        """Return the current logged in user account"""
         return self.request(URL_MANAGEMENT, "getAccount", {})
 
     async def get_devices(self):
+        """Get all the devices registered on the server"""
         device_locations = await self.get_device_locations()
         deviceUIDs = list(device_locations.keys())
         params = {
@@ -112,11 +117,13 @@ class EnetClient:
         return devices
 
     async def get_locations(self):
+        """Get all locations"""
         params = {"locationUIDs": []}
         result = await self.request(URL_VIZ, "getLocations", params)
         return result["locations"]
 
     async def get_device_locations(self):
+        """Return a dict of locations to device"""
         locations = await self.get_locations()
         device_to_loc = {}
 
@@ -138,6 +145,7 @@ class EnetClient:
         return device_to_loc
 
     async def get_scenes(self, only_libenet=True):
+        """Get all scene names and corresponding uid from the server"""
         result = await self.request(URL_SCENE, "getSceneActionUIDs", None)
         scenes = {}
         for scene in result["sceneActionUIDs"]:
@@ -149,6 +157,7 @@ class EnetClient:
         return scenes
 
     async def activate_scene(self, scene_uid):
+        """Activate the specified scene UID"""
         params = {"actionUID": scene_uid}
         await self.request(URL_VIZ, "executeAction", params)
 
@@ -213,13 +222,14 @@ channelconfig = {
 
 
 def Device(client, raw):
+    """A factory creating a enet Actuator or Sensor depending on its type"""
     device_type = raw["typeID"]
     if device_type in known_actuators:
         print("Actuator added: " + raw["typeID"])
-        return Light(client, raw)
+        return Actuator(client, raw)
     elif device_type in known_sensors:
         print("Sensor added: " + raw["typeID"])
-        return Switch(client, raw)
+        return Sensor(client, raw)
     else:
         log.warning(
             "Unknown device: typeID=%s name=%s", raw["typeID"], raw["installationArea"]
@@ -227,10 +237,13 @@ def Device(client, raw):
 
 
 class BaseEnetDevice:
+    """The base class for all Enet Devices, both sensors and actuators"""
+
     def __init__(self, client, raw):
         self.client = client
         self._raw = raw
         self.channels = []
+        self.location = ""
         self.uid = self._raw["uid"]
         self.name = self._raw["installationArea"]
         self.device_type = self._raw["typeID"]
@@ -243,11 +256,13 @@ class BaseEnetDevice:
         )
 
 
-class Switch(BaseEnetDevice):
+class Sensor(BaseEnetDevice):
     pass
 
 
-class Light(BaseEnetDevice):
+class Actuator(BaseEnetDevice):
+    """Class representing a enet actuator, ie a dimmer, switch or blind. Each actuator has one or more channels"""
+
     def __init__(self, client, raw):
         super().__init__(client, raw)
         self.create_channels()
@@ -267,12 +282,12 @@ class Light(BaseEnetDevice):
                     c = Channel(self, device_channel)
                     self.channels.append(c)
 
-                for odf, output_func in enumerate(
-                    device_channel["outputDeviceFunctions"]
-                ):
-                    type_id = output_func["currentValues"][0]["valueTypeID"]
-                    value = output_func["currentValues"][0]["value"]
-                    # print(f"    odf: {odf} type: {type_id} value: {value}")
+                # for odf, output_func in enumerate(
+                #    device_channel["outputDeviceFunctions"]
+                # ):
+                #    type_id = output_func["currentValues"][0]["valueTypeID"]
+                #    value = output_func["currentValues"][0]["value"]
+                #    print(f"    odf: {odf} type: {type_id} value: {value}")
 
     def __repr__(self):
         return "{}(Name: {} Type: {})".format(
@@ -281,11 +296,13 @@ class Light(BaseEnetDevice):
 
 
 class Channel:
+    """A class representing a actuator channel that can dim or switch a load"""
+
     def __init__(self, device, raw_channel):
-        self._device = device
+        self.device = device
         self.channel = raw_channel
         self.has_brightness = False
-        self.uid = f"{self._device.uid}-{self.channel['no']}"
+        self.uid = f"{self.device.uid}-{self.channel['no']}"
         self.channel_type = self.channel["channelTypeID"]
         self._output_device_function = self._find_output_function()
         self._input_device_function = self._find_input_function()
@@ -331,7 +348,7 @@ class Channel:
 
     async def get_value(self):
         params = {"deviceFunctionUID": self._output_device_function["uid"]}
-        current_value = await self._device.client.request(
+        current_value = await self.device.client.request(
             URL_VIZ, "getCurrentValuesFromOutputDeviceFunction", params
         )
 
@@ -354,7 +371,7 @@ class Channel:
 
         self.state = casted_value
         print("set_value()", params)
-        await self._device.client.request(URL_VIZ, "callInputDeviceFunction", params)
+        await self.device.client.request(URL_VIZ, "callInputDeviceFunction", params)
 
     async def turn_off(self):
         log.info("%s turn_off()", self.name)
