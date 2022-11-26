@@ -1,3 +1,4 @@
+"""Enet Smart Home platform"""
 from datetime import timedelta
 import logging
 
@@ -11,6 +12,7 @@ SKIP_UPDATES_DELAY = timedelta(seconds=5)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
+    """Add Enet light devices from a config entry"""
     hub = hass.data[DOMAIN][entry.entry_id]
     devices = await hub.get_devices()
     for device in devices:
@@ -20,6 +22,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 
 class EnetLight(LightEntity):
+    """A representation of a Enet Smart Home dimmer or switch channel"""
+
     def __init__(self, channel):
         self._name = channel.name
         self.channel = channel
@@ -33,7 +37,7 @@ class EnetLight(LightEntity):
             "name": self.channel._device.name,
             "manufacturer": "",
             "model": self.channel._device.device_type,
-            "suggested_area": self.channel._device.location.replace("My home:",""),
+            "suggested_area": self.channel._device.location.replace("My home:", ""),
         }
 
     @property
