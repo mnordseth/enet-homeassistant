@@ -31,7 +31,14 @@ class EnetSceneEntity(SceneEntity):
 
     @property
     def name(self):
-        return self._name
+        name = self._name
+        if name.startswith("[libenet") and "]" in name:
+            name = name.split("]", 1)[-1]
+        return name
+
+    @property
+    def unique_id(self):
+        return self.uid
 
     async def async_activate(self, **kwargs):
         """Activate Enet scene."""
@@ -40,8 +47,6 @@ class EnetSceneEntity(SceneEntity):
     @property
     def device_info(self) -> DeviceInfo:
         """Return device (service) info."""
-        # we create a virtual service/device for Hue scenes
-        # so we have a parent for grouped lights and scenes
         return DeviceInfo(
             identifiers={(DOMAIN, "Enet Controller")},
             name="Enet Controller",

@@ -81,6 +81,7 @@ class EnetLight(LightEntity):
         return 0
 
     async def async_device_update(self, *args, **kwargs):
+        _LOGGER.debug("async_device_update(%s, %s)", args, kwargs)
         if self._no_updates_until > dt_util.utcnow():
             return
         old_state = self.channel.state
