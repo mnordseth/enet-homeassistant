@@ -95,12 +95,13 @@ class EnetClient:
         """Return the current logged in user account"""
         return self.request(URL_MANAGEMENT, "getAccount", {})
 
-    async def get_devices(self):
+    async def get_devices(self, device_uids=None):
         """Get all the devices registered on the server"""
         device_locations = await self.get_device_locations()
-        deviceUIDs = list(device_locations.keys())
+        if device_uids is None:
+            device_uids = list(device_locations.keys())
         params = {
-            "deviceUIDs": deviceUIDs,
+            "deviceUIDs": device_uids,
             "filter": ".+\\\\.(SCV1|SCV2|SNA|PSN)\\\\[(.|1.|2.|3.)\\\\]+",
         }
         result = await self.request(URL_VIZ, "getDevicesWithParameterFilter", params)
@@ -161,10 +162,10 @@ class EnetClient:
         params = {"actionUID": scene_uid}
         await self.request(URL_VIZ, "executeAction", params)
 
-    async def setup_event_subscriptions(self):
+    async def setup_event_subscription(self, func_uid):
         """Subscribe for outputDeviceFunction events"""
-        func_uid = "83ec3031-f8f0-4972-a92b-2df300000c6a"  # peis dimmer
-        result = self.request(
+        #func_uid = "83ec3031-f8f0-4972-a92b-2df300000c6a"  # peis dimmer
+        result = await self.request(
             URL_VIZ,
             "registerEventOutputDeviceFunctionCalled",
             {"deviceFunctionUID": func_uid},
@@ -177,6 +178,7 @@ class EnetClient:
             result = await self.request(URL_VIZ, "requestEvents", None)
         except Exception as e:
             log.debug("Failed to get events: %s", e)
+            return
         # lastEventId = 0
         # result = await self.request(URL_VIZ, "requestEventsSince", {"sequenceNumberAcked":lastEventId})
         return result
@@ -275,7 +277,62 @@ class BaseEnetDevice:
 
 
 class Sensor(BaseEnetDevice):
-    pass
+    """Class representing a Enet Sensor or Wall switch"""
+    def __init__(self, client, raw):
+        super().__init__(client, raw)
+        self.channels = []
+        self.create_channels()
+        #self.register_events()
+
+    async def register_events(self):
+        """Setup event subscription for all outputfunctions"""
+        for channel in self.channels:
+            for output_function in channel["output_functions"]:
+                await self.client.setup_event_subscription(output_function["uid"])
+        
+    def create_channels(self):
+        """Create channels"""
+        log.debug(
+            "Enet Device %s type %s has the following channels:",
+            self.name,
+            self.device_type,
+        )
+
+        for ccg, channel_config_group in enumerate(
+            self._raw["deviceChannelConfigurationGroups"]
+        ):
+            for dc, device_channel in enumerate(channel_config_group["deviceChannels"]):
+                log.debug(
+                    "  ccg: %s dc: %s Channel no: %s Type: %s Area: %s",
+                    ccg,
+                    dc,
+                    device_channel["no"],
+                    device_channel["channelTypeID"],
+                    device_channel["effectArea"],
+                )
+                output_functions = []
+                for outputfunc in device_channel["outputDeviceFunctions"]:
+                    log.debug("    opf uid: %s type: %s active: %s",
+                              outputfunc["uid"],
+                              outputfunc["typeID"],
+                              outputfunc["active"]
+                              )
+                    if outputfunc["active"]:
+                        typenames = {"FT_INScS.SC":"Scene",
+                                     "FT_INScS.MD":"Master dim",
+                                     "FT_INGBRS.GBR":"Rocker"}
+                        name = "Channel %s - %s" % (device_channel, typenames.get(outputfunc["typeID"], "Unknown"))
+
+                        output_functions.append(dict(uid=outputfunc["uid"],
+                                                     typeID=outputfunc["typeID"],
+                                                     name = name
+                                                     )
+                                                )
+                if device_channel["channelTypeID"] != "CT_DEVICE":
+                    self.channels.append(dict(no=device_channel["no"],
+                                              channel_type=device_channel["channelTypeID"],
+                                              area=device_channel["effectArea"],
+                                              output_functions = output_functions))
 
 
 class Actuator(BaseEnetDevice):
