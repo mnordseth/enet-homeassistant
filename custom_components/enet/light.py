@@ -5,6 +5,7 @@ import logging
 from homeassistant.components.light import SUPPORT_BRIGHTNESS, LightEntity
 import homeassistant.util.dt as dt_util
 
+from .aioenet import Actuator
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -14,19 +15,21 @@ SKIP_UPDATES_DELAY = timedelta(seconds=5)
 async def async_setup_entry(hass, entry, async_add_entities):
     """Add Enet light devices from a config entry"""
     hub = hass.data[DOMAIN][entry.entry_id]
-    devices = await hub.get_devices()
-    for device in devices:
-        for channel in device.channels:
-            async_add_entities([EnetLight(channel)])
+
+    for device in hub.devices:
+        if isinstance(device,  Actuator):
+            for channel in device.channels:
+                async_add_entities([EnetLight(channel, hub.coordinator)])
     _LOGGER.info("Finished async setup()")
 
 
 class EnetLight(LightEntity):
     """A representation of a Enet Smart Home dimmer or switch channel"""
 
-    def __init__(self, channel):
+    def __init__(self, channel, coordinator):
         self._name = channel.name
         self.channel = channel
+        self.coordinator = coordinator
         self._no_updates_until = dt_util.utcnow()
         _LOGGER.info("EnetLight.init()  done %s", self.name)
 
@@ -56,7 +59,7 @@ class EnetLight(LightEntity):
 
     @property
     def should_poll(self):
-        return True
+        return False
 
     @property
     def is_on(self):
@@ -79,6 +82,12 @@ class EnetLight(LightEntity):
         if self.channel.has_brightness:
             return SUPPORT_BRIGHTNESS
         return 0
+
+    async def async_added_to_hass(self):
+        """Subscribe entity to updates when added to hass."""
+        self.async_on_remove(
+            self.coordinator.async_add_listener(self.async_write_ha_state)
+        )
 
     async def async_device_update(self, *args, **kwargs):
         _LOGGER.debug("async_device_update(%s, %s)", args, kwargs)

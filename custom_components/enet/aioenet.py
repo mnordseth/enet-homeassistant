@@ -164,7 +164,7 @@ class EnetClient:
 
     async def setup_event_subscription(self, func_uid):
         """Subscribe for outputDeviceFunction events"""
-        #func_uid = "83ec3031-f8f0-4972-a92b-2df300000c6a"  # peis dimmer
+        # func_uid = "83ec3031-f8f0-4972-a92b-2df300000c6a"  # peis dimmer
         result = await self.request(
             URL_VIZ,
             "registerEventOutputDeviceFunctionCalled",
@@ -278,18 +278,26 @@ class BaseEnetDevice:
 
 class Sensor(BaseEnetDevice):
     """Class representing a Enet Sensor or Wall switch"""
+
     def __init__(self, client, raw):
         super().__init__(client, raw)
         self.channels = []
         self.create_channels()
-        #self.register_events()
+
+    def get_function_uids_for_event(self):
+        """Return a list of function uids we should setup event listeners for"""
+        function_uids = {}
+        for channel in self.channels:
+            for output_function in channel["output_functions"]:
+                function_uids[output_function["uid"]] = self
+        return function_uids
 
     async def register_events(self):
         """Setup event subscription for all outputfunctions"""
         for channel in self.channels:
             for output_function in channel["output_functions"]:
                 await self.client.setup_event_subscription(output_function["uid"])
-        
+
     def create_channels(self):
         """Create channels"""
         log.debug(
@@ -312,27 +320,39 @@ class Sensor(BaseEnetDevice):
                 )
                 output_functions = []
                 for outputfunc in device_channel["outputDeviceFunctions"]:
-                    log.debug("    opf uid: %s type: %s active: %s",
-                              outputfunc["uid"],
-                              outputfunc["typeID"],
-                              outputfunc["active"]
-                              )
+                    log.debug(
+                        "    opf uid: %s type: %s active: %s",
+                        outputfunc["uid"],
+                        outputfunc["typeID"],
+                        outputfunc["active"],
+                    )
                     if outputfunc["active"]:
-                        typenames = {"FT_INScS.SC":"Scene",
-                                     "FT_INScS.MD":"Master dim",
-                                     "FT_INGBRS.GBR":"Rocker"}
-                        name = "Channel %s - %s" % (device_channel, typenames.get(outputfunc["typeID"], "Unknown"))
+                        typenames = {
+                            "FT_INScS.SC": "Scene",
+                            "FT_INScS.MD": "Master dim",
+                            "FT_INGBRS.GBR": "Rocker",
+                        }
+                        name = "Channel %s - %s" % (
+                            device_channel,
+                            typenames.get(outputfunc["typeID"], "Unknown"),
+                        )
 
-                        output_functions.append(dict(uid=outputfunc["uid"],
-                                                     typeID=outputfunc["typeID"],
-                                                     name = name
-                                                     )
-                                                )
+                        output_functions.append(
+                            dict(
+                                uid=outputfunc["uid"],
+                                typeID=outputfunc["typeID"],
+                                name=name,
+                            )
+                        )
                 if device_channel["channelTypeID"] != "CT_DEVICE":
-                    self.channels.append(dict(no=device_channel["no"],
-                                              channel_type=device_channel["channelTypeID"],
-                                              area=device_channel["effectArea"],
-                                              output_functions = output_functions))
+                    self.channels.append(
+                        dict(
+                            no=device_channel["no"],
+                            channel_type=device_channel["channelTypeID"],
+                            area=device_channel["effectArea"],
+                            output_functions=output_functions,
+                        )
+                    )
 
 
 class Actuator(BaseEnetDevice):
@@ -341,6 +361,19 @@ class Actuator(BaseEnetDevice):
     def __init__(self, client, raw):
         super().__init__(client, raw)
         self.create_channels()
+
+    def get_function_uids_for_event(self):
+        """Return a list of function uids we should setup event listeners for"""
+        return {
+            channel._output_device_function["uid"]: channel for channel in self.channels
+        }
+
+    async def register_events(self):
+        """Setup event subscription for all outputfunctions"""
+        for channel in self.channels:
+            await self.client.setup_event_subscription(
+                channel._output_device_function["uid"]
+            )
 
     def create_channels(self):
         """Create channels"""
@@ -389,7 +422,7 @@ class Channel:
         self._value_template = self._build_value_template()
         self.name = self.channel["effectArea"]
 
-        self.state = 0
+        self.state = self._output_device_function["currentValues"][0]["value"]
 
     def _build_value_template(self):
         value_template = self._output_device_function["currentValues"][0]
@@ -427,6 +460,7 @@ class Channel:
         return main_func
 
     async def get_value(self):
+        """Fetch the updated state from the sever"""
         params = {"deviceFunctionUID": self._output_device_function["uid"]}
         current_value = await self.device.client.request(
             URL_VIZ, "getCurrentValuesFromOutputDeviceFunction", params

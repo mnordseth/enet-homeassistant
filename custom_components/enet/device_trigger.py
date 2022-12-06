@@ -64,8 +64,9 @@ async def async_get_triggers(
             CONF_DOMAIN: DOMAIN,
             CONF_ENTITY_ID: entry.entity_id,
         }
-        triggers.append({**base_trigger, CONF_TYPE: "turned_on"})
-        triggers.append({**base_trigger, CONF_TYPE: "turned_off"})
+        print("Adding trigger: ", base_trigger)
+        # triggers.append({**base_trigger, CONF_TYPE: "turned_on"})
+        # triggers.append({**base_trigger, CONF_TYPE: "turned_off"})
 
     return triggers
 
