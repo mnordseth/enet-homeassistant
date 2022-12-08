@@ -2,6 +2,7 @@
 
 import logging
 import aiohttp
+from .enet_devices import device_info, channel_config
 
 log = logging.getLogger(__name__)
 
@@ -58,7 +59,7 @@ class EnetClient:
             "id": str(self._api_counter),
         }
         self._api_counter += 1
-        log.info("Requesting %s%s %s", self.baseurl, url, method)
+        log.debug("Requesting %s%s %s", self.baseurl, url, method)
         response = await self._session.post(f"{self.baseurl}{url}", json=req)
         if get_raw:
             return response
@@ -73,10 +74,14 @@ class EnetClient:
         json = await response.json()
         if "error" in json:
             e = "-> {} {} returned error: {}".format(url, method, json["error"])
-            log.warning("Got error: %s", json["error"])
+
             if json["error"]["code"] in (-29998, -29997):
+                log.warning("Got auth error: %s", json["error"])
                 raise AuthError
+            elif json["error"]["code"] == -29999:
+                raise aiohttp.ServerTimeoutError
             else:
+                log.warning("Got error: %s", json["error"])
                 raise Exception(e)
         else:
             if self._debug_requests:
@@ -101,6 +106,7 @@ class EnetClient:
         if device_uids is None:
             device_uids = list(device_locations.keys())
         params = {
+            # FIXME!!!!
             "deviceUIDs": device_uids,
             "filter": ".+\\\\.(SCV1|SCV2|SNA|PSN)\\\\[(.|1.|2.|3.)\\\\]+",
         }
@@ -176,86 +182,29 @@ class EnetClient:
         """Poll Enet server for events"""
         try:
             result = await self.request(URL_VIZ, "requestEvents", None)
-        except Exception as e:
-            log.debug("Failed to get events: %s", e)
+            return result
+        except Exception as err:
             return
-        # lastEventId = 0
-        # result = await self.request(URL_VIZ, "requestEventsSince", {"sequenceNumberAcked":lastEventId})
-        return result
-
-
-known_actuators = [
-    "DVT_DA1M",  # Jung 1 channel dimming actuator
-    "DVT_SV1M",  # Jung 1 channel 1-10V dimming actuator
-    "DVT_DA4R",  # 4 channel dimming actuator rail mount
-    "DVT_DA1R",  # 1 channel dimming actuator rail mount
-    "DVT_SJAR",  # 8 channel switch actuator
-    "DVT_SA2M",  # Gira 2-gang switching actuator https://katalog.gira.de/en/datenblatt.html?id=635918
-    "DVT_S2A1",
-    "DVT_SA1M",
-]
-
-known_sensors = [
-    "DVT_TADO",
-    "DVT_WS2BJF50",
-    "DVT_WS2BJF50CL",
-    "DVT_WS3BJF50",
-    "DVT_WS4BJF50",
-    "DVT_US2M",
-    "DVT_WS1BG",
-    "DVT_WS3BG",
-    "DVT_RPZS",
-    "DVT_HS2",
-    "DVT_HS4",
-    "DVT_WS3BJF50CL",
-    "DVT_WS4BJF50CL",  #
-    "DVT_BS1BP",  # eNet motion detector
-    "DVT_SF1S",  # eNet light sensor
-    "DVT_WS4BJ",
-]  # eNet radio transmitter module 4-gang
-
-channelconfig = {
-    "CT_1F01": {"control": "FT_INSA.SOO", "info": "FT_INSA.IOO"},  # Switch
-    "CT_1F01_DUMMY": {"control": "FT_INSA.SOO", "info": "FT_INSA.IOO"},
-    "CT_1F02": {"control": "FT_INDA.ASC", "info": "FT_INDA.ADV"},  # Dimmer
-    "CT_1F03": {"control": "FT_INBA.SAPBP", "info": "FT_INBA.CAPBP"},  # Blinds
-    "CT_1F05": {"control": "FT_INSArGO.SOO", "info": "FT_INSArGO.IOO"},
-    "CT_1F08": {"control": "FT_INSAv2.SOO", "info": "FT_INSAv2.IOO"},
-    "CT_1F09": {"control": "FT_INSAv3.SOO", "info": "FT_INSAv3.IOO"},
-    "CT_1F0B": {"control": "FT_INLAv2_SA.SOO", "info": "FT_INLAv2_SA.IOO"},
-    "CT_1F0C": {"control": "FT_INLAv2_DA.ASC", "info": "FT_INLAv2_DA.ADV"},
-    "CT_1F0D": {"control": "FT_INLAv2_SAS.SOO", "info": "FT_INLAv2_SAS.IOO"},
-    "CT_1F0E": {"control": "FT_INLNS3.ASC", "info": ""},
-    "CT_1F0E_SA": {"control": "FT_INLNS3_SA.SOO", "info": ""},
-    "CT_1F10": {"control": "FT_INBAv3.SAPBP", "info": "FT_INBAv3.CAPBP"},
-    "CT_1F18": {"control": "", "info": "FT_INThScS.CAVTH1"},
-    "CT_1F19": {"control": "", "info": "FT_INES.ABAE"},
-    "CT_1F1B": {"control": "", "info": "FT_INMOVS.BA"},
-    "CT_TADO_ZH": {"control": "FT_TADOZH.SET_OVERLAY", "info": "FT_TADOZH.INSIDE_TEMP"},
-    "CT_TADO_ZAC": {
-        "control": "FT_TADOZAC.SET_OVERLAY",
-        "info": "FT_TADOZAC.INSIDE_TEMP",
-    },
-    "CT_TADO_ZHW": {
-        "control": "FT_TADOZHW.SET_OVERLAY",
-        "info": "FT_TADOZHW.INSIDE_TEMP",
-    },
-}
 
 
 def Device(client, raw):
     """A factory creating a enet Actuator or Sensor depending on its type"""
     device_type = raw["typeID"]
-    if device_type in known_actuators:
-        print("Actuator added: " + raw["typeID"])
-        return Actuator(client, raw)
-    elif device_type in known_sensors:
-        print("Sensor added: " + raw["typeID"])
-        return Sensor(client, raw)
-    else:
+    info = device_info.get(device_type)
+    if info is None:
         log.warning(
             "Unknown device: typeID=%s name=%s", raw["typeID"], raw["installationArea"]
         )
+
+    if info["device_class"] == "Actuator":
+        print("Actuator added: " + raw["typeID"])
+        return Actuator(
+            client,
+            raw,
+        )
+    else:
+        print("Sensor added: " + raw["typeID"])
+        return Sensor(client, raw)
 
 
 class BaseEnetDevice:
@@ -296,6 +245,11 @@ class Sensor(BaseEnetDevice):
         """Setup event subscription for all outputfunctions"""
         for channel in self.channels:
             for output_function in channel["output_functions"]:
+                log.debug(
+                    "Register event subscription for %s - %s",
+                    self.name,
+                    output_function["uid"],
+                )
                 await self.client.setup_event_subscription(output_function["uid"])
 
     def create_channels(self):
@@ -371,6 +325,11 @@ class Actuator(BaseEnetDevice):
     async def register_events(self):
         """Setup event subscription for all outputfunctions"""
         for channel in self.channels:
+            log.debug(
+                "Register event subscription for %s - %s",
+                self.name,
+                channel._output_device_function["uid"],
+            )
             await self.client.setup_event_subscription(
                 channel._output_device_function["uid"]
             )
@@ -436,7 +395,7 @@ class Channel:
             type_id = output_func["typeID"]
             value_type_id = output_func["currentValues"][0]["valueTypeID"]
             value = output_func["currentValues"][0]["value"]
-            main = channelconfig.get(self.channel_type).get("info") == type_id
+            main = channel_config.get(self.channel_type).get("info") == type_id
 
             if value_type_id == "VT_SCALING_RANGE_0_100_DEF_0":
                 self.has_brightness = True
@@ -453,7 +412,7 @@ class Channel:
         main_func = None
         for idf, input_func in enumerate(self.channel["inputDeviceFunctions"]):
             type_id = input_func["typeID"]
-            main = channelconfig.get(self.channel_type).get("control") == type_id
+            main = channel_config.get(self.channel_type).get("control") == type_id
             if main:
                 print(f"    idf: {idf} type: {type_id} main: {main}")
                 main_func = input_func

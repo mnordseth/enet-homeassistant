@@ -10,29 +10,37 @@ from homeassistant.components.automation import (
     AutomationTriggerInfo,
 )
 from homeassistant.components.device_automation import DEVICE_TRIGGER_BASE_SCHEMA
-from homeassistant.components.homeassistant.triggers import state as state_trigger
+from homeassistant.components.homeassistant.triggers import event as event_trigger
 from homeassistant.const import (
     CONF_DEVICE_ID,
     CONF_DOMAIN,
     CONF_ENTITY_ID,
     CONF_PLATFORM,
     CONF_TYPE,
-    STATE_OFF,
-    STATE_ON,
 )
+
+
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant
 from homeassistant.helpers import config_validation as cv, entity_registry
 from homeassistant.helpers.typing import ConfigType
 
-from . import DOMAIN
+from .const import DOMAIN, ATTR_ENET_EVENT, CONF_CHANNEL, CONF_UNIQUE_ID
+from .aioenet import Sensor
+import logging
 
-# TODO specify your supported trigger types.
-TRIGGER_TYPES = {"turned_on", "turned_off"}
+_LOGGER = logging.getLogger(__name__)
+
+BUTTON_EVENT_TYPES = (
+    "initial_press",  # ButtonEvent.INITIAL_PRESS,
+    "short_release",  # ButtonEvent.SHORT_RELEASE,
+)
+
 
 TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
     {
-        vol.Required(CONF_ENTITY_ID): cv.entity_id,
-        vol.Required(CONF_TYPE): vol.In(TRIGGER_TYPES),
+        vol.Required(CONF_TYPE): vol.In(BUTTON_EVENT_TYPES),
+        vol.Required(CONF_CHANNEL): vol.Union(int, str),
+        vol.Required(CONF_UNIQUE_ID): vol.Union(int, str),
     }
 )
 
@@ -41,33 +49,32 @@ async def async_get_triggers(
     hass: HomeAssistant, device_id: str
 ) -> list[dict[str, Any]]:
     """List device triggers for enet devices."""
-    registry = entity_registry.async_get(hass)
+    device_registry = await hass.helpers.device_registry.async_get_registry()
+    device_entry = device_registry.async_get(device_id)
+    entry_id = [i for i in device_entry.config_entries][0]
+    hub = hass.data[DOMAIN][entry_id]
     triggers = []
 
-    # TODO Read this comment and remove it.
-    # This example shows how to iterate over the entities of this device
-    # that match this integration. If your triggers instead rely on
-    # events fired by devices without entities, do something like:
-    # zha_device = await _async_get_zha_device(hass, device_id)
-    # return zha_device.device_triggers
+    enet_device_id = get_enet_device_id(device_entry)
+    enet_device = next((d for d in hub.devices if d.uid == enet_device_id), None)
+    _LOGGER.debug("Enet device: %s", enet_device)
 
-    # Get all the integrations entities for this device
-    for entry in entity_registry.async_entries_for_device(registry, device_id):
-        if entry.domain != DOMAIN:
-            continue
+    if not isinstance(enet_device, Sensor):
+        return
 
-        # Add triggers for each entity that belongs to this integration
-        # TODO add your own triggers.
-        base_trigger = {
-            CONF_PLATFORM: "device",
-            CONF_DEVICE_ID: device_id,
-            CONF_DOMAIN: DOMAIN,
-            CONF_ENTITY_ID: entry.entity_id,
-        }
-        print("Adding trigger: ", base_trigger)
-        # triggers.append({**base_trigger, CONF_TYPE: "turned_on"})
-        # triggers.append({**base_trigger, CONF_TYPE: "turned_off"})
-
+    for channel in enet_device.channels:
+        for event_type in BUTTON_EVENT_TYPES:
+            triggers.append(
+                {
+                    CONF_DEVICE_ID: device_entry.id,
+                    CONF_DOMAIN: DOMAIN,
+                    CONF_PLATFORM: "device",
+                    CONF_TYPE: event_type,
+                    CONF_CHANNEL: channel["no"],
+                    CONF_UNIQUE_ID: enet_device.uid,
+                }
+            )
+    _LOGGER.debug("Triggers: %s", triggers)
     return triggers
 
 
@@ -78,20 +85,31 @@ async def async_attach_trigger(
     automation_info: AutomationTriggerInfo,
 ) -> CALLBACK_TYPE:
     """Attach a trigger."""
-    # TODO Implement your own logic to attach triggers.
-    # Use the existing state or event triggers from the automation integration.
+    event_config = event_trigger.TRIGGER_SCHEMA(
+        {
+            event_trigger.CONF_PLATFORM: "event",
+            event_trigger.CONF_EVENT_TYPE: ATTR_ENET_EVENT,
+            event_trigger.CONF_EVENT_DATA: {
+                CONF_DEVICE_ID: config[CONF_DEVICE_ID],
+                CONF_TYPE: config[CONF_TYPE],
+                CONF_CHANNEL: config[CONF_CHANNEL],
+            },
+        }
+    )
+    _LOGGER.debug("Attaching trigger: %s", event_config)
+    return await event_trigger.async_attach_trigger(
+        hass, event_config, action, automation_info, platform_type="device"
+    )
 
-    if config[CONF_TYPE] == "turned_on":
-        to_state = STATE_ON
-    else:
-        to_state = STATE_OFF
 
-    state_config = {
-        state_trigger.CONF_PLATFORM: "state",
-        CONF_ENTITY_ID: config[CONF_ENTITY_ID],
-        state_trigger.CONF_TO: to_state,
-    }
-    state_config = await state_trigger.async_validate_trigger_config(hass, state_config)
-    return await state_trigger.async_attach_trigger(
-        hass, state_config, action, automation_info, platform_type="device"
+def get_enet_device_id(device_entry):
+    """Get Hue device id from device entry."""
+    return next(
+        (
+            identifier[1]
+            for identifier in device_entry.identifiers
+            if identifier[0] == DOMAIN
+            and ":" not in identifier[1]  # filter out v1 mac id
+        ),
+        None,
     )

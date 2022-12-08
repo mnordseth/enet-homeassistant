@@ -15,6 +15,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from .aioenet import EnetClient, Channel
 from .const import DOMAIN
+from .device import async_setup_devices
 
 _LOGGER = logging.getLogger(__name__)
 PLATFORMS: list[Platform] = [Platform.LIGHT, Platform.SCENE]
@@ -26,12 +27,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
     hub = EnetClient(entry.data["url"], entry.data["username"], entry.data["password"])
     hub.coordinator = EnetCoordinator(hass, hub)
+    hub.coordinator.config_entry = entry
     await hub.simple_login()
     hass.data[DOMAIN][entry.entry_id] = hub
     hub.devices = await hub.get_devices()
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-
     await hub.coordinator.setup_event_listeners()
+    await async_setup_devices(hub.coordinator)
+
     hass.loop.create_task(hub.coordinator.async_refresh())
     return True
 
@@ -74,16 +77,16 @@ class EnetCoordinator(DataUpdateCoordinator):
         This is the place to pre-process the data to lookup tables
         so entities can quickly look up their data.
         """
-        _LOGGER.debug("_async_update_data()")
+        # _LOGGER.debug("_async_update_data()")
         while True:
             event = await self.hub.get_events()
-            # _LOGGER.debug("Got event: %s", event)
             if event:
                 self.handle_event(event)
 
     def handle_event(self, event_data):
         """Handle events from Enet Server. Either update value of actuator or
-        forward event from sensor"""
+        forward event from sensor
+        """
         for event in event_data["events"]:
             # _LOGGER.debug("Handling event: %s", event)
             if event["event"] == "outputDeviceFunctionCalled":
@@ -96,11 +99,11 @@ class EnetCoordinator(DataUpdateCoordinator):
                         function_uid,
                     )
                     continue
+                values = data["values"]
                 if isinstance(device, Channel):
-                    values = data["values"]
                     if len(values) != 1:
-                        _LOGGER.debug(
-                            "Event for device '%s' has multiple values: %s",
+                        _LOGGER.warning(
+                            "Event for device '%s' has multiple values: %s, expected 1.",
                             device,
                             values,
                         )
@@ -111,10 +114,31 @@ class EnetCoordinator(DataUpdateCoordinator):
                         # _LOGGER.debug("Updating listners: %s", self._listeners)
                         self.async_update_listeners()
                 else:
-                    # For now we just forward sensor / button events to hass
-                    _LOGGER.debug(
-                        "Event is not for actuator... type = (%s)  %s",
-                        type(device),
-                        data,
+                    # Decode sensor / button events and forward to hass bus
+                    subtype = data["channelNumber"]
+                    if len(values) != 2:
+                        log.warning("Expected 2 values: %s", event)
+                        continue
+
+                    event_type = "initial_press"
+                    if values[0]["valueTypeID"] == "VT_ROCKER_STATE":
+                        # If a button is configured as a rocker, you have the UP and Down
+                        # button on the same channel.
+                        if values[0]["value"] == "DOWN_BUTTON":
+                            subtype += 1
+                    if values[1]["valueTypeID"] == "VT_ROCKER_SWITCH_TIME":
+                        # Switch time is 0 on press and a number for release.
+                        # We don't distinguish between long and short press for the
+                        # moment.
+                        if values[1]["value"] > 0:
+                            event_type = "short_release"
+
+                    bus_data = dict(
+                        id=device.name,
+                        device_id=device.uid,
+                        unique_id=function_uid,
+                        type=event_type,
+                        channel=subtype,
                     )
-                    self.hass.bus.async_fire("enet_event" "", data)
+
+                    self.hass.bus.async_fire("enet_event", bus_data)
