@@ -17,7 +17,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     hub = hass.data[DOMAIN][entry.entry_id]
 
     for device in hub.devices:
-        if isinstance(device,  Actuator):
+        if isinstance(device, Actuator):
             for channel in device.channels:
                 async_add_entities([EnetLight(channel, hub.coordinator)])
     _LOGGER.info("Finished async setup()")
@@ -109,7 +109,7 @@ class EnetLight(LightEntity):
         self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs):
-        _LOGGER.info("Enet async_turn_off: (%s) %s", self.name, kwargs)
+        _LOGGER.info("async_turn_off: (%s) %s", self.name, kwargs)
         await self.channel.turn_off()
         self._no_updates_until = dt_util.utcnow() + SKIP_UPDATES_DELAY
         self.async_write_ha_state()
