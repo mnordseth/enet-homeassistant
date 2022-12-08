@@ -191,6 +191,9 @@ known_actuators = [
     "DVT_SA2M",  # Gira 2-gang switching actuator https://katalog.gira.de/en/datenblatt.html?id=635918
     "DVT_S2A1",
     "DVT_SA1M",
+    "DVT_SD1M",
+    "DVT_SA1Z",
+    "DVT_JA1M"
 ]
 
 known_sensors = [
