@@ -94,7 +94,7 @@ class EnetCoordinator(DataUpdateCoordinator):
                 function_uid = data["deviceFunctionUID"]
                 device = self.function_uid_map.get(function_uid)
                 if not device:
-                    _LOGGER.debug(
+                    _LOGGER.warning(
                         "Function %s does not map to device",
                         function_uid,
                     )
@@ -117,7 +117,7 @@ class EnetCoordinator(DataUpdateCoordinator):
                     # Decode sensor / button events and forward to hass bus
                     subtype = data["channelNumber"]
                     if len(values) != 2:
-                        log.warning("Expected 2 values: %s", event)
+                        _LOGGER.warning("Expected 2 values: %s", event)
                         continue
 
                     event_type = "initial_press"
@@ -134,9 +134,8 @@ class EnetCoordinator(DataUpdateCoordinator):
                             event_type = "short_release"
 
                     bus_data = dict(
-                        id=device.name,
-                        device_id=device.uid,
-                        unique_id=function_uid,
+                        device_id=device.hass_device_entry.id,
+                        unique_id=device.uid,
                         type=event_type,
                         channel=subtype,
                     )

@@ -42,4 +42,5 @@ async def async_setup_devices(coordinator):
     # create/update all current devices found in controller
     for enet_device in coordinator.hub.devices:
         if not isinstance(enet_device, Actuator):
-            add_device(enet_device)
+            hass_device_entry = add_device(enet_device)
+            enet_device.hass_device_entry = hass_device_entry
