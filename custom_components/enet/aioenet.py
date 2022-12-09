@@ -1,7 +1,9 @@
 """async library for communicating with a Enet Smart Home server from Jung / Gira"""
 
 import logging
+import functools
 import aiohttp
+
 from .enet_devices import device_info, channel_config
 
 log = logging.getLogger(__name__)
@@ -14,7 +16,24 @@ URL_SCENE = "/jsonrpc/visualization/app_scene"
 
 
 class AuthError(Exception):
-    pass
+    "Authentication error"
+
+
+def auth_if_needed(func):
+    "Decorator used to reauthenticate if we get a AuthError"
+
+    @functools.wraps(func)
+    def auth_wrapper(self, *args, **kwargs):
+        "Perfor reauthentication"
+        try:
+            return func(self, *args, **kwargs)
+        except AuthError:
+            log.warning("Trying to re-authenticate...")
+            self.simple_login()
+
+        return func(self, *args, **kwargs)
+
+    return auth_wrapper
 
 
 class EnetClient:
@@ -35,20 +54,9 @@ class EnetClient:
         self._raw_json = {}
         self.devices = []
 
-    def auth_if_needed(func):
-        def auth_wrapper(self, *args, **kwargs):
-            try:
-                return func(self, *args, **kwargs)
-            except AuthError:
-                log.warning("Trying to re-authenticate...")
-                self.simple_login()
-
-            return func(self, *args, **kwargs)
-
-        return auth_wrapper
-
     @auth_if_needed
     async def request(self, url, method, params, get_raw=False):
+        "Request data from the Enet Server"
         return await self._do_request(url, method, params, get_raw)
 
     async def _do_request(self, url, method, params, get_raw=False):
@@ -73,19 +81,19 @@ class EnetClient:
 
         json = await response.json()
         if "error" in json:
-            e = "-> {} {} returned error: {}".format(url, method, json["error"])
-
-            if json["error"]["code"] in (-29998, -29997):
+            returned_error = json["error"]
+            error_msg = f"-> {url} {method} returned error: {returned_error}"
+            if returned_error["code"] in (-29998, -29997):
                 log.warning("Got auth error: %s", json["error"])
                 raise AuthError
-            elif json["error"]["code"] == -29999:
+            elif returned_error["code"] == -29999:
                 raise aiohttp.ServerTimeoutError
             else:
-                log.warning("Got error: %s", json["error"])
-                raise Exception(e)
+                log.warning(error_msg)
+                raise Exception(error_msg)
         else:
             if self._debug_requests:
-                print("-> {} {} returned: {}".format(url, method, json["result"]))
+                log.debug("-> %s %s returned: %s", url, method, json["result"])
         return json["result"]
 
     async def simple_login(self):
@@ -106,7 +114,6 @@ class EnetClient:
         if device_uids is None:
             device_uids = list(device_locations.keys())
         params = {
-            # FIXME!!!!
             "deviceUIDs": device_uids,
             "filter": ".+\\\\.(SCV1|SCV2|SNA|PSN)\\\\[(.|1.|2.|3.)\\\\]+",
         }
@@ -115,7 +122,7 @@ class EnetClient:
         self._raw_json = raw_devices
         devices = []
         for raw_device in raw_devices:
-            device = Device(self, raw_device)
+            device = create_device(self, raw_device)
             if not device:
                 continue
             device.location = device_locations.get(device.uid, "")
@@ -187,8 +194,8 @@ class EnetClient:
             return
 
 
-def Device(client, raw):
-    """A factory creating a enet Actuator or Sensor depending on its type"""
+def create_device(client, raw):
+    """Create an enet Actuator or Sensor depending on its type"""
     device_type = raw["typeID"]
     info = device_info.get(device_type)
     if info is None:
@@ -198,10 +205,7 @@ def Device(client, raw):
 
     if info["device_class"] == "Actuator":
         print("Actuator added: " + raw["typeID"])
-        return Actuator(
-            client,
-            raw,
-        )
+        return Actuator(client, raw)
     else:
         print("Sensor added: " + raw["typeID"])
         return Sensor(client, raw)
@@ -260,14 +264,16 @@ class Sensor(BaseEnetDevice):
             self.device_type,
         )
 
-        for ccg, channel_config_group in enumerate(
+        for channel_config_group_index, channel_config_group in enumerate(
             self._raw["deviceChannelConfigurationGroups"]
         ):
-            for dc, device_channel in enumerate(channel_config_group["deviceChannels"]):
+            for device_channel_index, device_channel in enumerate(
+                channel_config_group["deviceChannels"]
+            ):
                 log.debug(
                     "  ccg: %s dc: %s Channel no: %s Type: %s Area: %s",
-                    ccg,
-                    dc,
+                    channel_config_group_index,
+                    device_channel_index,
                     device_channel["no"],
                     device_channel["channelTypeID"],
                     device_channel["effectArea"],
@@ -286,10 +292,8 @@ class Sensor(BaseEnetDevice):
                             "FT_INScS.MD": "Master dim",
                             "FT_INGBRS.GBR": "Rocker",
                         }
-                        name = "Channel %s - %s" % (
-                            device_channel,
-                            typenames.get(outputfunc["typeID"], "Unknown"),
-                        )
+                        type_name = typenames.get(outputfunc["typeID"], "Unknown")
+                        name = f"Channel {device_channel} - {type_name}"
 
                         output_functions.append(
                             dict(
@@ -319,7 +323,7 @@ class Actuator(BaseEnetDevice):
     def get_function_uids_for_event(self):
         """Return a list of function uids we should setup event listeners for"""
         return {
-            channel._output_device_function["uid"]: channel for channel in self.channels
+            channel.output_device_function["uid"]: channel for channel in self.channels
         }
 
     async def register_events(self):
@@ -328,10 +332,10 @@ class Actuator(BaseEnetDevice):
             log.debug(
                 "Register event subscription for %s - %s",
                 self.name,
-                channel._output_device_function["uid"],
+                channel.output_device_function["uid"],
             )
             await self.client.setup_event_subscription(
-                channel._output_device_function["uid"]
+                channel.output_device_function["uid"]
             )
 
     def create_channels(self):
@@ -341,27 +345,21 @@ class Actuator(BaseEnetDevice):
             self.name,
             self.device_type,
         )
-        for ccg, channel_config_group in enumerate(
+        for channel_config_group_number, channel_config_group in enumerate(
             self._raw["deviceChannelConfigurationGroups"]
         ):
-            for dc, device_channel in enumerate(channel_config_group["deviceChannels"]):
+            for device_channel_number, device_channel in enumerate(
+                channel_config_group["deviceChannels"]
+            ):
                 log.debug(
                     "  ccg: %s dc: %s Channel type: %s area: %s",
-                    ccg,
-                    dc,
+                    channel_config_group_number,
+                    device_channel_number,
                     device_channel["channelTypeID"],
                     device_channel["effectArea"],
                 )
                 if device_channel["channelTypeID"] != "CT_DEVICE":
-                    c = Channel(self, device_channel)
-                    self.channels.append(c)
-
-                # for odf, output_func in enumerate(
-                #    device_channel["outputDeviceFunctions"]
-                # ):
-                #    type_id = output_func["currentValues"][0]["valueTypeID"]
-                #    value = output_func["currentValues"][0]["value"]
-                #    print(f"    odf: {odf} type: {type_id} value: {value}")
+                    self.channels.append(Channel(self, device_channel))
 
     def __repr__(self):
         return f"{self.__class__.__name__} (Name: {self.name} Type: {self.device_type}"
@@ -376,15 +374,15 @@ class Channel:
         self.has_brightness = False
         self.uid = f"{self.device.uid}-{self.channel['no']}"
         self.channel_type = self.channel["channelTypeID"]
-        self._output_device_function = self._find_output_function()
+        self.output_device_function = self._find_output_function()
         self._input_device_function = self._find_input_function()
         self._value_template = self._build_value_template()
         self.name = self.channel["effectArea"]
 
-        self.state = self._output_device_function["currentValues"][0]["value"]
+        self.state = self.output_device_function["currentValues"][0]["value"]
 
     def _build_value_template(self):
-        value_template = self._output_device_function["currentValues"][0]
+        value_template = self.output_device_function["currentValues"][0]
         if "valueUID" in value_template:
             del value_template["valueUID"]
         return value_template
@@ -402,10 +400,6 @@ class Channel:
                 self.state = value
             if main:
                 main_func = output_func
-                log.debug(
-                    f"    odf: {odf} {type_id} value type: {value_type_id} value: {value} main: {main}"
-                )
-
         return main_func
 
     def _find_input_function(self):
@@ -420,7 +414,7 @@ class Channel:
 
     async def get_value(self):
         """Fetch the updated state from the sever"""
-        params = {"deviceFunctionUID": self._output_device_function["uid"]}
+        params = {"deviceFunctionUID": self.output_device_function["uid"]}
         current_value = await self.device.client.request(
             URL_VIZ, "getCurrentValuesFromOutputDeviceFunction", params
         )
@@ -446,10 +440,12 @@ class Channel:
         await self.device.client.request(URL_VIZ, "callInputDeviceFunction", params)
 
     async def turn_off(self):
+        "Turn off device"
         log.info("%s turn_off()", self.name)
         await self.set_value(0)
 
     async def turn_on(self):
+        "Turn on device"
         log.info("%s turn_on()", self.name)
         await self.set_value(100)
 
