@@ -302,7 +302,7 @@ class Sensor(BaseEnetDevice):
                                 name=name,
                             )
                         )
-                if device_channel["channelTypeID"] != "CT_DEVICE":
+                if device_channel["channelTypeID"] not in ("CT_DEVICE", "CT_1F15"):
                     self.channels.append(
                         dict(
                             no=device_channel["no"],
