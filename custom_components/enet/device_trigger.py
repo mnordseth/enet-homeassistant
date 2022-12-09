@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from typing import Any
-
+import logging
 import voluptuous as vol
 
 from homeassistant.components.automation import (
@@ -11,22 +11,14 @@ from homeassistant.components.automation import (
 )
 from homeassistant.components.device_automation import DEVICE_TRIGGER_BASE_SCHEMA
 from homeassistant.components.homeassistant.triggers import event as event_trigger
-from homeassistant.const import (
-    CONF_DEVICE_ID,
-    CONF_DOMAIN,
-    CONF_ENTITY_ID,
-    CONF_PLATFORM,
-    CONF_TYPE,
-)
+from homeassistant.const import CONF_DEVICE_ID, CONF_DOMAIN, CONF_PLATFORM, CONF_TYPE
 
 
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant
-from homeassistant.helpers import config_validation as cv, entity_registry
 from homeassistant.helpers.typing import ConfigType
 
-from .const import DOMAIN, ATTR_ENET_EVENT, CONF_CHANNEL, CONF_UNIQUE_ID
+from .const import DOMAIN, ATTR_ENET_EVENT, CONF_UNIQUE_ID, CONF_SUBTYPE
 from .aioenet import Sensor
-import logging
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -35,11 +27,10 @@ BUTTON_EVENT_TYPES = (
     "short_release",  # ButtonEvent.SHORT_RELEASE,
 )
 
-
 TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
     {
         vol.Required(CONF_TYPE): vol.In(BUTTON_EVENT_TYPES),
-        vol.Required(CONF_CHANNEL): vol.Union(int, str),
+        vol.Required(CONF_SUBTYPE): vol.Union(int, str),
         vol.Required(CONF_UNIQUE_ID): vol.Union(int, str),
     }
 )
@@ -70,7 +61,7 @@ async def async_get_triggers(
                     CONF_DOMAIN: DOMAIN,
                     CONF_PLATFORM: "device",
                     CONF_TYPE: event_type,
-                    CONF_CHANNEL: channel["no"],
+                    CONF_SUBTYPE: channel["no"],
                     CONF_UNIQUE_ID: enet_device.uid,
                 }
             )
@@ -92,7 +83,7 @@ async def async_attach_trigger(
             event_trigger.CONF_EVENT_DATA: {
                 CONF_DEVICE_ID: config[CONF_DEVICE_ID],
                 CONF_TYPE: config[CONF_TYPE],
-                CONF_CHANNEL: config[CONF_CHANNEL],
+                CONF_SUBTYPE: config[CONF_SUBTYPE],
             },
         }
     )

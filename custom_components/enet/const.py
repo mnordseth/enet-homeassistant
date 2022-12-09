@@ -3,5 +3,5 @@
 DOMAIN = "enet"
 ATTR_ENET_EVENT = "enet_event"
 
-CONF_CHANNEL = "channel"
+CONF_SUBTYPE = "subtype"
 CONF_UNIQUE_ID = "unique_id"

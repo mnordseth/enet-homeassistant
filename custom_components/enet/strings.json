@@ -19,15 +19,15 @@
     }
   },
   "device_automation": {
-    "trigger_channel": {
+    "trigger_subtype": {
       "1": "Button 1",
       "2": "Button 2",
       "3": "Button 3",
       "4": "Button 4"
     },
     "trigger_type": {
-      "initial_press": "\"{channel}\" pressed initially",
-      "short_release": "\"{channel}\" released after short press",
+      "initial_press": "\"{subtype}\" pressed initially",
+      "short_release": "\"{subtype}\" released after short press",
       "long_release": "\"{subtype}\" released after long press"
     }
   }

@@ -137,7 +137,7 @@ class EnetCoordinator(DataUpdateCoordinator):
                         device_id=device.hass_device_entry.id,
                         unique_id=device.uid,
                         type=event_type,
-                        channel=subtype,
+                        subtype=subtype,
                     )
 
                     self.hass.bus.async_fire("enet_event", bus_data)
