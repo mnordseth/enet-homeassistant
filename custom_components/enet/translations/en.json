@@ -11,11 +11,24 @@
         "step": {
             "user": {
                 "data": {
-                    "url": "Enet Server URL",
                     "password": "Password",
+                    "url": "URL",
                     "username": "Username"
                 }
             }
+        }
+    },
+    "device_automation": {
+        "trigger_channel": {
+            "1": "Button 1",
+            "2": "Button 2",
+            "3": "Button 3",
+            "4": "Button 4"
+        },
+        "trigger_type": {
+            "initial_press": "\"{channel}\" pressed initially",
+            "long_release": "\"{subtype}\" released after long press",
+            "short_release": "\"{channel}\" released after short press"
         }
     }
 }
