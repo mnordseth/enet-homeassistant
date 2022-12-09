@@ -7,6 +7,7 @@ import homeassistant.util.dt as dt_util
 
 from .aioenet import Actuator
 from .const import DOMAIN
+from . import enet_devices
 
 _LOGGER = logging.getLogger(__name__)
 SKIP_UPDATES_DELAY = timedelta(seconds=5)
@@ -35,12 +36,14 @@ class EnetLight(LightEntity):
 
     @property
     def device_info(self):
+        device_info = enet_devices.device_info.get(self.channel.device.device_type)
         return {
             "identifiers": {(DOMAIN, self.channel.device.uid)},
             "name": self.channel.device.name,
-            "manufacturer": "",
-            "model": self.channel.device.device_type,
+            "manufacturer": device_info.get("manufacturer"),
+            "model": f"{self.channel.device.device_type} ({device_info.get('description')})",
             "suggested_area": self.channel.device.location.replace("My home:", ""),
+            "via_device": (DOMAIN, "Enet Controller"),
         }
 
     @property

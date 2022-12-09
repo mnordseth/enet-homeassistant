@@ -49,7 +49,7 @@ class EnetSceneEntity(SceneEntity):
         """Return device (service) info."""
         return DeviceInfo(
             identifiers={(DOMAIN, "Enet Controller")},
-            name="Enet Controller",
+            name="Enet Smart Home Server",
             # manufacturer=self.bridge.api.config.bridge_device.product_data.manufacturer_name,
             # model=self.group.type.value.title(),
             # suggested_area=self.group.metadata.name,
