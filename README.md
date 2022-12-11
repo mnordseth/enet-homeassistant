@@ -3,7 +3,13 @@
 # Enet Smart Home integration for Home Assistant
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
-This plugin provides an Enet Smart Home integration to Home Assistant. It currently supports actuators like dimmers and switches, and has been tested on a few different devices.
+This plugin provides an Enet Smart Home integration to Home Assistant.
+
+Supported features:
+- Most actuators like dimmers and switches
+- Listing and activating scenes defined on the Enet server
+- Events from buttons (press and release). Both buttons configured for scenes and connected to an actuator creates events.
+
 
 ## Installation using HACS
 
