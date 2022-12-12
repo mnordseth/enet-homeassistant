@@ -100,6 +100,11 @@ device_info = {
         "manufacturer": "Jung",
         "device_class": "Actuator",
     },
+    "DVT_WS1BG": {
+        "description": "Switching/momentary-contact actuator, 1-gang Mini",
+        "manufacturer": "Gira",
+        "device_class": "Actuator",
+    },
     "DVT_SD1M": {
         "description": "DALI gateway 1-gang mini",
         "manufacturer": "Jung",

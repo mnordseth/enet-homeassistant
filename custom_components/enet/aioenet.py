@@ -190,7 +190,7 @@ class EnetClient:
         try:
             result = await self.request(URL_VIZ, "requestEvents", None)
             return result
-        except Exception as err:
+        except aiohttp.ServerTimeoutError:
             return
 
 
@@ -202,6 +202,7 @@ def create_device(client, raw):
         log.warning(
             "Unknown device: typeID=%s name=%s", raw["typeID"], raw["installationArea"]
         )
+        return
 
     if info["device_class"] == "Actuator":
         print("Actuator added: " + raw["typeID"])
@@ -314,7 +315,9 @@ class Sensor(BaseEnetDevice):
 
 
 class Actuator(BaseEnetDevice):
-    """Class representing a enet actuator, ie a dimmer, switch or blind. Each actuator has one or more channels"""
+    """Class representing a enet actuator, ie a dimmer,
+    switch or blind. Each actuator has one or more channels
+    """
 
     def __init__(self, client, raw):
         super().__init__(client, raw)
@@ -389,7 +392,7 @@ class Channel:
 
     def _find_output_function(self):
         main_func = None
-        for odf, output_func in enumerate(self.channel["outputDeviceFunctions"]):
+        for output_func in self.channel["outputDeviceFunctions"]:
             type_id = output_func["typeID"]
             value_type_id = output_func["currentValues"][0]["valueTypeID"]
             value = output_func["currentValues"][0]["value"]
