@@ -3,12 +3,12 @@
 # Enet Smart Home integration for Home Assistant
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
-This plugin provides an Enet Smart Home integration to Home Assistant.
+This plugin integrates a Gira or Jung Enet Smart Home server to Home Assistant.
 
 Supported features:
-- Most actuators like dimmers and switches
+- Most actuators like dimmers and relays
 - Listing and activating scenes defined on the Enet server
-- Events from buttons (press and release). Both buttons configured for scenes and connected to an actuator creates events.
+- Events from buttons (press and release). Both buttons configured for scenes and buttons connected to an actuator creates events.
 
 
 ## Installation using HACS
