@@ -100,11 +100,6 @@ device_info = {
         "manufacturer": "Gira / Jung",
         "device_class": "Actuator",
     },
-    "DVT_WS1BG": {
-        "description": "Switching/momentary-contact actuator, 1-gang Mini",
-        "manufacturer": "Gira / Jung",
-        "device_class": None,
-    },
     "DVT_SD1M": {
         "description": "DALI gateway 1-gang mini",
         "manufacturer": "Gira / Jung",
@@ -213,6 +208,16 @@ device_info = {
     "IBOX": {
         "description": "eNet server for rail mounting",
         "manufacturer": "Gira / Jung",
+        "device_class": None,
+    },
+    "DVT_WS1BG": {
+        "description": "Wall transmitter, 1-gang with inscription space",
+        "manufacturer": "Gira",
+        "device_class": None,
+    },
+    "DVT_WS3BG": {
+        "description": "Wall transmitter, 3-gang with inscription space",
+        "manufacturer": "Gira",
         "device_class": None,
     },
 }
