@@ -113,7 +113,7 @@ device_info = {
     "DVT_SJA1": {
         "description": "Centre plate for blinds control",
         "manufacturer": "Gira / Jung",
-        "device_class": None,
+        "device_class": "Actuator",
     },
     "DVT_SJAR": {
         "description": "Switch/push-button actuator 8-gang / blinds actuator 4-gang, for rail mounting",
@@ -227,7 +227,10 @@ channel_config = {
     "CT_1F01_DUMMY": {"control": "FT_INSA.SOO", "info": "FT_INSA.IOO"},
     "CT_1F02": {"control": "FT_INDA.ASC", "info": "FT_INDA.ADV"},  # Dimmer
     "CT_1F03": {"control": "FT_INBA.SAPBP", "info": "FT_INBA.CAPBP"},  # Blinds
-    "CT_1F05": {"control": "FT_INSArGO.SOO", "info": "FT_INSArGO.IOO"},
+    "CT_1F05": {
+        "control": "FT_INSArGO.SOO",
+        "info": "FT_INSArGO.IOO",
+    },  # SWITCHING_ACTUATOR
     "CT_1F08": {"control": "FT_INSAv2.SOO", "info": "FT_INSAv2.IOO"},
     "CT_1F09": {"control": "FT_INSAv3.SOO", "info": "FT_INSAv3.IOO"},
     "CT_1F0B": {"control": "FT_INLAv2_SA.SOO", "info": "FT_INLAv2_SA.IOO"},
