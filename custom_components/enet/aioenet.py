@@ -361,7 +361,7 @@ class Actuator(BaseEnetDevice):
                     device_channel["channelTypeID"],
                     device_channel["effectArea"],
                 )
-                if device_channel["channelTypeID"] != "CT_DEVICE":
+                if device_channel["channelTypeID"] not in ("CT_DEVICE", "CT_DISABLED"):
                     self.channels.append(Channel(self, device_channel))
 
     def __repr__(self):
