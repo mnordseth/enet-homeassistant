@@ -103,7 +103,12 @@ class EnetClient:
         await self._do_request(
             URL_MANAGEMENT, "setClientRole", dict(clientRole="CR_VISU")
         )
-
+        
+    async def simple_logout(self):
+        """Logout of the Enet Server"""
+        await self.request(URL_MANAGEMENT, "userLogout", None)
+        await self._session.close()
+        
     def get_account(self):
         """Return the current logged in user account"""
         return self.request(URL_MANAGEMENT, "getAccount", {})
