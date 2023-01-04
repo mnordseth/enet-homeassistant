@@ -103,12 +103,12 @@ class EnetClient:
         await self._do_request(
             URL_MANAGEMENT, "setClientRole", dict(clientRole="CR_VISU")
         )
-        
+
     async def simple_logout(self):
         """Logout of the Enet Server"""
         await self.request(URL_MANAGEMENT, "userLogout", None)
         await self._session.close()
-        
+
     def get_account(self):
         """Return the current logged in user account"""
         return self.request(URL_MANAGEMENT, "getAccount", {})
@@ -299,7 +299,7 @@ class Sensor(BaseEnetDevice):
                             "FT_INGBRS.GBR": "Rocker",
                         }
                         type_name = typenames.get(outputfunc["typeID"], "Unknown")
-                        name = f"Channel {device_channel} - {type_name}"
+                        name = f"Channel {device_channel['effectArea']} - {type_name}"
 
                         output_functions.append(
                             dict(
