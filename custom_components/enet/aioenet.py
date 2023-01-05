@@ -52,6 +52,7 @@ class EnetClient:
         self._cookie = ""
         self._last_telegram_ts = {}
         self._raw_json = {}
+        self._projectuid = None
         self.devices = []
 
     @auth_if_needed
@@ -109,6 +110,23 @@ class EnetClient:
         await self.request(URL_MANAGEMENT, "userLogout", None)
         await self._session.close()
 
+    async def get_project(self):
+        """Get the project which included the projectUID and the projectName"""
+        result = await self.request(URL_VIZ, "getCurrentProject", None)
+        self._projectuid = result["projectUID"]
+        return result
+
+    async def get_project_information(self):
+        """Get the project information which includes version numbers, 
+        creation and modification dates and other general information
+        about the server and its configuration."""
+        if self._projectuid is None:
+            result = await self.get_project()
+        
+        params = {"projectUID": self._projectuid}
+        result = await self.request(URL_VIZ, "getProjectInformation", params)
+        return result
+    
     def get_account(self):
         """Return the current logged in user account"""
         return self.request(URL_MANAGEMENT, "getAccount", {})
