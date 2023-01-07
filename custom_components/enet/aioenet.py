@@ -181,6 +181,28 @@ class EnetClient:
         recurse_locations(locations, [])
         return device_to_loc
 
+    async def get_all_location_uids(self):
+        """Return a dict of all locations to location uid"""
+        locations = await self.get_locations()
+        all_location_uids = {}
+
+        def recurse_locations(locations, parent, level=0):
+            for location in locations:
+                name = location["name"]
+                hier_name = ":".join(parent) + ":" + name
+                if level > 0:
+                    all_location_uids[location["uid"]] = hier_name
+                for device in location["deviceUIDs"]:
+                    all_location_uids[device["deviceUID"]] = hier_name
+                if location["childLocations"]:
+                    parent.append(name)
+                    recurse_locations(location["childLocations"], parent, level + 1)
+            if parent:
+                parent.pop()
+
+        recurse_locations(locations, [])
+        return all_location_uids
+
     async def get_scenes(self, only_libenet=True):
         """Get all scene names and corresponding uid from the server"""
         result = await self.request(URL_SCENE, "getSceneActionUIDs", None)
@@ -404,6 +426,7 @@ class Channel:
         self._input_device_function = self._find_input_function()
         self._value_template = self._build_value_template()
         self.name = self.channel["effectArea"]
+        self.effective_locationuid = self.channel["effectLocationUID"]
 
         self.state = self.output_device_function["currentValues"][0]["value"]
 
