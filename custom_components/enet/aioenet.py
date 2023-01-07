@@ -410,7 +410,7 @@ class Actuator(BaseEnetDevice):
                     self.channels.append(Channel(self, device_channel))
 
     def __repr__(self):
-        return f"{self.__class__.__name__} (Name: {self.name} Type: {self.device_type}"
+        return f"{self.__class__.__name__} (Name: {self.name} Type: {self.device_type})"
 
 
 class Channel:
@@ -462,7 +462,7 @@ class Channel:
         return main_func
 
     async def get_value(self):
-        """Fetch the updated state from the sever"""
+        """Fetch the updated state from the server"""
         params = {"deviceFunctionUID": self.output_device_function["uid"]}
         current_value = await self.device.client.request(
             URL_VIZ, "getCurrentValuesFromOutputDeviceFunction", params
