@@ -4,7 +4,10 @@ import logging
 import functools
 import aiohttp
 
-from .enet_devices import device_info, channel_config
+try:
+    from .enet_devices import device_info, channel_config, ignored_channel_types
+except ImportError:
+    from enet_devices import device_info, channel_config, ignored_channel_types
 
 log = logging.getLogger(__name__)
 
@@ -117,16 +120,16 @@ class EnetClient:
         return result
 
     async def get_project_information(self):
-        """Get the project information which includes version numbers, 
+        """Get the project information which includes version numbers,
         creation and modification dates and other general information
         about the server and its configuration."""
         if self._projectuid is None:
             result = await self.get_project()
-        
+
         params = {"projectUID": self._projectuid}
         result = await self.request(URL_VIZ, "getProjectInformation", params)
         return result
-    
+
     def get_account(self):
         """Return the current logged in user account"""
         return self.request(URL_MANAGEMENT, "getAccount", {})
@@ -158,6 +161,28 @@ class EnetClient:
         params = {"locationUIDs": []}
         result = await self.request(URL_VIZ, "getLocations", params)
         return result["locations"]
+
+    async def get_all_location_uids(self):
+        """Return a dict of all locations to location uid"""
+        locations = await self.get_locations()
+        all_location_uids = {}
+
+        def recurse_locations(locations, parent, level=0):
+            for location in locations:
+                name = location["name"]
+                hier_name = ":".join(parent) + ":" + name
+                if level > 0:
+                    all_location_uids[location["uid"]] = hier_name
+                for device in location["deviceUIDs"]:
+                    all_location_uids[device["deviceUID"]] = hier_name
+                if location["childLocations"]:
+                    parent.append(name)
+                    recurse_locations(location["childLocations"], parent, level + 1)
+            if parent:
+                parent.pop()
+
+        recurse_locations(locations, [])
+        return all_location_uids
 
     async def get_device_locations(self):
         """Return a dict of locations to device"""
@@ -225,18 +250,11 @@ def create_device(client, raw):
         log.warning(
             "Unknown device: typeID=%s name=%s", raw["typeID"], raw["installationArea"]
         )
-        return
-
-    if info["device_class"] == "Actuator":
-        print("Actuator added: " + raw["typeID"])
-        return Actuator(client, raw)
-    else:
-        print("Sensor added: " + raw["typeID"])
-        return Sensor(client, raw)
+    return Device(client, raw)
 
 
-class BaseEnetDevice:
-    """The base class for all Enet Devices, both sensors and actuators"""
+class Device:
+    """Physical Enet Device. Can contain any combination of actuator and sensor channels"""
 
     def __init__(self, client, raw):
         self.client = client
@@ -248,150 +266,102 @@ class BaseEnetDevice:
         self.device_type = self._raw["typeID"]
         self.battery_state = self._raw["batteryState"]
         self.software_update_available = self._raw["isSoftwareUpdateAvailable"]
+        self.create_channels()
 
     def __repr__(self):
         return f"{self.__class__.__name__} Name: {self.name} Type: {self.device_type}"
 
+    def create_channels(self):
+        """Create channels"""
+        log.debug(
+            "Enet Device %s type %s has the following channels:",
+            self.name,
+            self.device_type,
+        )
 
-class Sensor(BaseEnetDevice):
-    """Class representing a Enet Sensor or Wall switch"""
+        for channel_config_group in self._raw["deviceChannelConfigurationGroups"]:
+            for device_channel in channel_config_group["deviceChannels"]:
+                channel_type_id = device_channel["channelTypeID"]
+                if channel_type_id in ignored_channel_types:
+                    continue
 
-    def __init__(self, client, raw):
-        super().__init__(client, raw)
-        self.channels = []
-        self.create_channels()
+                channel_type_config = channel_config.get(channel_type_id)
+                if channel_type_config is None:
+                    log.warning("Unsupported enet channel type: %s", channel_type_id)
+                    continue
+
+                log.debug(
+                    "  Channel no: %s Type: %s Area: %s Meta: %s",
+                    device_channel["no"],
+                    device_channel["channelTypeID"],
+                    device_channel["effectArea"],
+                    channel_type_config,
+                )
+                if channel_type_config["type"] == "actuator":
+                    self.channels.append(ActuatorChannel(self, device_channel))
+                else:
+                    self.channels.append(SensorChannel(self, device_channel))
 
     def get_function_uids_for_event(self):
         """Return a list of function uids we should setup event listeners for"""
         function_uids = {}
         for channel in self.channels:
-            for output_function in channel["output_functions"]:
-                function_uids[output_function["uid"]] = self
+            function_uids.update(channel.get_function_uids_for_event())
         return function_uids
 
     async def register_events(self):
         """Setup event subscription for all outputfunctions"""
-        for channel in self.channels:
-            for output_function in channel["output_functions"]:
-                log.debug(
-                    "Register event subscription for %s - %s",
-                    self.name,
-                    output_function["uid"],
-                )
-                await self.client.setup_event_subscription(output_function["uid"])
-
-    def create_channels(self):
-        """Create channels"""
-        log.debug(
-            "Enet Device %s type %s has the following channels:",
-            self.name,
-            self.device_type,
-        )
-
-        for channel_config_group_index, channel_config_group in enumerate(
-            self._raw["deviceChannelConfigurationGroups"]
-        ):
-            for device_channel_index, device_channel in enumerate(
-                channel_config_group["deviceChannels"]
-            ):
-                log.debug(
-                    "  ccg: %s dc: %s Channel no: %s Type: %s Area: %s",
-                    channel_config_group_index,
-                    device_channel_index,
-                    device_channel["no"],
-                    device_channel["channelTypeID"],
-                    device_channel["effectArea"],
-                )
-                output_functions = []
-                for outputfunc in device_channel["outputDeviceFunctions"]:
-                    log.debug(
-                        "    opf uid: %s type: %s active: %s",
-                        outputfunc["uid"],
-                        outputfunc["typeID"],
-                        outputfunc["active"],
-                    )
-                    if outputfunc["active"]:
-                        typenames = {
-                            "FT_INScS.SC": "Scene",
-                            "FT_INScS.MD": "Master dim",
-                            "FT_INGBRS.GBR": "Rocker",
-                        }
-                        type_name = typenames.get(outputfunc["typeID"], "Unknown")
-                        name = f"Channel {device_channel['effectArea']} - {type_name}"
-
-                        output_functions.append(
-                            dict(
-                                uid=outputfunc["uid"],
-                                typeID=outputfunc["typeID"],
-                                name=name,
-                            )
-                        )
-                if device_channel["channelTypeID"] not in ("CT_DEVICE", "CT_1F15"):
-                    self.channels.append(
-                        dict(
-                            no=device_channel["no"],
-                            channel_type=device_channel["channelTypeID"],
-                            area=device_channel["effectArea"],
-                            output_functions=output_functions,
-                        )
-                    )
+        for function_uid in self.get_function_uids_for_event():
+            log.debug(
+                "Register event subscription for %s - %s", self.name, function_uid
+            )
+            await self.client.setup_event_subscription(function_uid)
 
 
-class Actuator(BaseEnetDevice):
-    """Class representing a enet actuator, ie a dimmer,
-    switch or blind. Each actuator has one or more channels
-    """
+class SensorChannel:
+    """A class representing a sensor channel"""
 
-    def __init__(self, client, raw):
-        super().__init__(client, raw)
-        self.create_channels()
+    def __init__(self, device, raw_channel):
+        self.device = device
+        self.channel = raw_channel
+        self.has_brightness = False
+        self.uid = f"{self.device.uid}-{self.channel['no']}"
+        self.channel_type = self.channel["channelTypeID"]
+        self.name = self.channel["effectArea"]
+        self.output_functions = []
+        self._find_output_functions()
 
     def get_function_uids_for_event(self):
         """Return a list of function uids we should setup event listeners for"""
-        return {
-            channel.output_device_function["uid"]: channel for channel in self.channels
-        }
+        function_uids = {}
+        for output_function in self.output_functions:
+            function_uids[output_function["uid"]] = self.device
+        return function_uids
 
-    async def register_events(self):
-        """Setup event subscription for all outputfunctions"""
-        for channel in self.channels:
-            log.debug(
-                "Register event subscription for %s - %s",
-                self.name,
-                channel.output_device_function["uid"],
-            )
-            await self.client.setup_event_subscription(
-                channel.output_device_function["uid"]
-            )
+    def _find_output_functions(self):
+        for outputfunc in self.channel["outputDeviceFunctions"]:
+            if outputfunc["active"]:
+                typenames = {
+                    "FT_INScS.SC": "Scene",
+                    "FT_INScS.MD": "Master dim",
+                    "FT_INGBRS.GBR": "Rocker",
+                }
+                type_name = typenames.get(outputfunc["typeID"], "Unknown")
+                name = f"Channel {self.name} - {type_name}"
 
-    def create_channels(self):
-        """Create channels"""
-        log.debug(
-            "Enet Device %s type %s has the following channels:",
-            self.name,
-            self.device_type,
-        )
-        for channel_config_group_number, channel_config_group in enumerate(
-            self._raw["deviceChannelConfigurationGroups"]
-        ):
-            for device_channel_number, device_channel in enumerate(
-                channel_config_group["deviceChannels"]
-            ):
-                log.debug(
-                    "  ccg: %s dc: %s Channel type: %s area: %s",
-                    channel_config_group_number,
-                    device_channel_number,
-                    device_channel["channelTypeID"],
-                    device_channel["effectArea"],
+                self.output_functions.append(
+                    dict(
+                        uid=outputfunc["uid"],
+                        typeID=outputfunc["typeID"],
+                        name=name,
+                    )
                 )
-                if device_channel["channelTypeID"] not in ("CT_DEVICE", "CT_DISABLED"):
-                    self.channels.append(Channel(self, device_channel))
 
     def __repr__(self):
-        return f"{self.__class__.__name__} (Name: {self.name} Type: {self.device_type}"
+        return f"{self.__class__.__name__} (Name: {self.name} Type: {self.channel_type}"
 
 
-class Channel:
+class ActuatorChannel:
     """A class representing a actuator channel that can dim or switch a load"""
 
     def __init__(self, device, raw_channel):
@@ -406,6 +376,10 @@ class Channel:
         self.name = self.channel["effectArea"]
 
         self.state = self.output_device_function["currentValues"][0]["value"]
+
+    def get_function_uids_for_event(self):
+        """Return a list of function uids we should setup event listeners for"""
+        return {self.output_device_function["uid"]: self}
 
     def _build_value_template(self):
         value_template = self.output_device_function["currentValues"][0]
@@ -430,11 +404,10 @@ class Channel:
 
     def _find_input_function(self):
         main_func = None
-        for idf, input_func in enumerate(self.channel["inputDeviceFunctions"]):
+        for input_func in self.channel["inputDeviceFunctions"]:
             type_id = input_func["typeID"]
             main = channel_config.get(self.channel_type).get("control") == type_id
             if main:
-                print(f"    idf: {idf} type: {type_id} main: {main}")
                 main_func = input_func
         return main_func
 

@@ -18,7 +18,7 @@ from homeassistant.core import CALLBACK_TYPE, HomeAssistant
 from homeassistant.helpers.typing import ConfigType
 
 from .const import DOMAIN, ATTR_ENET_EVENT, CONF_UNIQUE_ID, CONF_SUBTYPE
-from .aioenet import Sensor
+from .aioenet import SensorChannel
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -50,7 +50,8 @@ async def async_get_triggers(
     enet_device = next((d for d in hub.devices if d.uid == enet_device_id), None)
     _LOGGER.debug("Enet device: %s", enet_device)
 
-    if not isinstance(enet_device, Sensor):
+    # if not isinstance(enet_device, Sensor):
+    if not any([isinstance(c, SensorChannel) for c in enet_device.channels]):
         return
 
     for channel in enet_device.channels:

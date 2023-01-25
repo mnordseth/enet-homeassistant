@@ -13,7 +13,7 @@ from homeassistant.helpers import entity
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .aioenet import EnetClient, Channel
+from .aioenet import EnetClient, ActuatorChannel
 from .const import DOMAIN
 from .device import async_setup_devices
 
@@ -100,7 +100,7 @@ class EnetCoordinator(DataUpdateCoordinator):
                     )
                     continue
                 values = data["values"]
-                if isinstance(device, Channel):
+                if isinstance(device, ActuatorChannel):
                     if len(values) != 1:
                         _LOGGER.warning(
                             "Event for device '%s' has multiple values: %s, expected 1.",

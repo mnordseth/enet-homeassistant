@@ -11,7 +11,7 @@ from homeassistant.const import (
 )
 from homeassistant.core import callback
 from homeassistant.helpers import device_registry
-from .aioenet import Actuator
+from .aioenet import ActuatorChannel
 from . import enet_devices
 from .const import DOMAIN
 
@@ -26,7 +26,7 @@ async def async_setup_devices(coordinator):
 
     @callback
     def add_device(enet_device):
-        """Register a Hue device in device registry."""
+        """Register a Enet device in device registry."""
         _LOGGER.debug("add_device() %s", enet_device)
         device_info = enet_devices.device_info.get(enet_device.device_type)
         params = {
@@ -41,6 +41,6 @@ async def async_setup_devices(coordinator):
 
     # create/update all current devices found in controller
     for enet_device in coordinator.hub.devices:
-        if not isinstance(enet_device, Actuator):
+        if all([not isinstance(c, ActuatorChannel) for c in enet_device.channels]):
             hass_device_entry = add_device(enet_device)
             enet_device.hass_device_entry = hass_device_entry
