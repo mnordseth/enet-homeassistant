@@ -370,6 +370,7 @@ class ActuatorChannel:
         self.has_brightness = False
         self.uid = f"{self.device.uid}-{self.channel['no']}"
         self.channel_type = self.channel["channelTypeID"]
+        self.ha_domain = channel_config[self.channel_type].get("ha_domain")
         self.output_device_function = self._find_output_function()
         self._input_device_function = self._find_input_function()
         self._value_template = self._build_value_template()

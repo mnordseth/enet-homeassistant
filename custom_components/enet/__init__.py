@@ -18,7 +18,7 @@ from .const import DOMAIN
 from .device import async_setup_devices
 
 _LOGGER = logging.getLogger(__name__)
-PLATFORMS: list[Platform] = [Platform.LIGHT, Platform.SCENE]
+PLATFORMS: list[Platform] = [Platform.LIGHT, Platform.SCENE, Platform.COVER]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

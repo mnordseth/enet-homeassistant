@@ -1,16 +1,14 @@
-"""Enet Smart Home platform"""
+"""Enet Smart Home light support"""
 from datetime import timedelta
 import logging
 
 from homeassistant.components.light import SUPPORT_BRIGHTNESS, LightEntity
-import homeassistant.util.dt as dt_util
 
 from .aioenet import ActuatorChannel
 from .const import DOMAIN
 from . import enet_devices
 
 _LOGGER = logging.getLogger(__name__)
-SKIP_UPDATES_DELAY = timedelta(seconds=5)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -19,7 +17,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     for device in hub.devices:
         for channel in device.channels:
-            if isinstance(channel, ActuatorChannel):
+            if isinstance(channel, ActuatorChannel) and channel.ha_domain == "light":
                 async_add_entities([EnetLight(channel, hub.coordinator)])
     _LOGGER.info("Finished async setup()")
 
