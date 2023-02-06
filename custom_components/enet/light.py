@@ -1,5 +1,4 @@
 """Enet Smart Home light support"""
-from datetime import timedelta
 import logging
 
 from homeassistant.components.light import SUPPORT_BRIGHTNESS, LightEntity

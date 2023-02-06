@@ -67,7 +67,7 @@ class EnetCover(CoverEntity):
 
     @property
     def current_cover_position(self):
-        return 100 - self.channel.state
+        return int(float((100 - self.channel.state) / 100) * 255)
 
     async def async_added_to_hass(self):
         """Subscribe entity to updates when added to hass."""
@@ -87,6 +87,6 @@ class EnetCover(CoverEntity):
 
     async def async_set_cover_position(self, **kwargs) -> None:
         """Move the cover to a specific position."""
-        enet_position = 100 - kwargs[ATTR_POSITION]
+        enet_position = 100 - int(float(kwargs[ATTR_POSITION]) / 255 * 100)
         await self.channel.set_value(enet_position)
         self.async_write_ha_state()
