@@ -62,7 +62,7 @@ async def async_get_triggers(
                     CONF_DOMAIN: DOMAIN,
                     CONF_PLATFORM: "device",
                     CONF_TYPE: event_type,
-                    CONF_SUBTYPE: channel["no"],
+                    CONF_SUBTYPE: channel.channel["no"],
                     CONF_UNIQUE_ID: enet_device.uid,
                 }
             )
