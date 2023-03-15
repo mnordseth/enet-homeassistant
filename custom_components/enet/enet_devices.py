@@ -220,6 +220,11 @@ device_info = {
         "manufacturer": "Gira",
         "device_class": None,
     },
+    "DVT_TADO": {
+        "description": "enet integrated TADO",
+        "manufacturer": "TADO",
+        "device_class": None,
+    },
 }
 
 channel_config = {
@@ -339,4 +344,4 @@ channel_config = {
     "CT_1F20": {"description": "Repeater sensor", "type": "sensor"},
 }
 
-ignored_channel_types = ("CT_DISABLED", "CT_DEVICE", "CT_1F15")
+ignored_channel_types = ("CT_DISABLED", "CT_DEVICE", "CT_1F15", "CH_TADO", "CH_TADO_ZH")
