@@ -1,5 +1,6 @@
 """Enet Smart Home light support"""
 import logging
+import math
 
 from homeassistant.components.light import SUPPORT_BRIGHTNESS, LightEntity
 
@@ -92,7 +93,7 @@ class EnetLight(LightEntity):
         _LOGGER.info("async_turn_on: (%s) %s", self.name, kwargs)
 
         if brightness := kwargs.get("brightness"):
-            value = int(float(brightness) / 255 * 100)
+            value = int(math.ceil(float(brightness) / 255 * 100))
             await self.channel.set_value(value)
         else:
             await self.channel.turn_on()
