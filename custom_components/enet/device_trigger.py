@@ -16,6 +16,7 @@ from homeassistant.const import CONF_DEVICE_ID, CONF_DOMAIN, CONF_PLATFORM, CONF
 
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant
 from homeassistant.helpers.typing import ConfigType
+from homeassistant.helpers import device_registry
 
 from .const import DOMAIN, ATTR_ENET_EVENT, CONF_UNIQUE_ID, CONF_SUBTYPE
 from .aioenet import SensorChannel
@@ -40,8 +41,7 @@ async def async_get_triggers(
     hass: HomeAssistant, device_id: str
 ) -> list[dict[str, Any]]:
     """List device triggers for enet devices."""
-    device_registry = await hass.helpers.device_registry.async_get_registry()
-    device_entry = device_registry.async_get(device_id)
+    device_entry =  device_registry.async_get(hass).async_get(device_id)
     entry_id = [i for i in device_entry.config_entries][0]
     hub = hass.data[DOMAIN][entry_id]
     triggers = []
@@ -95,13 +95,13 @@ async def async_attach_trigger(
 
 
 def get_enet_device_id(device_entry):
-    """Get Hue device id from device entry."""
+    """Get Enet device id from device entry."""
     return next(
         (
             identifier[1]
             for identifier in device_entry.identifiers
             if identifier[0] == DOMAIN
-            and ":" not in identifier[1]  # filter out v1 mac id
+            and ":" not in identifier[1]
         ),
         None,
     )

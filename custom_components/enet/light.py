@@ -93,7 +93,7 @@ class EnetLight(LightEntity):
         _LOGGER.info("async_turn_on: (%s) %s", self.name, kwargs)
 
         if brightness := kwargs.get("brightness"):
-            value = int(math.ceil(float(brightness) / 255 * 100))
+            value = math.ceil(float(brightness) / 255 * 100)
             await self.channel.set_value(value)
         else:
             await self.channel.turn_on()

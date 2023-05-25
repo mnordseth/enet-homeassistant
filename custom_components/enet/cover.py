@@ -67,6 +67,10 @@ class EnetCover(CoverEntity):
 
     @property
     def current_cover_position(self):
+        """Return current position of cover tilt.
+
+        None is unknown, 0 is closed, 100 is fully open.
+        """
         return int(float((100 - self.channel.state) / 100) * 255)
 
     async def async_added_to_hass(self):
