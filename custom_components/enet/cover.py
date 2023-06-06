@@ -1,6 +1,7 @@
 """Enet Smart Home cover / blinds support"""
 
 import logging
+import math
 from homeassistant.components.cover import (
     ATTR_POSITION,
     #    ATTR_TILT_POSITION,
@@ -69,9 +70,9 @@ class EnetCover(CoverEntity):
     def current_cover_position(self):
         """Return current position of cover tilt.
 
-        None is unknown, 0 is closed, 100 is fully open.
+        None is unknown, 0 is fully open, 100 is closed.
         """
-        return int(float((100 - self.channel.state) / 100) * 255)
+        return math.ceil(float(self.channel.state / 100) * 255)
 
     async def async_added_to_hass(self):
         """Subscribe entity to updates when added to hass."""
@@ -91,6 +92,6 @@ class EnetCover(CoverEntity):
 
     async def async_set_cover_position(self, **kwargs) -> None:
         """Move the cover to a specific position."""
-        enet_position = 100 - int(float(kwargs[ATTR_POSITION]) / 255 * 100)
+        enet_position = math.ceil(float(kwargs[ATTR_POSITION]) / 255 * 100)
         await self.channel.set_value(enet_position)
         self.async_write_ha_state()
