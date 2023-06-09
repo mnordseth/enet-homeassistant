@@ -40,7 +40,7 @@ class EnetCover(CoverEntity):
             | CoverEntityFeature.OPEN
             | CoverEntityFeature.SET_POSITION
         )
-        self._attr_device_class = CoverDeviceClass.BLIND
+        self._attr_device_class = CoverDeviceClass.SHUTTER
 
         _LOGGER.info("EnetCover.init()  done %s", self.name)
 
