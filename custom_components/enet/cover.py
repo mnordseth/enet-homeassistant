@@ -1,12 +1,12 @@
 """Enet Smart Home cover / blinds support"""
 
 import logging
-import math
 from homeassistant.components.cover import (
     ATTR_POSITION,
     #    ATTR_TILT_POSITION,
     CoverEntity,
     CoverEntityFeature,
+    CoverDeviceClass
 )
 
 from .aioenet import ActuatorChannel
@@ -40,6 +40,8 @@ class EnetCover(CoverEntity):
             | CoverEntityFeature.OPEN
             | CoverEntityFeature.SET_POSITION
         )
+        self._attr_device_class = CoverDeviceClass.SHUTTER
+
         _LOGGER.info("EnetCover.init()  done %s", self.name)
 
     @property
@@ -64,15 +66,15 @@ class EnetCover(CoverEntity):
 
     @property
     def is_closed(self):
-        return self.channel.state == 0
+        return self.channel.state == 100
 
     @property
     def current_cover_position(self):
         """Return current position of cover tilt.
 
-        None is unknown, 0 is fully open, 100 is closed.
+        None is unknown, 0 is fully closed, 100 is fully open.
         """
-        return math.ceil(float(self.channel.state / 100) * 255)
+        return 100 - self.channel.state
 
     async def async_added_to_hass(self):
         """Subscribe entity to updates when added to hass."""
@@ -92,6 +94,6 @@ class EnetCover(CoverEntity):
 
     async def async_set_cover_position(self, **kwargs) -> None:
         """Move the cover to a specific position."""
-        enet_position = math.ceil(float(kwargs[ATTR_POSITION]) / 255 * 100)
+        enet_position = 100 - kwargs[ATTR_POSITION]
         await self.channel.set_value(enet_position)
         self.async_write_ha_state()
