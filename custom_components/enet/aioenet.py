@@ -327,6 +327,7 @@ class SensorChannel:
         self.has_brightness = False
         self.uid = f"{self.device.uid}-{self.channel['no']}"
         self.channel_type = self.channel["channelTypeID"]
+        self.ha_domain = channel_config[self.channel_type].get("ha_domain")
         self.name = self.channel["effectArea"]
         self.output_functions = []
         self._find_output_functions()

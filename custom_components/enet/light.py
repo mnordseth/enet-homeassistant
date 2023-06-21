@@ -4,9 +4,9 @@ import math
 
 from homeassistant.components.light import SUPPORT_BRIGHTNESS, LightEntity
 
+from .entity import EnetBaseEntity
 from .aioenet import ActuatorChannel
 from .const import DOMAIN
-from . import enet_devices
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -22,44 +22,18 @@ async def async_setup_entry(hass, entry, async_add_entities):
     _LOGGER.info("Finished async setup()")
 
 
-class EnetLight(LightEntity):
+class EnetLight(EnetBaseEntity, LightEntity):
     """A representation of a Enet Smart Home dimmer or switch channel"""
 
-    def __init__(self, channel, coordinator):
-        self._name = channel.name
-        self.channel = channel
-        self.coordinator = coordinator
-        _LOGGER.info("EnetLight.init()  done %s", self.name)
-
-    @property
-    def device_info(self):
-        device_info = enet_devices.device_info.get(self.channel.device.device_type)
-        return {
-            "identifiers": {(DOMAIN, self.channel.device.uid)},
-            "name": self.channel.device.name,
-            "manufacturer": device_info.get("manufacturer"),
-            "model": f"{self.channel.device.device_type} ({device_info.get('description')})",
-            "suggested_area": self.channel.device.location.replace("My home:", ""),
-            "via_device": (DOMAIN, "Enet Controller"),
-        }
-
-    @property
-    def icon(self):
-        if self.available:
-            if self.is_on:
-                return "mdi:lightbulb-on"
-            else:
-                return "mdi:lightbulb-outline"
-        else:
-            return "mdi:exclamation-thick"
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def should_poll(self):
-        return False
+    # @property
+    # def icon(self):
+    #    if self.available:
+    #        if self.is_on:
+    #            return "mdi:lightbulb-on"
+    #        else:
+    #            return "mdi:lightbulb-outline"
+    #    else:
+    #        return "mdi:exclamation-thick"
 
     @property
     def is_on(self):
@@ -71,11 +45,7 @@ class EnetLight(LightEntity):
 
     @property
     def brightness(self):
-        return int(float(self.channel.state / 100) * 255)
-
-    @property
-    def unique_id(self):
-        return self.channel.uid
+        return math.ceil(float(self.channel.state / 100) * 255)
 
     @property
     def supported_features(self):

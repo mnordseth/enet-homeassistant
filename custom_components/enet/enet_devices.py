@@ -326,7 +326,8 @@ channel_config = {
         "description": "Threshold",
         "control": "",
         "info": "FT_INThScS.CAVTH1",
-        "type": "sensor",
+        "ha_domain": "light level",
+        "type": "actuator",
     },
     "CT_1F19": {
         "description": "Energy sensor",

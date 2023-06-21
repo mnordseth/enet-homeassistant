@@ -17,7 +17,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    """Add Enet light devices from a config entry"""
+    """Add Enet cover devices from a config entry"""
     hub = hass.data[DOMAIN][entry.entry_id]
 
     for device in hub.devices:
