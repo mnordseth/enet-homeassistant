@@ -298,7 +298,9 @@ class Device:
                     channel_type_config,
                 )
                 if channel_type_config["type"] == "actuator":
-                    self.channels.append(ActuatorChannel(self, device_channel))
+                    channel = ActuatorChannel(self, device_channel)
+                    if channel.active:
+                        self.channels.append(channel)
                 else:
                     self.channels.append(SensorChannel(self, device_channel))
 
@@ -369,6 +371,7 @@ class ActuatorChannel:
         self.device = device
         self.channel = raw_channel
         self.has_brightness = False
+        self.active = False
         self.uid = f"{self.device.uid}-{self.channel['no']}"
         self.channel_type = self.channel["channelTypeID"]
         self.ha_domain = channel_config[self.channel_type].get("ha_domain")
@@ -402,6 +405,8 @@ class ActuatorChannel:
                 self.state = value
             if main:
                 main_func = output_func
+                self.active = output_func.get("active", True)
+
         return main_func
 
     def _find_input_function(self):
