@@ -41,7 +41,7 @@ async def async_get_triggers(
     hass: HomeAssistant, device_id: str
 ) -> list[dict[str, Any]]:
     """List device triggers for enet devices."""
-    device_entry =  device_registry.async_get(hass).async_get(device_id)
+    device_entry = device_registry.async_get(hass).async_get(device_id)
     entry_id = [i for i in device_entry.config_entries][0]
     hub = hass.data[DOMAIN][entry_id]
     triggers = []
@@ -54,7 +54,17 @@ async def async_get_triggers(
     if not any([isinstance(c, SensorChannel) for c in enet_device.channels]):
         return
 
+    channel_numbers = []
+
     for channel in enet_device.channels:
+        number = channel.channel["no"]
+        channel_numbers.append(number)
+        # If rocker switch, also add channel number + 1
+        for output_function in channel.output_functions:
+            if output_function["typeID"] in ["FT_INGBRS.GBR"]:
+                channel_numbers.append(number + 1)
+
+    for channel_no in channel_numbers:
         for event_type in BUTTON_EVENT_TYPES:
             triggers.append(
                 {
@@ -62,7 +72,7 @@ async def async_get_triggers(
                     CONF_DOMAIN: DOMAIN,
                     CONF_PLATFORM: "device",
                     CONF_TYPE: event_type,
-                    CONF_SUBTYPE: channel.channel["no"],
+                    CONF_SUBTYPE: channel_no,
                     CONF_UNIQUE_ID: enet_device.uid,
                 }
             )
@@ -100,8 +110,7 @@ def get_enet_device_id(device_entry):
         (
             identifier[1]
             for identifier in device_entry.identifiers
-            if identifier[0] == DOMAIN
-            and ":" not in identifier[1]
+            if identifier[0] == DOMAIN and ":" not in identifier[1]
         ),
         None,
     )
