@@ -25,7 +25,7 @@ _LOGGER = logging.getLogger(__name__)
 
 BUTTON_EVENT_TYPES = (
     "initial_press",  # ButtonEvent.INITIAL_PRESS,
-    "short_release",  # ButtonEvent.SHORT_RELEASE,
+    #    "short_release",  # ButtonEvent.SHORT_RELEASE,
 )
 
 TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
