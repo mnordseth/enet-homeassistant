@@ -250,7 +250,11 @@ def create_device(client, raw):
         log.warning(
             "Unknown device: typeID=%s name=%s", raw["typeID"], raw["installationArea"]
         )
-    return Device(client, raw)
+    try:
+        return Device(client, raw)
+    except Exception as e:
+        log.exception("Failed to create device: typeID=%s name=%s", raw["typeID"], raw["installationArea"])
+
 
 
 class Device:
