@@ -58,6 +58,20 @@ class EnetClient:
         self._projectuid = None
         self.devices = []
 
+    async def initialize(self):
+        await self.simple_login()
+        self.devices = await self.get_devices()
+
+    async def __aenter__(self):
+        await self.initialize()
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self._session.close()
+        if exc_val:
+            raise exc_val
+        return exc_type
+
     @auth_if_needed
     async def request(self, url, method, params, get_raw=False):
         "Request data from the Enet Server"

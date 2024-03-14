@@ -2,7 +2,7 @@
 import logging
 import math
 
-from homeassistant.components.light import SUPPORT_BRIGHTNESS, LightEntity
+from homeassistant.components.light import ColorMode, LightEntity
 
 from .entity import EnetBaseEntity
 from .aioenet import ActuatorChannel
@@ -25,33 +25,25 @@ async def async_setup_entry(hass, entry, async_add_entities):
 class EnetLight(EnetBaseEntity, LightEntity):
     """A representation of a Enet Smart Home dimmer or switch channel"""
 
-    # @property
-    # def icon(self):
-    #    if self.available:
-    #        if self.is_on:
-    #            return "mdi:lightbulb-on"
-    #        else:
-    #            return "mdi:lightbulb-outline"
-    #    else:
-    #        return "mdi:exclamation-thick"
-
     @property
     def is_on(self):
         return self.channel.state != 0
-
-    @property
-    def available(self):
-        return True
 
     @property
     def brightness(self):
         return math.ceil(float(self.channel.state / 100) * 255)
 
     @property
-    def supported_features(self):
+    def supported_color_modes(self):
         if self.channel.has_brightness:
-            return SUPPORT_BRIGHTNESS
-        return 0
+            return {ColorMode.BRIGHTNESS}
+        return {ColorMode.ONOFF}
+
+    @property
+    def color_mode(self):
+        if self.channel.has_brightness:
+            return ColorMode.BRIGHTNESS
+        return ColorMode.ONOFF
 
     async def async_added_to_hass(self):
         """Subscribe entity to updates when added to hass."""
