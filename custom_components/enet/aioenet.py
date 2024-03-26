@@ -3,6 +3,7 @@
 import logging
 import functools
 import aiohttp
+import asyncio
 
 try:
     from .enet_devices import device_info, channel_config, ignored_channel_types
@@ -16,6 +17,7 @@ URL_VIZ = "/jsonrpc/visualization"
 URL_COM = "/jsonrpc/commissioning"
 URL_TELEGRAM = URL_COM + "/app_telegrams"
 URL_SCENE = "/jsonrpc/visualization/app_scene"
+ID_FILTER_ALL="*"
 
 
 class AuthError(Exception):
@@ -56,11 +58,15 @@ class EnetClient:
         self._last_telegram_ts = {}
         self._raw_json = {}
         self._projectuid = None
+        self._subscribers = []
+        self.function_uid_map = {}
         self.devices = []
 
     async def initialize(self):
         await self.simple_login()
         self.devices = await self.get_devices()
+        await self.initialize_events()
+        asyncio.create_task(self.__read_events())
 
     async def __aenter__(self):
         await self.initialize()
@@ -71,6 +77,70 @@ class EnetClient:
         if exc_val:
             raise exc_val
         return exc_type
+
+    async def initialize_events(self):
+        log.debug("Setting up event listners")
+        for device in self.devices:
+            func_uids = device.get_function_uids_for_event()
+            self.function_uid_map.update(func_uids)
+            await device.register_events()
+        
+
+    def subscribe(self, callback, id_filter=ID_FILTER_ALL):
+        """
+        Subscribe to status changes
+        """
+        self._subscribers.append(callback)
+
+        # unsubscribe logic
+        def unsubscribe():
+            self._subscribers.remove(callback)
+
+        return unsubscribe
+
+    async def __read_events(self):
+        """
+        Process events from Enet server
+        """
+        while True:
+            event = await self.get_events()
+            if event:
+                await self.__handle_event(event)
+
+
+    async def __handle_event(self, events):
+        """Handle events from Enet Server. Either update value of actuator or
+        forward event from sensor
+        """
+        for event in events["events"]:
+            log.debug("Handling event: %s", event)
+            if event["event"] == "outputDeviceFunctionCalled":
+                data = event["eventData"]
+                function_uid = data["deviceFunctionUID"]
+                device = self.function_uid_map.get(function_uid)
+                if not device:
+                    log.warning(
+                        "Function %s does not map to device",
+                        function_uid,
+                    )
+                    continue
+                values = data["values"]
+                if isinstance(device, ActuatorChannel):
+                    if len(values) != 1:
+                        log.warning(
+                            "Event for device '%s' has multiple values: %s, expected 1.",
+                            device,
+                            values,
+                        )
+                    for value_spec in values:
+                        value = value_spec["value"]
+                        log.debug("Updating value of %s to %s", device, value)
+                        device.state = value
+
+
+                for callback in self._subscribers:
+                    callback(data, device)
+
 
     @auth_if_needed
     async def request(self, url, method, params, get_raw=False):
