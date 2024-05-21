@@ -84,7 +84,7 @@ class EnetClient:
             func_uids = device.get_function_uids_for_event()
             self.function_uid_map.update(func_uids)
             await device.register_events()
-        
+
 
     def subscribe(self, callback, id_filter=ID_FILTER_ALL):
         """
@@ -353,6 +353,7 @@ class Device:
         self.name = self._raw["installationArea"]
         self.device_type = self._raw["typeID"]
         self.battery_state = self._raw["batteryState"]
+        self.serial_number = self._raw["metaData"]["serialNumber"]
         self.software_update_available = self._raw["isSoftwareUpdateAvailable"]
         self.create_channels()
 

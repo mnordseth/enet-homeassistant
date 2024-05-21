@@ -6,6 +6,7 @@ from homeassistant.const import (
     ATTR_MANUFACTURER,
     ATTR_MODEL,
     ATTR_NAME,
+    ATTR_SERIAL_NUMBER,
     ATTR_SUGGESTED_AREA,
     ATTR_VIA_DEVICE,
 )
@@ -34,6 +35,7 @@ async def async_setup_devices(coordinator):
             ATTR_NAME: enet_device.name,
             ATTR_MODEL: f"{enet_device.device_type} ({device_info.get('description')})",
             ATTR_MANUFACTURER: device_info.get("manufacturer"),
+            ATTR_SERIAL_NUMBER: enet_device.serial_number,
             ATTR_SUGGESTED_AREA: enet_device.location.replace("My home:", ""),
             ATTR_VIA_DEVICE: (DOMAIN, "Enet Controller"),
         }

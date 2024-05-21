@@ -37,6 +37,7 @@ class EnetBaseEntity(Entity):
                 "name": self.channel.device.name,
                 "manufacturer": device_info.get("manufacturer"),
                 "model": f"{self.channel.device.device_type} ({device_info.get('description')})",
+                "serial_number": self.channel.device.serial_number,
                 "suggested_area": self.channel.device.location.replace("My home:", ""),
                 "via_device": (DOMAIN, "Enet Controller"),
             }
