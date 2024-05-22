@@ -29,7 +29,7 @@ def auth_if_needed(func):
 
     @functools.wraps(func)
     def auth_wrapper(self, *args, **kwargs):
-        "Perfor reauthentication"
+        "Perform re-authentication"
         try:
             return func(self, *args, **kwargs)
         except AuthError:
