@@ -1,0 +1,5344 @@
+{
+    "valueTypes": [
+        {
+            "id": "VT_INLAv2_DA_APPLICATION_MODE_DEF_LIGHT",
+            "name": "Application Mode (Default 'Light dimming')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "LIGHT_DIMMING",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNUSED",
+                            "value": 0
+                        },
+                        {
+                            "key": "LIGHT_DIMMING",
+                            "value": 4
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_LIGHT_APPLICATION_MODE_INSAv3_XLEDPRO",
+            "name": "Light Application Mode (INSAv3 - XLED PRO",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NORMAL_OPERATION",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NORMAL_OPERATION",
+                            "value": 0
+                        },
+                        {
+                            "key": "NIGHT_GROUND",
+                            "value": 2
+                        },
+                        {
+                            "key": "PERMANENT_OFF",
+                            "value": 20
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_CAP_TEMP_STEP",
+            "name": "Capability Temperature Step Size",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 1.0,
+                "dataDouble": {
+                    "minValue": 0.1,
+                    "maxValue": 10.0,
+                    "increment": 0.1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_FAULT",
+            "name": "Fault",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "no fault",
+                    "trueName": "value is corrupted due to a failure"
+                }
+            }
+        },
+        {
+            "id": "VT_SSGET_COMMAND",
+            "name": "Sumstatus Get Command",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 65535,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_INMOVS_APPLICATION_MODE_DEF_MOVEMENT",
+            "name": "Application Mode (Default 'Movement')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "MOVEMENT",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNUSED",
+                            "value": 0
+                        },
+                        {
+                            "key": "MOVEMENT",
+                            "value": 9
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_POWER_-100000_100000",
+            "name": "Value Power [-100000..100000W]",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": -100000,
+                    "maxValue": 100000,
+                    "increment": 1,
+                    "unit": "W"
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_9",
+            "name": "Actual Scene Number [0..37] (Default 9)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 9,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 37,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_APPLICATION_MODE",
+            "name": "Application Mode (Default 'HVAC')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "HVAC",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNUSED",
+                            "value": 0
+                        },
+                        {
+                            "key": "HVAC",
+                            "value": 10
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_7",
+            "name": "Actual Scene Number [0..37] (Default 7)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 7,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 37,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_8",
+            "name": "Actual Scene Number [0..37] (Default 8)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 8,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 37,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_5",
+            "name": "Actual Scene Number [0..37] (Default 5)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 5,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 37,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_6",
+            "name": "Actual Scene Number [0..37] (Default 6)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 6,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 37,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_50_51_DEF_50",
+            "name": "Actual Scene Number [50..51] (Default 50)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 50,
+                "dataInteger": {
+                    "minValue": 50,
+                    "maxValue": 51,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_SSGET_SEQUENCE_NUMBER",
+            "name": "Sumstatus Get Sequence Number",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 65535,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_3",
+            "name": "Actual Scene Number [0..37] (Default 3)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 3,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 37,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_50_51_DEF_51",
+            "name": "Actual Scene Number [50..51] (Default 51)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 51,
+                "dataInteger": {
+                    "minValue": 50,
+                    "maxValue": 51,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE1_SCALING_RANGE_0_100_DEF_0",
+            "name": "Value1 Scaling [0..100](Default 0)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 100,
+                    "increment": 1,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_4",
+            "name": "Actual Scene Number [0..37] (Default 4)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 4,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 37,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_1",
+            "name": "Actual Scene Number [0..37] (Default 1)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 1,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 37,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_MESSAGE",
+            "name": "Message (Default 'no message')",
+            "data": {
+                "type": "STRING",
+                "defaultValue": "no message",
+                "dataString": {
+                    "minLength": 0,
+                    "maxLength": 100,
+                    "charset": null
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_2",
+            "name": "Actual Scene Number [0..37] (Default 2)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 2,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 37,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_TIME1_RANGE_0.0_86400.0_DEF_1.0",
+            "name": "Value Time1 [0.0..86400.0s] (Default 1.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 1.0,
+                "dataDouble": {
+                    "minValue": 0.0,
+                    "maxValue": 86400.0,
+                    "increment": 0.01,
+                    "unit": "s"
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_0",
+            "name": "Actual Scene Number [0..37] (Default 0)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 37,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_MASTER_DIMMING_RESOL",
+            "name": "Master Dimming Resolution",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "10ms",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "10ms",
+                            "value": 0
+                        },
+                        {
+                            "key": "640msPlus1280ms",
+                            "value": 1
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_PSN_RANGE_0_4_DEF_3",
+            "name": "Priority Scenen Number [0..4] (Default 3)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 3,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 4,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_51",
+            "name": "Actual Scene Number (Default 51)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 51,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_50",
+            "name": "Actual Scene Number (Default 50)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 50,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ALARM_UN_ACK",
+            "name": "Alarm Un Ack",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "acknowledged",
+                    "trueName": "not acknowledged"
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_POWER_0_2000_DEF_1",
+            "name": "Value Power [0..2000W] (Default 1)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 1,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 2000,
+                    "increment": 1,
+                    "unit": "W"
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_VOLT_RANGE_0.0_670760.97",
+            "name": "Value Volt [0.0..670760.97mV]",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 0.0,
+                "dataDouble": {
+                    "minValue": 0.0,
+                    "maxValue": 670760.97,
+                    "increment": 0.01,
+                    "unit": "mV"
+                }
+            }
+        },
+        {
+            "id": "VT_PSN_RANGE_0_4_DEF_2",
+            "name": "Priority Scenen Number [0..4] (Default 2)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 2,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 4,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_PSN_RANGE_0_4_DEF_1",
+            "name": "Priority Scenen Number [0..4] (Default 1)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 1,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 4,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_PSN_RANGE_0_4_DEF_0",
+            "name": "Priority Scenen Number [0..4] (Default 0)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 4,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_VALID_HEIGHT_POS",
+            "name": "ValidHeightPosition",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "void",
+                    "trueName": "valid"
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_TIME1_RANGE_5.0_900.0_DEF_10.0",
+            "name": "Value Time1 [5.0..900.0s] (Default 10.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 10.0,
+                "dataDouble": {
+                    "minValue": 5.0,
+                    "maxValue": 900.0,
+                    "increment": 0.01,
+                    "unit": "s"
+                }
+            }
+        },
+        {
+            "id": "VT_LIGHT_APPLICATION_MODE_INSA_DA",
+            "name": "Light Application Mode (INSA_DA)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NORMAL_OPERATION",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NORMAL_OPERATION",
+                            "value": 0
+                        },
+                        {
+                            "key": "PERMANENT_ON",
+                            "value": 19
+                        },
+                        {
+                            "key": "PERMANENT_OFF",
+                            "value": 20
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SDDK4FMB_CHANNEL_CONFIG_DEF_2",
+            "name": "Channel Config (Default '2')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "GBR_SENSOR",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NONE",
+                            "value": 0
+                        },
+                        {
+                            "key": "SCENE_SENSOR",
+                            "value": 1
+                        },
+                        {
+                            "key": "GBR_SENSOR",
+                            "value": 2
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_INLS_APPLICATION_MODE_DEF_ROCKER",
+            "name": "Application Mode (Default 'Rocker')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "ROCKER",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNUSED",
+                            "value": 0
+                        },
+                        {
+                            "key": "ROCKER",
+                            "value": 6
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SDDK4FMB_CHANNEL_CONFIG_DEF_1",
+            "name": "Channel Config (Default '1')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "SCENE_SENSOR",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NONE",
+                            "value": 0
+                        },
+                        {
+                            "key": "SCENE_SENSOR",
+                            "value": 1
+                        },
+                        {
+                            "key": "GBR_SENSOR",
+                            "value": 2
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SECONDS",
+            "name": "Seconds",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 59,
+                    "increment": 1,
+                    "unit": "seconds"
+                }
+            }
+        },
+        {
+            "id": "VT_DIMMING_ACTUATOR_MODE_DEF_0",
+            "name": "Dimming Actuator Mode (Default 'No optionals')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NO_OPTIONALS",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NO_OPTIONALS",
+                            "value": 0
+                        },
+                        {
+                            "key": "DALT_ENABLED",
+                            "value": 1
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SLATS_POSITION",
+            "name": "Slats Position Scaling [0..100](Default 0)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 100,
+                    "increment": 1,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_DIMMING_ACTUATOR_MODE_DEF_1",
+            "name": "Dimming Actuator Mode (Default 'DALT enabled')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "DALT_ENABLED",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NO_OPTIONALS",
+                            "value": 0
+                        },
+                        {
+                            "key": "DALT_ENABLED",
+                            "value": 1
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_TIME1_RANGE_5.0_86400.0_DEF_120.0",
+            "name": "Value Time1 [5.0..86400.0s] (Default 120.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 120.0,
+                "dataDouble": {
+                    "minValue": 5.0,
+                    "maxValue": 86400.0,
+                    "increment": 0.01,
+                    "unit": "s"
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_HEALTH",
+            "name": "Health (Default 'Healthy')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "HEALTHY",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNHEALTHY",
+                            "value": 0
+                        },
+                        {
+                            "key": "HEALTHY",
+                            "value": 1
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SJAR_CHANNEL_CONFIG_1_INSA_INBA",
+            "name": "SJAR Channel Configuration 1 INSA/INBA",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "BLINDS_ACTUATOR",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "SWITCHING_ACTUATOR",
+                            "value": 0
+                        },
+                        {
+                            "key": "BLINDS_ACTUATOR",
+                            "value": 11
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TIME_PERIOD_100MSEC_RANGE_0_300000_DEF_0",
+            "name": "Time Period 100MSec [0..300000ms](Default 0ms)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 300000,
+                    "increment": 100,
+                    "unit": "ms"
+                }
+            }
+        },
+        {
+            "id": "VT_FORCED_CONTROL",
+            "name": "Forced Control",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "no control",
+                    "trueName": "control"
+                }
+            }
+        },
+        {
+            "id": "VT_LIGHT_APPLICATION_MODE_INLNS3_SA",
+            "name": "Light Application Mode (INLNS3_SA)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NORMAL_OPERATION",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NORMAL_OPERATION",
+                            "value": 0
+                        },
+                        {
+                            "key": "PERMANENT_ON",
+                            "value": 19
+                        },
+                        {
+                            "key": "PERMANENT_OFF",
+                            "value": 20
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_VALID_SLATS_POS",
+            "name": "ValidSlatsPosition",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "void",
+                    "trueName": "valid"
+                }
+            }
+        },
+        {
+            "id": "VT_PERCENT_U8_RANGE_0_50_DEF_10",
+            "name": "Percent [0..50%] (Default 10)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 10,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 50,
+                    "increment": 1,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_SJAR_CHANNEL_CONFIG_2_INSA_INBA",
+            "name": "SJAR Channel Configuration 2 INSA/INBA",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "BLINDS_ACTUATOR",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "SWITCHING_ACTUATOR",
+                            "value": 0
+                        },
+                        {
+                            "key": "BLINDS_ACTUATOR",
+                            "value": 12
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TRIGGER",
+            "name": "Trigger",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": true,
+                "dataBool": {
+                    "falseName": "trigger",
+                    "trueName": "trigger"
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_48",
+            "name": "Actual Scene Number (Default 48)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 48,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_49",
+            "name": "Actual Scene Number (Default 49)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 49,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_SCALING_RANGE_0.0_100.0_DEF_100.0",
+            "name": "Scaling [0.0..100.0](Default 100.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 100.0,
+                "dataDouble": {
+                    "minValue": 0.0,
+                    "maxValue": 100.0,
+                    "increment": 0.3922,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_TIME1_RANGE_0.0_86400.0_DEF_0.0",
+            "name": "Value Time1 [0.0..86400.0s] (Default 0.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 0.0,
+                "dataDouble": {
+                    "minValue": 0.0,
+                    "maxValue": 86400.0,
+                    "increment": 0.01,
+                    "unit": "s"
+                }
+            }
+        },
+        {
+            "id": "VT_BEHAVIOUR_MAINS_POWER_UP_INSA",
+            "name": "Behaviour Mains Power Up (INSA)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "OFF",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "OFF",
+                            "value": 0
+                        },
+                        {
+                            "key": "ON",
+                            "value": 1
+                        },
+                        {
+                            "key": "LAST_VALUE_BEFORE_POWER_DOWN",
+                            "value": 4
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_DURATION",
+            "name": "Tado termination duration in seconds [0..24h] (Default '0s')",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 86400,
+                    "increment": 1,
+                    "unit": "s"
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_MODE",
+            "name": "Tado Mode (Default 'Home')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "HOME",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NONE",
+                            "value": 0
+                        },
+                        {
+                            "key": "HOME",
+                            "value": 1
+                        },
+                        {
+                            "key": "AWAY",
+                            "value": 2
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_CAP_SWINGS",
+            "name": "Capability Swings",
+            "data": {
+                "type": "LIST",
+                "defaultValue": [
+                    "NONE"
+                ],
+                "dataList": {
+                    "maxSize": 2,
+                    "valueType": "String"
+                }
+            }
+        },
+        {
+            "id": "VT_TIME_PERIOD_100MSEC_RANGE_200_300000_DEF_1000",
+            "name": "Time Period 100MSec [200..300000ms](Default 1000ms)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 1000,
+                "dataInteger": {
+                    "minValue": 200,
+                    "maxValue": 300000,
+                    "increment": 100,
+                    "unit": "ms"
+                }
+            }
+        },
+        {
+            "id": "VT_INLAv2_SA_APPLICATION_MODE_DEF_LIGHT",
+            "name": "Application Mode (Default 'Light switching')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "LIGHT_SWITCHING",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNUSED",
+                            "value": 0
+                        },
+                        {
+                            "key": "SWITCHING",
+                            "value": 1
+                        },
+                        {
+                            "key": "LIGHT_SWITCHING",
+                            "value": 3
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SCENE_MODE_NRM_MD_LP_FC_WA_SP_TF_DUMMY",
+            "name": "Scene Mode NRM/MD/LP/FC/WA/SP/TF (Dummy)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NORMAL_SCENES",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NORMAL_SCENES",
+                            "value": 0
+                        },
+                        {
+                            "key": "MASTER_DIMMING_SCENES",
+                            "value": 1
+                        },
+                        {
+                            "key": "LOCKOUT_PROTECTION_SCENES",
+                            "value": 2
+                        },
+                        {
+                            "key": "FORCED_CONTROL_SCENES",
+                            "value": 3
+                        },
+                        {
+                            "key": "WIND_ALARM_SCENES",
+                            "value": 4
+                        },
+                        {
+                            "key": "SUNPROTECTION_SCENES",
+                            "value": 5
+                        },
+                        {
+                            "key": "TWILIGHT_FNC_SCENES",
+                            "value": 6
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_BEHAVIOUR_MAINS_POWER_UP_INBA",
+            "name": "Behaviour Mains Power Up (INBA)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NO_CHANGE",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NO_CHANGE",
+                            "value": 2
+                        },
+                        {
+                            "key": "VALUE_ACCORDING_TO_ADDITIONAL_PARAMETER",
+                            "value": 3
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SCENE_SENSOR_MODE_DEF_MD",
+            "name": "Scene Sensor Mode (Default MasterDimming)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "MD_MASTER_DIMMING",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NO_OPTIONALS",
+                            "value": 0
+                        },
+                        {
+                            "key": "MD_MASTER_DIMMING",
+                            "value": 1
+                        },
+                        {
+                            "key": "FOT_FORCED_TIMED",
+                            "value": 2
+                        },
+                        {
+                            "key": "MD_FOT_FOV",
+                            "value": 3
+                        },
+                        {
+                            "key": "MD_FOT_FOV_PVXFOV",
+                            "value": 4
+                        },
+                        {
+                            "key": "SP_SUNPROTECTION",
+                            "value": 5
+                        },
+                        {
+                            "key": "TF_TWILIGHT_FNC",
+                            "value": 6
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ALARM",
+            "name": "Alarm",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "no alarm",
+                    "trueName": "alarm"
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_2_UCOUNT_RANGE_0_65535",
+            "name": "Value 2 Ucount [0..65535]",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 65535,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_TEMP_RANGE_-273.0_670760.97_DEF_670760.97",
+            "name": "Value Temp [-273.0..670760.97°C] (Default 670760.97)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 670760.97,
+                "dataDouble": {
+                    "minValue": -273.0,
+                    "maxValue": 670760.97,
+                    "increment": 0.01,
+                    "unit": "°C"
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_CAP_TEMP_MAX",
+            "name": "Capability Temperature Max",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 100.0,
+                "dataDouble": {
+                    "minValue": 0.0,
+                    "maxValue": 100.0,
+                    "increment": 0.1,
+                    "unit": "°C"
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_LUX_RANGE_10.0_2000.0",
+            "name": "Value Lux [10.0..2000.0Lux] (Default 10.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 10.0,
+                "dataDouble": {
+                    "minValue": 10.0,
+                    "maxValue": 2000.0,
+                    "increment": 0.01,
+                    "unit": "Lux"
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_DURATION_RANGE_1_86400_DEF_600",
+            "name": "Tado termination duration in seconds [1s..24h] (Default '600s')",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 600,
+                "dataInteger": {
+                    "minValue": 1,
+                    "maxValue": 86400,
+                    "increment": 1,
+                    "unit": "s"
+                }
+            }
+        },
+        {
+            "id": "VT_INLAv2_SAS_APPLICATION_MODE_DEF_LIGHT",
+            "name": "Application Mode (Default 'Light switching slave')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "LIGHT_SWITCHING_SLAVE",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNUSED",
+                            "value": 0
+                        },
+                        {
+                            "key": "SWITCHING_SLAVE",
+                            "value": 11
+                        },
+                        {
+                            "key": "LIGHT_SWITCHING_SLAVE",
+                            "value": 12
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_LIGHT_APPLICATION_MODE_INLAv2_SAS",
+            "name": "Light Application Mode (INLAv2_SAS)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NORMAL_OPERATION",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NORMAL_OPERATION",
+                            "value": 0
+                        },
+                        {
+                            "key": "NON_LATCHING",
+                            "value": 17
+                        },
+                        {
+                            "key": "BLINKING",
+                            "value": 18
+                        },
+                        {
+                            "key": "PERMANENT_ON",
+                            "value": 19
+                        },
+                        {
+                            "key": "PERMANENT_OFF",
+                            "value": 20
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TADOZAC_ECO_TEMP",
+            "name": "ECO Temperature - Zone Air Conditioning (Default 18.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 18.0,
+                "dataDouble": {
+                    "minValue": 18.0,
+                    "maxValue": 30.0,
+                    "increment": 0.1,
+                    "unit": "°C"
+                }
+            }
+        },
+        {
+            "id": "VT_INSAv2_APPLICATION_MODE_XLEDPRO_DEF_LIGHT",
+            "name": "Application Mode (Default 'Light switching')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "LIGHT_SWITCHING",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNUSED",
+                            "value": 0
+                        },
+                        {
+                            "key": "LIGHT_SWITCHING",
+                            "value": 3
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_REASON_CODE",
+            "name": "Reason Code (Default '0')",
+            "data": {
+                "type": "STRING",
+                "defaultValue": "0",
+                "dataString": {
+                    "minLength": 0,
+                    "maxLength": 100,
+                    "charset": null
+                }
+            }
+        },
+        {
+            "id": "VT_SJAR_CHANNEL_CONFIG_4_INSA_INBA",
+            "name": "SJAR Channel Configuration 4 INSA/INBA",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "BLINDS_ACTUATOR",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "SWITCHING_ACTUATOR",
+                            "value": 0
+                        },
+                        {
+                            "key": "BLINDS_ACTUATOR",
+                            "value": 14
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_4",
+            "name": "Actual Scene Number (Default 4)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 4,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_3",
+            "name": "Actual Scene Number (Default 3)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 3,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_2",
+            "name": "Actual Scene Number (Default 2)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 2,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_INLNS3_SA_APPLICATION_MODE_DEF_LIGHT",
+            "name": "Application Mode (Default 'Light switching')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "LIGHT_SWITCHING",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNUSED",
+                            "value": 0
+                        },
+                        {
+                            "key": "SWITCHING",
+                            "value": 1
+                        },
+                        {
+                            "key": "LIGHT_SWITCHING",
+                            "value": 3
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TEMPERATURE_RANGE_5.0_25.0_DEF_18.0",
+            "name": "Value Temperature [5.0..25.0°C] (Default 18.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 18.0,
+                "dataDouble": {
+                    "minValue": 5.0,
+                    "maxValue": 25.0,
+                    "increment": 0.1,
+                    "unit": "°C"
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_1",
+            "name": "Actual Scene Number (Default 1)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 1,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_BEHAVIOUR_MAINS_POWER_DOWN_INSA",
+            "name": "Behaviour Mains Power Down (INSA)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "OFF",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "OFF",
+                            "value": 0
+                        },
+                        {
+                            "key": "ON",
+                            "value": 1
+                        },
+                        {
+                            "key": "NO_CHANGE",
+                            "value": 2
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_BEHAVIOUR_LOCK_UNLOCK_INDA",
+            "name": "Behaviour Lock Unlock (INDA)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NO_CHANGE",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "OFF",
+                            "value": 0
+                        },
+                        {
+                            "key": "ON",
+                            "value": 1
+                        },
+                        {
+                            "key": "NO_CHANGE",
+                            "value": 2
+                        },
+                        {
+                            "key": "VALUE_BEFORE_LOCKING",
+                            "value": 6
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_0",
+            "name": "Actual Scene Number (Default 0)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_INBAv3_APPLICATION_MODE_DEF_BLINDS",
+            "name": "Application Mode (Default 'Blinds')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "BLINDS",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNUSED",
+                            "value": 0
+                        },
+                        {
+                            "key": "BLINDS",
+                            "value": 5
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_BEHAVIOUR_LOCK_UNLOCK_INSAv2",
+            "name": "Behaviour Lock Unlock (INSAv2)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "OFF",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "OFF",
+                            "value": 0
+                        },
+                        {
+                            "key": "ON",
+                            "value": 1
+                        },
+                        {
+                            "key": "NO_CHANGE",
+                            "value": 2
+                        },
+                        {
+                            "key": "VALUE_BEFORE_LOCKING",
+                            "value": 6
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_9",
+            "name": "Actual Scene Number (Default 9)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 9,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_8",
+            "name": "Actual Scene Number (Default 8)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 8,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_CHANNEL_COMBINATION_MODE_INDA",
+            "name": "Channel Combination Mode (INDA)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "MODE_1_CH1_CH2_CH3_CH4",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "MODE_1_CH1_CH2_CH3_CH4",
+                            "value": 0
+                        },
+                        {
+                            "key": "MODE_2_CH1+2_CH3_CH4",
+                            "value": 1
+                        },
+                        {
+                            "key": "MODE_3_CH1+2+3_CH4",
+                            "value": 2
+                        },
+                        {
+                            "key": "MODE_4_CH1+2+3+4",
+                            "value": 3
+                        },
+                        {
+                            "key": "MODE_5_CH1+2_CH3+4",
+                            "value": 4
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_7",
+            "name": "Actual Scene Number (Default 7)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 7,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_6",
+            "name": "Actual Scene Number (Default 6)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 6,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_5",
+            "name": "Actual Scene Number (Default 5)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 5,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_SCALING_RANGE_0.4_100.0",
+            "name": "Scaling [0.4..100.0]",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 100.0,
+                "dataDouble": {
+                    "minValue": 0.4,
+                    "maxValue": 100.0,
+                    "increment": 0.3922,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_CHANNEL_CONFIG_INSCS_INGBRS_DUMMY",
+            "name": "Channel Configuration INSCS/INGBRS (Dummy)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "GBR_SENSOR",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "SCENE_SENSOR",
+                            "value": 0
+                        },
+                        {
+                            "key": "GBR_SENSOR",
+                            "value": 1
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TEMPERATURE_RANGE_18.0_30.0_DEF_18.0",
+            "name": "Value Temperature [18.0..30.0°C] (Default 18.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 18.0,
+                "dataDouble": {
+                    "minValue": 18.0,
+                    "maxValue": 30.0,
+                    "increment": 0.1,
+                    "unit": "°C"
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_2_UCOUNT_RANGE_0_65535_X10",
+            "name": "Value 2 Ucount [0..65535x10]",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 65535,
+                    "increment": 1,
+                    "unit": "x 10"
+                }
+            }
+        },
+        {
+            "id": "VT_TIME_PERIOD_MSEC_CONST_0",
+            "name": "Time Period MSec [0ms]",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 0,
+                    "increment": 0,
+                    "unit": "ms"
+                }
+            }
+        },
+        {
+            "id": "VT_HUMIDITY_RANGE_0.0_100.0_DEF_0.0",
+            "name": "Value Humidity [0.0..100.0%] (Default 0.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 0.0,
+                "dataDouble": {
+                    "minValue": 0.0,
+                    "maxValue": 100.0,
+                    "increment": 0.1,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_BS1BP_SEND_BEHAVIOUR",
+            "name": "Send Behaviour",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "TRE_POWER_OPTIMIZED_EVE_AUTO_SEND",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "TRE_POWER_OPTIMIZED_EVE_NO_AUTO_SEND",
+                            "value": 0
+                        },
+                        {
+                            "key": "TRE_INFO_OPTIMIZED_EVE_NO_AUTO_SEND",
+                            "value": 1
+                        },
+                        {
+                            "key": "TRE_POWER_OPTIMIZED_EVE_AUTO_SEND",
+                            "value": 2
+                        },
+                        {
+                            "key": "TRE_INFO_OPTIMIZED_EVE_AUTO_SEND",
+                            "value": 3
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_TIME1_RANGE_0.0_3600.0_DEF_120.0",
+            "name": "Value Time1 [0.0..3600.0s] (Default 120.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 120.0,
+                "dataDouble": {
+                    "minValue": 0.0,
+                    "maxValue": 3600.0,
+                    "increment": 0.01,
+                    "unit": "s"
+                }
+            }
+        },
+        {
+            "id": "VT_INSAv3_APPLICATION_MODE_XLEDPRO_DEF_LIGHT",
+            "name": "Application Mode (Default 'Light switching')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "LIGHT_SWITCHING",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNUSED",
+                            "value": 0
+                        },
+                        {
+                            "key": "LIGHT_SWITCHING",
+                            "value": 3
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ROCKER_STATE",
+            "name": "Rocker State",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "DUAL_BUTTONS",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "SERVICE_CALL",
+                            "value": 0
+                        },
+                        {
+                            "key": "UP_BUTTON",
+                            "value": 1
+                        },
+                        {
+                            "key": "DOWN_BUTTON",
+                            "value": 2
+                        },
+                        {
+                            "key": "DUAL_BUTTONS",
+                            "value": 3
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_BASIC_LIGHT_FUNCTION_ENABLE_BASICLIGHT",
+            "name": "Basic Light Function Enable (disable/BasicLight)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "DISABLE",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "DISABLE",
+                            "value": 0
+                        },
+                        {
+                            "key": "BASICLIGHT",
+                            "value": 1
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_BEHAVIOUR_LOCK_UNLOCK_INSA",
+            "name": "Behaviour Lock Unlock (INSA)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NO_CHANGE",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "OFF",
+                            "value": 0
+                        },
+                        {
+                            "key": "ON",
+                            "value": 1
+                        },
+                        {
+                            "key": "NO_CHANGE",
+                            "value": 2
+                        },
+                        {
+                            "key": "VALUE_BEFORE_LOCKING",
+                            "value": 6
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TADOZHW_ECO_TEMP",
+            "name": "ECO Temperature - Zone Hot Water (Default 55.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 55.0,
+                "dataDouble": {
+                    "minValue": 30.0,
+                    "maxValue": 70.0,
+                    "increment": 0.1,
+                    "unit": "°C"
+                }
+            }
+        },
+        {
+            "id": "VT_HEIGHT_POSITION",
+            "name": "Height Position Blinds Scaling [0..100](Default 0)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 100,
+                    "increment": 1,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_STEP_CODE",
+            "name": "StepCode",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "100%",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "Break",
+                            "value": 0
+                        },
+                        {
+                            "key": "100%",
+                            "value": 1
+                        },
+                        {
+                            "key": "50%",
+                            "value": 2
+                        },
+                        {
+                            "key": "25%",
+                            "value": 3
+                        },
+                        {
+                            "key": "12,5%",
+                            "value": 4
+                        },
+                        {
+                            "key": "6%",
+                            "value": 5
+                        },
+                        {
+                            "key": "3%",
+                            "value": 6
+                        },
+                        {
+                            "key": "1,5%",
+                            "value": 7
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_COUNTER",
+            "name": "Counter (Default 0)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 255,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_LIGHT_APPLICATION_MODE_INLNS3",
+            "name": "Light Application Mode (INLNS3)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NORMAL_OPERATION",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NORMAL_OPERATION",
+                            "value": 0
+                        },
+                        {
+                            "key": "PERMANENT_ON",
+                            "value": 19
+                        },
+                        {
+                            "key": "PERMANENT_OFF",
+                            "value": 20
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_LIGHT_APPLICATION_MODE_INSAv2_SENSIQ",
+            "name": "Light Application Mode (INSAv2 - sensIQ)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NORMAL_OPERATION",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NORMAL_OPERATION",
+                            "value": 0
+                        },
+                        {
+                            "key": "PULSE_MODE",
+                            "value": 21
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_HOUR",
+            "name": "Hour",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 23,
+                    "increment": 1,
+                    "unit": "hours"
+                }
+            }
+        },
+        {
+            "id": "VT_BEHAVIOUR_LOCK_UNLOCK_INBA",
+            "name": "Behaviour Lock Unlock (INBA)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NO_CHANGE",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UP",
+                            "value": 0
+                        },
+                        {
+                            "key": "DOWN",
+                            "value": 1
+                        },
+                        {
+                            "key": "NO_CHANGE",
+                            "value": 2
+                        },
+                        {
+                            "key": "LAST_VALUE_BEFORE_LOCKING",
+                            "value": 6
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_LIGHT_APPLICATION_MODE_INSAv2",
+            "name": "Light Application Mode (INSAv2)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NORMAL_OPERATION",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NORMAL_OPERATION",
+                            "value": 0
+                        },
+                        {
+                            "key": "NON_LATCHING",
+                            "value": 17
+                        },
+                        {
+                            "key": "BLINKING",
+                            "value": 18
+                        },
+                        {
+                            "key": "PERMANENT_ON",
+                            "value": 19
+                        },
+                        {
+                            "key": "PERMANENT_OFF",
+                            "value": 20
+                        },
+                        {
+                            "key": "PULSE_MODE",
+                            "value": 21
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_48_49_DEF_49",
+            "name": "Actual Scene Number [48..49] (Default 49)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 49,
+                "dataInteger": {
+                    "minValue": 48,
+                    "maxValue": 49,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_SSGET_NO_COMMAND_FLAG",
+            "name": "Sumstatus Get No Command Flag",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "use command",
+                    "trueName": "ignore command"
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_LUX_RANGE_0.0_670760.0",
+            "name": "Value Lux [0.0..670760.0Lux]",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 0.0,
+                "dataDouble": {
+                    "minValue": 0.0,
+                    "maxValue": 670760.0,
+                    "increment": 0.01,
+                    "unit": "Lux"
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_48_49_DEF_48",
+            "name": "Actual Scene Number [48..49] (Default 48)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 48,
+                "dataInteger": {
+                    "minValue": 48,
+                    "maxValue": 49,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_INGBRS_APPLICATION_MODE_DEF_ROCKER",
+            "name": "Application Mode (Default 'Rocker')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "ROCKER",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNUSED",
+                            "value": 0
+                        },
+                        {
+                            "key": "ROCKER",
+                            "value": 6
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_CURR_RANGE_0.0_670760.97",
+            "name": "Value Curr [0.0..670760.97mA]",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 0.0,
+                "dataDouble": {
+                    "minValue": 0.0,
+                    "maxValue": 670760.97,
+                    "increment": 0.01,
+                    "unit": "mA"
+                }
+            }
+        },
+        {
+            "id": "VT_SSGET_SERIAL_NUMBER",
+            "name": "Sumstatus Get Serial Number (6 Bytes)",
+            "data": {
+                "type": "LONG",
+                "defaultValue": 0,
+                "dataLong": {
+                    "minValue": 0,
+                    "maxValue": 281474976710655,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_TIME1_RANGE_0.0_3600.0_DEF_300.0",
+            "name": "Value Time1 [0.0..3600.0s] (Default 300.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 300.0,
+                "dataDouble": {
+                    "minValue": 0.0,
+                    "maxValue": 3600.0,
+                    "increment": 0.01,
+                    "unit": "s"
+                }
+            }
+        },
+        {
+            "id": "VT_SJAR_CHANNEL_CONFIG_3_INSA_INBA",
+            "name": "SJAR Channel Configuration 3 INSA/INBA",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "BLINDS_ACTUATOR",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "SWITCHING_ACTUATOR",
+                            "value": 0
+                        },
+                        {
+                            "key": "BLINDS_ACTUATOR",
+                            "value": 13
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TIME_PERIOD_HRS_RANGE_0_65535",
+            "name": "Time Period Hrs [0..65535h]",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 65535,
+                    "increment": 1,
+                    "unit": "h"
+                }
+            }
+        },
+        {
+            "id": "VT_BEHAVIOUR_TIMER_MAINS_POWER_UP_INDA",
+            "name": "Behaviour Timer Mains Power Up (INDA)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "OFF",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "OFF",
+                            "value": 0
+                        },
+                        {
+                            "key": "RESTART",
+                            "value": 1
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SCALING_RANGE_1_100_DEF_100",
+            "name": "Scaling [1..100](Default 100)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 100,
+                "dataInteger": {
+                    "minValue": 1,
+                    "maxValue": 100,
+                    "increment": 1,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_INBA_APPLICATION_MODE_DEF_BLINDS",
+            "name": "Application Mode (Default 'Blinds')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "BLINDS",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNUSED",
+                            "value": 0
+                        },
+                        {
+                            "key": "BLINDS",
+                            "value": 5
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_LEARN_CONTROL",
+            "name": "Dynamic Control",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NO_LEARNING",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NO_LEARNING",
+                            "value": 0
+                        },
+                        {
+                            "key": "START_LEARNING_FOLLOW_UP_TIME",
+                            "value": 1
+                        },
+                        {
+                            "key": "STOP_LEARNING_FOLLOW_UP_TIME",
+                            "value": 2
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ACTIVE_ENERGY_-1073741823_1073741823_DEF_0",
+            "name": "Active Energy [0..2147483647Wh] (Default 0)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": -1073741823,
+                    "maxValue": 1073741823,
+                    "increment": 1,
+                    "unit": "Wh"
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_OPMODE",
+            "name": "Tado Operation Mode (Default 'Auto')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "AUTO",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "AUTO",
+                            "value": 0
+                        },
+                        {
+                            "key": "OVERLAY",
+                            "value": 1
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SSGI_SWITCH_VALUE",
+            "name": "Sumstatus Generic Info Switch Value",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "off",
+                    "trueName": "on"
+                }
+            }
+        },
+        {
+            "id": "VT_STATE_DEF_1",
+            "name": "State (Default 1)",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": true,
+                "dataBool": {
+                    "falseName": "inactive",
+                    "trueName": "active"
+                }
+            }
+        },
+        {
+            "id": "VT_EMODE_CHANNEL_ENABLE",
+            "name": "EMode Channel Enable",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "ENABLE",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "ENABLE",
+                            "value": 0
+                        },
+                        {
+                            "key": "DISABLE",
+                            "value": 255
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_REASON_TITLE",
+            "name": "Reason Code (Default 'no error')",
+            "data": {
+                "type": "STRING",
+                "defaultValue": "no error",
+                "dataString": {
+                    "minLength": 0,
+                    "maxLength": 100,
+                    "charset": null
+                }
+            }
+        },
+        {
+            "id": "VT_SCALING_RANGE_1_100_DEF_20",
+            "name": "Scaling [1..100](Default 20)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 20,
+                "dataInteger": {
+                    "minValue": 1,
+                    "maxValue": 100,
+                    "increment": 1,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_SSGI_SEQUENCE_NUMBER",
+            "name": "Sumstatus Generic Info Sequence Number",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 65535,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_OUT_OF_SERVICE",
+            "name": "Out Of Service",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "in commission",
+                    "trueName": "value is out of service"
+                }
+            }
+        },
+        {
+            "id": "VT_SWITCH",
+            "name": "Switch",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "off",
+                    "trueName": "on"
+                }
+            }
+        },
+        {
+            "id": "VT_TIME_PERIOD_MSEC_RANGE_100_10000_DEF_100",
+            "name": "Time Period MSec [100..10000ms](Default 100ms)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 100,
+                "dataInteger": {
+                    "minValue": 100,
+                    "maxValue": 10000,
+                    "increment": 1,
+                    "unit": "ms"
+                }
+            }
+        },
+        {
+            "id": "VT_SCENE_SENSOR_MODE_DEF_SP",
+            "name": "Scene Sensor Mode (Default Sunprotection)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "SP_SUNPROTECTION",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NO_OPTIONALS",
+                            "value": 0
+                        },
+                        {
+                            "key": "MD_MASTER_DIMMING",
+                            "value": 1
+                        },
+                        {
+                            "key": "FOT_FORCED_TIMED",
+                            "value": 2
+                        },
+                        {
+                            "key": "MD_FOT_FOV",
+                            "value": 3
+                        },
+                        {
+                            "key": "MD_FOT_FOV_PVXFOV",
+                            "value": 4
+                        },
+                        {
+                            "key": "SP_SUNPROTECTION",
+                            "value": 5
+                        },
+                        {
+                            "key": "TF_TWILIGHT_FNC",
+                            "value": 6
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ENABLE_DEF_TRUE",
+            "name": "Enable (Default true)",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": true,
+                "dataBool": {
+                    "falseName": "disable",
+                    "trueName": "enable"
+                }
+            }
+        },
+        {
+            "id": "VT_TEMPERATURE_RANGE_0.0_100.0_DEF_0.0",
+            "name": "Value Temperature [0.0..100.0°C] (Default 0.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 0.0,
+                "dataDouble": {
+                    "minValue": 0.0,
+                    "maxValue": 100.0,
+                    "increment": 0.1,
+                    "unit": "°C"
+                }
+            }
+        },
+        {
+            "id": "VT_INSA_APPLICATION_MODE_DEF_LIGHT",
+            "name": "Application Mode (Default 'Light switching')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "LIGHT_SWITCHING",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNUSED",
+                            "value": 0
+                        },
+                        {
+                            "key": "SWITCHING",
+                            "value": 1
+                        },
+                        {
+                            "key": "LIGHT_SWITCHING",
+                            "value": 3
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SCALING_RANGE_1_67_DEF_5",
+            "name": "Scaling [1..67](Default 5)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 5,
+                "dataInteger": {
+                    "minValue": 1,
+                    "maxValue": 67,
+                    "increment": 1,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_TIMESTAMP",
+            "name": "Timestamp",
+            "data": {
+                "type": "DATETIME",
+                "defaultValue": {
+                    "day": 1,
+                    "month": 1,
+                    "year": 1999,
+                    "hour": 0,
+                    "minute": 0,
+                    "second": 0
+                },
+                "dataDateTime": {
+                    "format": "dd.MM.yyyy HH:mm:ss",
+                    "minDateTime": {
+                        "day": 1,
+                        "month": 1,
+                        "year": 1999,
+                        "hour": 0,
+                        "minute": 0,
+                        "second": 0
+                    },
+                    "maxDateTime": {
+                        "day": 31,
+                        "month": 12,
+                        "year": 2099,
+                        "hour": 23,
+                        "minute": 59,
+                        "second": 59
+                    }
+                }
+            }
+        },
+        {
+            "id": "VT_SCENE_SENSOR_MODE_DEF_TF",
+            "name": "Scene Sensor Mode (Default TwilightFunction)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "TF_TWILIGHT_FNC",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NO_OPTIONALS",
+                            "value": 0
+                        },
+                        {
+                            "key": "MD_MASTER_DIMMING",
+                            "value": 1
+                        },
+                        {
+                            "key": "FOT_FORCED_TIMED",
+                            "value": 2
+                        },
+                        {
+                            "key": "MD_FOT_FOV",
+                            "value": 3
+                        },
+                        {
+                            "key": "MD_FOT_FOV_PVXFOV",
+                            "value": 4
+                        },
+                        {
+                            "key": "SP_SUNPROTECTION",
+                            "value": 5
+                        },
+                        {
+                            "key": "TF_TWILIGHT_FNC",
+                            "value": 6
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_STATE",
+            "name": "State (Default 'Online')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "ONLINE",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "OFFLINE",
+                            "value": 0
+                        },
+                        {
+                            "key": "ONLINE",
+                            "value": 1
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SCENE_NUMBER",
+            "name": "Scene Number",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_DIMMING_ACTUATOR_LOAD_TYPE_STATE",
+            "name": "Dimming Actuator Load Type",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "UNDEFINED",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNDEFINED",
+                            "value": 0
+                        },
+                        {
+                            "key": "CAPACITIVE",
+                            "value": 1
+                        },
+                        {
+                            "key": "INDUCTIVE",
+                            "value": 2
+                        },
+                        {
+                            "key": "UNIVERSAL_CAP",
+                            "value": 3
+                        },
+                        {
+                            "key": "UNIVERSAL_IND",
+                            "value": 4
+                        },
+                        {
+                            "key": "LED_CAPACITIVE",
+                            "value": 5
+                        },
+                        {
+                            "key": "LED_INDUCTIVE",
+                            "value": 6
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_CHANNEL_CONFIG_INSCS_INGBRS_DEF_12",
+            "name": "Channel Configuration INSCS/INGBRS (Default 12)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 12,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 255,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_ZONE_NAME",
+            "name": "Tado Zone Name (Default 'Zone')",
+            "data": {
+                "type": "STRING",
+                "defaultValue": "Zone",
+                "dataString": {
+                    "minLength": 0,
+                    "maxLength": 15,
+                    "charset": null
+                }
+            }
+        },
+        {
+            "id": "VT_CHANNEL_CONFIG_INSCS_INGBRS_DEF_13",
+            "name": "Channel Configuration INSCS/INGBRS (Default 13)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 13,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 255,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_CHANNEL_CONFIG_INSCS_INGBRS_DEF_14",
+            "name": "Channel Configuration INSCS/INGBRS (Default 14)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 14,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 255,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_CHANNEL_CONFIG_INSCS_INGBRS_DEF_15",
+            "name": "Channel Configuration INSCS/INGBRS (Default 15)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 15,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 255,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_SUMSTATE_MODE_DEF_1",
+            "name": "Sumstate Mode (Default 'off 1 repetition')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "OFF_1_REPETITION",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "ON",
+                            "value": 0
+                        },
+                        {
+                            "key": "OFF_1_REPETITION",
+                            "value": 1
+                        },
+                        {
+                            "key": "OFF_2_REPETITIONS",
+                            "value": 2
+                        },
+                        {
+                            "key": "OFF_3_REPETITIONS",
+                            "value": 3
+                        },
+                        {
+                            "key": "OFF_4_REPETITIONS",
+                            "value": 4
+                        },
+                        {
+                            "key": "OFF_5_REPETITIONS",
+                            "value": 5
+                        },
+                        {
+                            "key": "OFF_6_REPETITIONS",
+                            "value": 6
+                        },
+                        {
+                            "key": "OFF_7_REPETITIONS",
+                            "value": 7
+                        },
+                        {
+                            "key": "OFF_8_REPETITIONS",
+                            "value": 8
+                        },
+                        {
+                            "key": "OFF_9_REPETITIONS",
+                            "value": 9
+                        },
+                        {
+                            "key": "OFF_10_REPETITIONS",
+                            "value": 10
+                        },
+                        {
+                            "key": "OFF_3_REPETITIONS_UNLINKED",
+                            "value": 254
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SUMSTATE_MODE_DEF_0",
+            "name": "Sumstate Mode (Default 'on')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "ON",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "ON",
+                            "value": 0
+                        },
+                        {
+                            "key": "OFF_1_REPETITION",
+                            "value": 1
+                        },
+                        {
+                            "key": "OFF_2_REPETITIONS",
+                            "value": 2
+                        },
+                        {
+                            "key": "OFF_3_REPETITIONS",
+                            "value": 3
+                        },
+                        {
+                            "key": "OFF_4_REPETITIONS",
+                            "value": 4
+                        },
+                        {
+                            "key": "OFF_5_REPETITIONS",
+                            "value": 5
+                        },
+                        {
+                            "key": "OFF_6_REPETITIONS",
+                            "value": 6
+                        },
+                        {
+                            "key": "OFF_7_REPETITIONS",
+                            "value": 7
+                        },
+                        {
+                            "key": "OFF_8_REPETITIONS",
+                            "value": 8
+                        },
+                        {
+                            "key": "OFF_9_REPETITIONS",
+                            "value": 9
+                        },
+                        {
+                            "key": "OFF_10_REPETITIONS",
+                            "value": 10
+                        },
+                        {
+                            "key": "OFF_3_REPETITIONS_UNLINKED",
+                            "value": 254
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_US2M_OPERATION_MODE_DEF_2",
+            "name": "Operation Mode (Default '2')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "1CH_SWITCHING_DIMMING_BLINDS",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "SCENE_SENSOR",
+                            "value": 0
+                        },
+                        {
+                            "key": "1CH_SWITCHING_DIMMING_BLINDS",
+                            "value": 2
+                        },
+                        {
+                            "key": "1CH_AUTO",
+                            "value": 3
+                        },
+                        {
+                            "key": "2CH_SWITCHING_DIMMING_NON_LATCHING",
+                            "value": 4
+                        },
+                        {
+                            "key": "2CH_AUTO",
+                            "value": 5
+                        },
+                        {
+                            "key": "2CH_BLINDS",
+                            "value": 6
+                        },
+                        {
+                            "key": "2CH_SCENE_PHY_SENSORS",
+                            "value": 8
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_INFO_MOVE_BLINDS",
+            "name": "Info Move Blinds",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "STOP_UP",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "STOP_UP",
+                            "value": 0
+                        },
+                        {
+                            "key": "STOP_DOWN",
+                            "value": 1
+                        },
+                        {
+                            "key": "MOVE_UP",
+                            "value": 2
+                        },
+                        {
+                            "key": "MOVE_DOWN",
+                            "value": 3
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ROCKER_SWITCH_TIME",
+            "name": "Rocker Switch Time",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 16383,
+                    "increment": 1,
+                    "unit": "10ms"
+                }
+            }
+        },
+        {
+            "id": "VT_UP1AV_COVER_OPERATION_MODE_SA_2K_DEF_SA_SC",
+            "name": "Cover Operation Mode Switching Actuator 2K (Default 'SWITCHING_ACTUATOR_SLAVE_CHANNEL')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "SWITCHING_ACTUATOR_SLAVE_CHANNEL",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "SWITCHING_ACTUATOR_SLAVE_CHANNEL",
+                            "value": 7
+                        },
+                        {
+                            "key": "SWITCHING_ACTUATOR_2K",
+                            "value": 9
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TEMPERATURE_RANGE_30.0_70.0_DEF_55.0",
+            "name": "Value Temperature [30.0..70.0°C] (Default 55.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 55.0,
+                "dataDouble": {
+                    "minValue": 30.0,
+                    "maxValue": 70.0,
+                    "increment": 0.1,
+                    "unit": "°C"
+                }
+            }
+        },
+        {
+            "id": "VT_SCALING_RANGE_0_100_DEF_0",
+            "name": "Scaling [0..100](Default 0)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 100,
+                    "increment": 1,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_OPMODE_INBA",
+            "name": "Operation Mode (INBA)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "SHUTTER",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "BLINDS",
+                            "value": 0
+                        },
+                        {
+                            "key": "SHUTTER",
+                            "value": 1
+                        },
+                        {
+                            "key": "MARQUEE",
+                            "value": 3
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ENABLE_DEF_FALSE",
+            "name": "Enable (Default false)",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "disable",
+                    "trueName": "enable"
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_TERMINATION_TYPE",
+            "name": "Tado termination type (Default 'MANUAL')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "MANUAL",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "MANUAL",
+                            "value": 0
+                        },
+                        {
+                            "key": "TADO_MODE",
+                            "value": 1
+                        },
+                        {
+                            "key": "TIMER",
+                            "value": 2
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SSGI_VALUE_PERCENT",
+            "name": "Sumstatus Generic Info Value Percent",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 100,
+                    "increment": 1,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_44_45_DEF_45",
+            "name": "Actual Scene Number [44..45] (Default 45)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 45,
+                "dataInteger": {
+                    "minValue": 44,
+                    "maxValue": 45,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_44_45_DEF_44",
+            "name": "Actual Scene Number [44..45] (Default 44)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 44,
+                "dataInteger": {
+                    "minValue": 44,
+                    "maxValue": 45,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_BEHAVIOUR_TIMER_MAINS_POWER_UP_INSA",
+            "name": "Behaviour Timer Mains Power Up (INSA)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "OFF",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "OFF",
+                            "value": 0
+                        },
+                        {
+                            "key": "RESTART",
+                            "value": 1
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_INLNS3_APPLICATION_MODE_DEF_LIGHT",
+            "name": "Application Mode (Default 'Light dimming')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "LIGHT_DIMMING",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNUSED",
+                            "value": 0
+                        },
+                        {
+                            "key": "LIGHT_DIMMING",
+                            "value": 4
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_CAP_TEMP_MIN",
+            "name": "Capability Temperature Min",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 0.0,
+                "dataDouble": {
+                    "minValue": 0.0,
+                    "maxValue": 100.0,
+                    "increment": 0.1,
+                    "unit": "°C"
+                }
+            }
+        },
+        {
+            "id": "VT_UP_DOWN",
+            "name": "UpDown",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": true,
+                "dataBool": {
+                    "falseName": "up",
+                    "trueName": "down"
+                }
+            }
+        },
+        {
+            "id": "VT_ES_TRANSMISSION_MODE",
+            "name": "Fault",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "DOUBLE",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "SINGLE",
+                            "value": 0
+                        },
+                        {
+                            "key": "DOUBLE",
+                            "value": 1
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_LIGHT_APPLICATION_MODE_INSAv2_XLEDPRO",
+            "name": "Light Application Mode (INSAv2 - XLED PRO",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NORMAL_OPERATION",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NORMAL_OPERATION",
+                            "value": 0
+                        },
+                        {
+                            "key": "PULSE_MODE",
+                            "value": 21
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_11",
+            "name": "Actual Scene Number [0..37] (Default 11)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 11,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 37,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_10",
+            "name": "Actual Scene Number [0..37] (Default 10)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 10,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 37,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_TIME_PERIOD_MSEC_CONST_300",
+            "name": "Time Period MSec [300ms]",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 300,
+                "dataInteger": {
+                    "minValue": 300,
+                    "maxValue": 300,
+                    "increment": 0,
+                    "unit": "ms"
+                }
+            }
+        },
+        {
+            "id": "VT_UP1A_INSERT_CUSTOMER_VERSION_DEF_0",
+            "name": "Insert Customer Version (Default '0')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "UNKNOWN",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNKNOWN",
+                            "value": 0
+                        },
+                        {
+                            "key": "SWITCHING_ACTUATOR",
+                            "value": 1
+                        },
+                        {
+                            "key": "DIMMING_ACTUATOR",
+                            "value": 2
+                        },
+                        {
+                            "key": "LIGHT_EXTENSION",
+                            "value": 3
+                        },
+                        {
+                            "key": "BLINDS_ACTUATOR",
+                            "value": 4
+                        },
+                        {
+                            "key": "SWITCHING_ACTUATOR_2K",
+                            "value": 9
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TIME_PERIOD_MSEC_RANGE_300_10000_DEF_1000",
+            "name": "Time Period MSec [300..10000ms](Default 1000ms)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 1000,
+                "dataInteger": {
+                    "minValue": 300,
+                    "maxValue": 10000,
+                    "increment": 1,
+                    "unit": "ms"
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_17",
+            "name": "Actual Scene Number [0..37] (Default 17)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 17,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 37,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_SSGET_REQUEST_TYPE",
+            "name": "Sumstatus Get Request Type",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "SUMSTATUS_GET",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "ERROR",
+                            "value": 0
+                        },
+                        {
+                            "key": "SUMSTATUS_GET",
+                            "value": 1
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SCV_SWITCH_DEF_ON",
+            "name": "Scene Value Switch (Default On)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "ON",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "OFF",
+                            "value": 0
+                        },
+                        {
+                            "key": "ON",
+                            "value": 255
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_EMODE_CHANNEL_ENABLE_DEF_DISABLE",
+            "name": "EMode Channel Enable (Default Disable)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "DISABLE",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "ENABLE",
+                            "value": 0
+                        },
+                        {
+                            "key": "DISABLE",
+                            "value": 255
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TIME_PERIOD_MSEC_RANGE_1000_60000_DEF_4000",
+            "name": "Time Period MSec [1000..60000ms](Default 4000ms)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 4000,
+                "dataInteger": {
+                    "minValue": 1000,
+                    "maxValue": 60000,
+                    "increment": 1,
+                    "unit": "ms"
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_13",
+            "name": "Actual Scene Number [0..37] (Default 13)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 13,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 37,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_TIME_PERIOD_MSEC_RANGE_300_10000_DEF_300",
+            "name": "Time Period MSec [300..10000ms](Default 300ms)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 300,
+                "dataInteger": {
+                    "minValue": 300,
+                    "maxValue": 10000,
+                    "increment": 1,
+                    "unit": "ms"
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_12",
+            "name": "Actual Scene Number [0..37] (Default 12)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 12,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 37,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_INDA_APPLICATION_MODE_DEF_LIGHT",
+            "name": "Application Mode (Default 'Light dimming')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "LIGHT_DIMMING",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNUSED",
+                            "value": 0
+                        },
+                        {
+                            "key": "LIGHT_DIMMING",
+                            "value": 4
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_15",
+            "name": "Actual Scene Number [0..37] (Default 15)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 15,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 37,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_IN_SCENE_CONTROL",
+            "name": "IN Scene Control",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "ACTIVATE",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "ACTIVATE",
+                            "value": 0
+                        },
+                        {
+                            "key": "STORE_ACTIVATE",
+                            "value": 1
+                        },
+                        {
+                            "key": "LEARN",
+                            "value": 2
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_14",
+            "name": "Actual Scene Number [0..37] (Default 14)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 14,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 37,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_TIME_PERIOD_SEC_RANGE_1_600_DEF_120",
+            "name": "Time Period Sec [1..600s](Default 120s)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 120,
+                "dataInteger": {
+                    "minValue": 1,
+                    "maxValue": 600,
+                    "increment": 1,
+                    "unit": "s"
+                }
+            }
+        },
+        {
+            "id": "VT_INES_APPLICATION_MODE_DEF_ENERGY",
+            "name": "Application Mode (Default 'Energy')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "ENERGY",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNUSED",
+                            "value": 0
+                        },
+                        {
+                            "key": "ENERGY",
+                            "value": 8
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SSGET_CONNECTION_CODE",
+            "name": "Sumstatus Connection Code",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 255,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_SCALING_RANGE_0.0_100.0",
+            "name": "Scaling [0.0..100.0]",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 0.0,
+                "dataDouble": {
+                    "minValue": 0.0,
+                    "maxValue": 100.0,
+                    "increment": 0.3922,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_SCALING_RANGE_75.0_100.0",
+            "name": "Scaling [75.0..100.0]",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 100.0,
+                "dataDouble": {
+                    "minValue": 75.0,
+                    "maxValue": 100.0,
+                    "increment": 0.3922,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_CYCLE_TIME",
+            "name": "Cycle Time",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "T_15M",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "T_1M",
+                            "value": 60
+                        },
+                        {
+                            "key": "T_3M",
+                            "value": 180
+                        },
+                        {
+                            "key": "T_5M",
+                            "value": 300
+                        },
+                        {
+                            "key": "T_10M",
+                            "value": 600
+                        },
+                        {
+                            "key": "T_15M",
+                            "value": 900
+                        },
+                        {
+                            "key": "T_30M",
+                            "value": 1800
+                        },
+                        {
+                            "key": "T_60M",
+                            "value": 3600
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_LIGHT_APPLICATION_MODE_INSA",
+            "name": "Light Application Mode (INSA)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NORMAL_OPERATION",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NORMAL_OPERATION",
+                            "value": 0
+                        },
+                        {
+                            "key": "NON_LATCHING",
+                            "value": 17
+                        },
+                        {
+                            "key": "BLINKING",
+                            "value": 18
+                        },
+                        {
+                            "key": "PERMANENT_ON",
+                            "value": 19
+                        },
+                        {
+                            "key": "PERMANENT_OFF",
+                            "value": 20
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SCALING_RANGE_0.4_67.0",
+            "name": "Scaling [0.4..5.0..67.0]",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 5.0,
+                "dataDouble": {
+                    "minValue": 0.4,
+                    "maxValue": 67.0,
+                    "increment": 0.3922,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_LIGHT_APPLICATION_MODE_INLAv2_DA",
+            "name": "Light Application Mode (INLAv2_DA)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NORMAL_OPERATION",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NORMAL_OPERATION",
+                            "value": 0
+                        },
+                        {
+                            "key": "PERMANENT_ON",
+                            "value": 19
+                        },
+                        {
+                            "key": "PERMANENT_OFF",
+                            "value": 20
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_42_43_DEF_43",
+            "name": "Actual Scene Number [42..43] (Default 43)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 43,
+                "dataInteger": {
+                    "minValue": 42,
+                    "maxValue": 43,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_42_43_DEF_42",
+            "name": "Actual Scene Number [42..43] (Default 42)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 42,
+                "dataInteger": {
+                    "minValue": 42,
+                    "maxValue": 43,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_TIME1_RANGE_10.0_3600.0_DEF_120.0",
+            "name": "Value Time1 [10.0..3600.0s] (Default 120.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 120.0,
+                "dataDouble": {
+                    "minValue": 10.0,
+                    "maxValue": 3600.0,
+                    "increment": 0.01,
+                    "unit": "s"
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_EXPIRY",
+            "name": "Expiry",
+            "data": {
+                "type": "DATETIME",
+                "defaultValue": {
+                    "day": 1,
+                    "month": 1,
+                    "year": 1999,
+                    "hour": 0,
+                    "minute": 0,
+                    "second": 0
+                },
+                "dataDateTime": {
+                    "format": "dd.MM.yyyy HH:mm:ss",
+                    "minDateTime": {
+                        "day": 1,
+                        "month": 1,
+                        "year": 1999,
+                        "hour": 0,
+                        "minute": 0,
+                        "second": 0
+                    },
+                    "maxDateTime": {
+                        "day": 31,
+                        "month": 12,
+                        "year": 2099,
+                        "hour": 23,
+                        "minute": 59,
+                        "second": 59
+                    }
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE2_SCALING_RANGE_0_100_DEF_0",
+            "name": "Value2 Scaling [0..100](Default 0)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 100,
+                    "increment": 1,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_18_19_DEF_19",
+            "name": "Actual Scene Number [18..19] (Default 19)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 19,
+                "dataInteger": {
+                    "minValue": 18,
+                    "maxValue": 19,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_18_19_DEF_18",
+            "name": "Actual Scene Number [18..19] (Default 18)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 18,
+                "dataInteger": {
+                    "minValue": 18,
+                    "maxValue": 19,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_CHANNEL_CONFIG_INSCS_INGBRS_DEF_6",
+            "name": "Channel Configuration INSCS/INGBRS (Default 6)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 6,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 255,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_IN_ALARM",
+            "name": "In Alarm",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "no alarm",
+                    "trueName": "in alarm"
+                }
+            }
+        },
+        {
+            "id": "VT_TIME_PERIOD_MSEC_RANGE_0_10000_DEF_0",
+            "name": "Time Period MSec [0..10000ms](Default 0ms)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 10000,
+                    "increment": 1,
+                    "unit": "ms"
+                }
+            }
+        },
+        {
+            "id": "VT_OVERRIDDEN",
+            "name": "Overridden",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "value is real",
+                    "trueName": "value is overridden"
+                }
+            }
+        },
+        {
+            "id": "VT_SUMSTATE_MAX_TIMEOUT_DEF_7",
+            "name": "Sumstate Max Timeout (Default 7)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 7,
+                "dataInteger": {
+                    "minValue": 1,
+                    "maxValue": 255,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_UP1A_COVER_OPERATION_MODE_SA_2K_DEF_SA_SC",
+            "name": "Cover Operation Mode Switching Actuator 2K (Default 'SWITCHING_ACTUATOR_SLAVE_CHANNEL')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "SWITCHING_ACTUATOR_SLAVE_CHANNEL",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "SWITCHING_ACTUATOR_SLAVE_CHANNEL",
+                            "value": 7
+                        },
+                        {
+                            "key": "SWITCHING_ACTUATOR_2K",
+                            "value": 9
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_CONTROL",
+            "name": "Control",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": true,
+                "dataBool": {
+                    "falseName": "no control",
+                    "trueName": "control"
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE2_CONST_0",
+            "name": "Value2 [Const 0]",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 0,
+                    "increment": 0,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_US2M_BINARY_INPUT_TRIGGER_EDGE_DEF_RISING",
+            "name": "Binary Input Rising Falling Edge (Default 'Rising')",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "rising",
+                    "trueName": "falling"
+                }
+            }
+        },
+        {
+            "id": "VT_SCALING_RANGE_0_100_DEF_100",
+            "name": "Scaling [0..100](Default 100)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 100,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 100,
+                    "increment": 1,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_POWER",
+            "name": "Tado zone power (Default 'On')",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": true,
+                "dataBool": {
+                    "falseName": "off",
+                    "trueName": "on"
+                }
+            }
+        },
+        {
+            "id": "VT_SCV_SWITCH_DEF_OFF",
+            "name": "Scene Value Switch (Default Off)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "OFF",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "OFF",
+                            "value": 0
+                        },
+                        {
+                            "key": "ON",
+                            "value": 255
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_UP1AV_OPERATION_MODE_INLNS3_INLNS3_SA_DEF_INLNS3",
+            "name": "Operation Mode INLS3 (Default 'INLS3')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "LIGHT_EXTENSION",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "LIGHT_EXTENSION",
+                            "value": 0
+                        },
+                        {
+                            "key": "LIGHT_EXTENSION_SWITCHING_ACTUATOR",
+                            "value": 1
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_DYNAMIC_CONTROL",
+            "name": "Dynamic Control",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NO_DYNAMICCHANGE",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NO_DYNAMICCHANGE",
+                            "value": 0
+                        },
+                        {
+                            "key": "ENABLE_DYNAMIC",
+                            "value": 1
+                        },
+                        {
+                            "key": "DISABLE_DYNAMIC",
+                            "value": 2
+                        },
+                        {
+                            "key": "FREEZE_DYNAMIC",
+                            "value": 3
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_PREPARATION_MODE",
+            "name": "Tado Preparation Mode (Default 'None')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NONE",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NONE",
+                            "value": 0
+                        },
+                        {
+                            "key": "HOME",
+                            "value": 1
+                        },
+                        {
+                            "key": "AWAY",
+                            "value": 2
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_CHANNEL_CONFIG_INSCS_INGBRS_DISABLE",
+            "name": "Channel Configuration INSCS/INGBRS/DISABLE",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 255,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 255,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_CLK_SYNC_FAULT",
+            "name": "Clk Sync Fault",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "time synchronisation active",
+                    "trueName": "time synchronisation disturbed"
+                }
+            }
+        },
+        {
+            "id": "VT_INScS_APPLICATION_MODE_DEF_SCENE",
+            "name": "Application Mode (Default 'Scene')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "SCENE",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNUSED",
+                            "value": 0
+                        },
+                        {
+                            "key": "SCENE",
+                            "value": 7
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_11",
+            "name": "Actual Scene Number (Default 11)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 11,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_10",
+            "name": "Actual Scene Number (Default 10)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 10,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_CHANNEL_CONFIG_INSA_INDA_DUMMY",
+            "name": "Channel Configuration INSA/INDA (Dummy)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "DIMMING_ACTUATOR",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "SWITCHING_ACTUATOR",
+                            "value": 0
+                        },
+                        {
+                            "key": "DIMMING_ACTUATOR",
+                            "value": 1
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_13",
+            "name": "Actual Scene Number (Default 13)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 13,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_12",
+            "name": "Actual Scene Number (Default 12)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 12,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_INBS_APPLICATION_MODE_DEF_ROCKER",
+            "name": "Application Mode (Default 'Rocker')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "ROCKER",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNUSED",
+                            "value": 0
+                        },
+                        {
+                            "key": "ROCKER",
+                            "value": 6
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_TEMP_RANGE_-273.0_670760.0_DEF_0.0",
+            "name": "Value Temp [-273.0..670760.0°C] (Default 0.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 0.0,
+                "dataDouble": {
+                    "minValue": -273.0,
+                    "maxValue": 670760.0,
+                    "increment": 0.01,
+                    "unit": "°C"
+                }
+            }
+        },
+        {
+            "id": "VT_SCENE_NUMBER_0_17",
+            "name": "Scene Number [0..37]",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 37,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_LIGHT_APPLICATION_MODE_INDA",
+            "name": "Light Application Mode (INDA)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NORMAL_OPERATION",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NORMAL_OPERATION",
+                            "value": 0
+                        },
+                        {
+                            "key": "PERMANENT_ON",
+                            "value": 19
+                        },
+                        {
+                            "key": "PERMANENT_OFF",
+                            "value": 20
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_LIGHT_APPLICATION_MODE_INLAv2_SA",
+            "name": "Light Application Mode (INLAv2_SA)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NORMAL_OPERATION",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NORMAL_OPERATION",
+                            "value": 0
+                        },
+                        {
+                            "key": "NON_LATCHING",
+                            "value": 17
+                        },
+                        {
+                            "key": "BLINKING",
+                            "value": 18
+                        },
+                        {
+                            "key": "PERMANENT_ON",
+                            "value": 19
+                        },
+                        {
+                            "key": "PERMANENT_OFF",
+                            "value": 20
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_BEHAVIOUR_MAINS_POWER_UP_INDA",
+            "name": "Behaviour Mains Power Up (INDA)",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "OFF",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "OFF",
+                            "value": 0
+                        },
+                        {
+                            "key": "ON",
+                            "value": 1
+                        },
+                        {
+                            "key": "VALUE_ACCORDING_TO_ADDITIONAL_PARAMETER",
+                            "value": 3
+                        },
+                        {
+                            "key": "LAST_VALUE_BEFORE_POWER_DOWN",
+                            "value": 4
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SSGET_GROUP_ADDRESS",
+            "name": "Sumstatus Get Group Address",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 65535,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_LUX_RANGE_0.0_670760.97_DEF_670760.97",
+            "name": "Value Lux [0.0..670760.97Lux] (Default 670760.97)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 670760.97,
+                "dataDouble": {
+                    "minValue": 0.0,
+                    "maxValue": 670760.97,
+                    "increment": 0.01,
+                    "unit": "Lux"
+                }
+            }
+        },
+        {
+            "id": "VT_STATE",
+            "name": "State",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "inactive",
+                    "trueName": "active"
+                }
+            }
+        },
+        {
+            "id": "VT_BS1BP_SENSOR_DEAD_TIME",
+            "name": "Sensor Dead Time",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "50%",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "25%",
+                            "value": 1
+                        },
+                        {
+                            "key": "50%",
+                            "value": 2
+                        },
+                        {
+                            "key": "75%",
+                            "value": 3
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_15",
+            "name": "Actual Scene Number (Default 15)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 15,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_14",
+            "name": "Actual Scene Number (Default 14)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 14,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_STEP",
+            "name": "Step",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": true,
+                "dataBool": {
+                    "falseName": "decrease",
+                    "trueName": "increase"
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_GEO_OVERRIDE",
+            "name": "Geolocation Override",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "disable",
+                    "trueName": "enable"
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_DEF_17",
+            "name": "Actual Scene Number (Default 17)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 17,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 63,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_LUX_RANGE_2.0_2000.0_DEF_2000.0",
+            "name": "Value Lux [2.0..2000.0Lux] (Default 2000.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 2000.0,
+                "dataDouble": {
+                    "minValue": 2.0,
+                    "maxValue": 2000.0,
+                    "increment": 0.01,
+                    "unit": "Lux"
+                }
+            }
+        },
+        {
+            "id": "VT_TIME_PERIOD_MSEC_CONST_100",
+            "name": "Time Period MSec [100ms]",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 100,
+                "dataInteger": {
+                    "minValue": 100,
+                    "maxValue": 100,
+                    "increment": 0,
+                    "unit": "ms"
+                }
+            }
+        },
+        {
+            "id": "VT_BOOL",
+            "name": "Bool",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "false",
+                    "trueName": "true"
+                }
+            }
+        },
+        {
+            "id": "VT_REACTIVE_POWER_-100000_100000",
+            "name": "Reactive Power [-100000..100000var]",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": -100000,
+                    "maxValue": 100000,
+                    "increment": 1,
+                    "unit": "var"
+                }
+            }
+        },
+        {
+            "id": "VT_MINUTES",
+            "name": "Minutes",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 59,
+                    "increment": 1,
+                    "unit": "minutes"
+                }
+            }
+        },
+        {
+            "id": "VT_DIMMING_ACTUATOR_LOAD_TYPE",
+            "name": "Dimming Actuator Load Type",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "UNIVERSAL",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "CAPACITIVE",
+                            "value": 1
+                        },
+                        {
+                            "key": "INDUCTIVE",
+                            "value": 2
+                        },
+                        {
+                            "key": "UNIVERSAL",
+                            "value": 3
+                        },
+                        {
+                            "key": "LED_CAPACITIVE",
+                            "value": 5
+                        },
+                        {
+                            "key": "LED_INDUCTIVE",
+                            "value": 6
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_ACMODE",
+            "name": "Tado Air Conditioning Mode (Default 'Auto')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "AUTO",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "AUTO",
+                            "value": 0
+                        },
+                        {
+                            "key": "COOL",
+                            "value": 1
+                        },
+                        {
+                            "key": "HEAT",
+                            "value": 2
+                        },
+                        {
+                            "key": "DRY",
+                            "value": 3
+                        },
+                        {
+                            "key": "FAN",
+                            "value": 4
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_APPARENT_POWER_0_100000",
+            "name": "Value Power [0..100000VA]",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 100000,
+                    "increment": 1,
+                    "unit": "VA"
+                }
+            }
+        },
+        {
+            "id": "VT_UP1A_OPERATION_MODE_INLNS3_INLNS3_SA_DEF_INLNS3",
+            "name": "Operation Mode INLS3 (Default 'INLS3')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "LIGHT_EXTENSION",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "LIGHT_EXTENSION",
+                            "value": 0
+                        },
+                        {
+                            "key": "LIGHT_EXTENSION_SWITCHING_ACTUATOR",
+                            "value": 1
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_LUX_RANGE_0.0_2000.0",
+            "name": "Value Lux [0.0..2000.0Lux] (Default 10.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 10.0,
+                "dataDouble": {
+                    "minValue": 0.0,
+                    "maxValue": 2000.0,
+                    "increment": 0.01,
+                    "unit": "Lux"
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_SWING",
+            "name": "Swing (Default 'Off')",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "off",
+                    "trueName": "on"
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_CAP_FAN_SPEEDS",
+            "name": "Capability Fan Speeds",
+            "data": {
+                "type": "LIST",
+                "defaultValue": [
+                    "NONE"
+                ],
+                "dataList": {
+                    "maxSize": 4,
+                    "valueType": "String"
+                }
+            }
+        },
+        {
+            "id": "VT_SCALING_RANGE_75_100_DEF_100",
+            "name": "Scaling [75..100](Default 100)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 100,
+                "dataInteger": {
+                    "minValue": 75,
+                    "maxValue": 100,
+                    "increment": 1,
+                    "unit": "%"
+                }
+            }
+        },
+        {
+            "id": "VT_UP1AV_INSERT_CUSTOMER_VERSION_DEF_0",
+            "name": "Insert Customer Version (Default '0')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "UNKNOWN",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "UNKNOWN",
+                            "value": 0
+                        },
+                        {
+                            "key": "SWITCHING_ACTUATOR",
+                            "value": 1
+                        },
+                        {
+                            "key": "DIMMING_ACTUATOR",
+                            "value": 2
+                        },
+                        {
+                            "key": "LIGHT_EXTENSION",
+                            "value": 3
+                        },
+                        {
+                            "key": "BLINDS_ACTUATOR",
+                            "value": 4
+                        },
+                        {
+                            "key": "SWITCHING_ACTUATOR_2K",
+                            "value": 9
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_CAN_SET_TEMP",
+            "name": "Can Set Temperature",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": true,
+                "dataBool": {
+                    "falseName": "false",
+                    "trueName": "true"
+                }
+            }
+        },
+        {
+            "id": "VT_MASTER_DIMMING_TIME",
+            "name": "Master Dimming Time",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 127,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_SDDK4FM_CHANNEL_CONFIG_DEF_4",
+            "name": "Channel Config (Default '4')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "DIMMING_ACTUATOR",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NONE",
+                            "value": 0
+                        },
+                        {
+                            "key": "SCENE_SENSOR",
+                            "value": 1
+                        },
+                        {
+                            "key": "GBR_SENSOR",
+                            "value": 2
+                        },
+                        {
+                            "key": "SWITCHING_ACTUATOR",
+                            "value": 3
+                        },
+                        {
+                            "key": "DIMMING_ACTUATOR",
+                            "value": 4
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SDDK4FM_CHANNEL_CONFIG_DEF_3",
+            "name": "Channel Config (Default '3')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "SWITCHING_ACTUATOR",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NONE",
+                            "value": 0
+                        },
+                        {
+                            "key": "SCENE_SENSOR",
+                            "value": 1
+                        },
+                        {
+                            "key": "GBR_SENSOR",
+                            "value": 2
+                        },
+                        {
+                            "key": "SWITCHING_ACTUATOR",
+                            "value": 3
+                        },
+                        {
+                            "key": "DIMMING_ACTUATOR",
+                            "value": 4
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SDDK4FM_CHANNEL_CONFIG_DEF_2",
+            "name": "Channel Config (Default '2')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "GBR_SENSOR",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NONE",
+                            "value": 0
+                        },
+                        {
+                            "key": "SCENE_SENSOR",
+                            "value": 1
+                        },
+                        {
+                            "key": "GBR_SENSOR",
+                            "value": 2
+                        },
+                        {
+                            "key": "SWITCHING_ACTUATOR",
+                            "value": 3
+                        },
+                        {
+                            "key": "DIMMING_ACTUATOR",
+                            "value": 4
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_46_47_DEF_47",
+            "name": "Actual Scene Number [46..47] (Default 47)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 47,
+                "dataInteger": {
+                    "minValue": 46,
+                    "maxValue": 47,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_SDDK4FM_CHANNEL_CONFIG_DEF_1",
+            "name": "Channel Config (Default '1')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "SCENE_SENSOR",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NONE",
+                            "value": 0
+                        },
+                        {
+                            "key": "SCENE_SENSOR",
+                            "value": 1
+                        },
+                        {
+                            "key": "GBR_SENSOR",
+                            "value": 2
+                        },
+                        {
+                            "key": "SWITCHING_ACTUATOR",
+                            "value": 3
+                        },
+                        {
+                            "key": "DIMMING_ACTUATOR",
+                            "value": 4
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_ACTUAL_SCENE_NUMBER_RANGE_46_47_DEF_46",
+            "name": "Actual Scene Number [46..47] (Default 46)",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 46,
+                "dataInteger": {
+                    "minValue": 46,
+                    "maxValue": 47,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_LUX_RANGE_5.0_2000.0_DEF_2000.0",
+            "name": "Value Lux [5.0..2000.0Lux] (Default 2000.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 2000.0,
+                "dataDouble": {
+                    "minValue": 5.0,
+                    "maxValue": 2000.0,
+                    "increment": 0.01,
+                    "unit": "Lux"
+                }
+            }
+        },
+        {
+            "id": "VT_SCENE_NUMBER_0_4",
+            "name": "Scene Number [0..4]",
+            "data": {
+                "type": "INTEGER",
+                "defaultValue": 0,
+                "dataInteger": {
+                    "minValue": 0,
+                    "maxValue": 4,
+                    "increment": 1,
+                    "unit": ""
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_FAN_SPEED",
+            "name": "Fan Speed (Default 'Auto')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "AUTO",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "AUTO",
+                            "value": 0
+                        },
+                        {
+                            "key": "LOW",
+                            "value": 1
+                        },
+                        {
+                            "key": "MIDDLE",
+                            "value": 2
+                        },
+                        {
+                            "key": "HIGH",
+                            "value": 3
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_VALUE_TIME1_RANGE_5.0_900.0_DEF_600.0",
+            "name": "Value Time1 [5.0..900.0s] (Default 600.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 600.0,
+                "dataDouble": {
+                    "minValue": 5.0,
+                    "maxValue": 900.0,
+                    "increment": 0.01,
+                    "unit": "s"
+                }
+            }
+        },
+        {
+            "id": "VT_DAY",
+            "name": "Day",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "NO_DAY",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "NO_DAY",
+                            "value": 0
+                        },
+                        {
+                            "key": "MONDAY",
+                            "value": 1
+                        },
+                        {
+                            "key": "TUESDAY",
+                            "value": 2
+                        },
+                        {
+                            "key": "WEDNESDAY",
+                            "value": 3
+                        },
+                        {
+                            "key": "THURSDAY",
+                            "value": 4
+                        },
+                        {
+                            "key": "FRIDAY",
+                            "value": 5
+                        },
+                        {
+                            "key": "SATURDAY",
+                            "value": 6
+                        },
+                        {
+                            "key": "SUNDAY",
+                            "value": 7
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_SF1S_CHARGE_VOLTAGE",
+            "name": "Charge Voltage [-671088.64..670760.97V]",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 670760.97,
+                "dataDouble": {
+                    "minValue": -671088.64,
+                    "maxValue": 670760.97,
+                    "increment": 0.01,
+                    "unit": "V"
+                }
+            }
+        },
+        {
+            "id": "VT_SUMSTATE_MODE_DEF_254",
+            "name": "Sumstate Mode (Default 'off 3 repetitions unlinked')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "OFF_3_REPETITIONS_UNLINKED",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "ON",
+                            "value": 0
+                        },
+                        {
+                            "key": "OFF_1_REPETITION",
+                            "value": 1
+                        },
+                        {
+                            "key": "OFF_2_REPETITIONS",
+                            "value": 2
+                        },
+                        {
+                            "key": "OFF_3_REPETITIONS",
+                            "value": 3
+                        },
+                        {
+                            "key": "OFF_4_REPETITIONS",
+                            "value": 4
+                        },
+                        {
+                            "key": "OFF_5_REPETITIONS",
+                            "value": 5
+                        },
+                        {
+                            "key": "OFF_6_REPETITIONS",
+                            "value": 6
+                        },
+                        {
+                            "key": "OFF_7_REPETITIONS",
+                            "value": 7
+                        },
+                        {
+                            "key": "OFF_8_REPETITIONS",
+                            "value": 8
+                        },
+                        {
+                            "key": "OFF_9_REPETITIONS",
+                            "value": 9
+                        },
+                        {
+                            "key": "OFF_10_REPETITIONS",
+                            "value": 10
+                        },
+                        {
+                            "key": "OFF_3_REPETITIONS_UNLINKED",
+                            "value": 254
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TADO_ZONE_TYPE",
+            "name": "Tado Zone Type (Default 'DISABLED')",
+            "data": {
+                "type": "MAPENTRYKEY",
+                "defaultValue": "DISABLED",
+                "dataMapEntryKey": {
+                    "keyType": "String",
+                    "valueType": "Integer",
+                    "map": [
+                        {
+                            "key": "DISABLED",
+                            "value": 0
+                        },
+                        {
+                            "key": "HEATING",
+                            "value": 1
+                        },
+                        {
+                            "key": "AIR_CONDITIONING",
+                            "value": 2
+                        },
+                        {
+                            "key": "HOT_WATER",
+                            "value": 3
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "VT_TADOZH_ECO_TEMP",
+            "name": "ECO Temperature - Zone Heating (Default 18.0)",
+            "data": {
+                "type": "DOUBLE",
+                "defaultValue": 18.0,
+                "dataDouble": {
+                    "minValue": 5.0,
+                    "maxValue": 25.0,
+                    "increment": 0.1,
+                    "unit": "°C"
+                }
+            }
+        },
+        {
+            "id": "VT_SSGET_REPEAT_FLAG",
+            "name": "Sumstatus Get Repeat Flag",
+            "data": {
+                "type": "BOOL",
+                "defaultValue": false,
+                "dataBool": {
+                    "falseName": "first request",
+                    "trueName": "repeated request"
+                }
+            }
+        }
+    ]
+}

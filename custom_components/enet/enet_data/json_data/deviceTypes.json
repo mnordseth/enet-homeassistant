@@ -1,0 +1,4249 @@
+{
+    "deviceTypes": [
+        {
+            "id": "DVT_DA1R",
+            "name": "INet Dimmaktor 1K Modul REG",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Dimming actuator, 1-gang DRA",
+                "articleNo": "5430 00",
+                "expirationID": "",
+                "articleGroupID": "AG_ACTUATORS",
+                "releaseDate": {
+                    "day": 27,
+                    "month": 6,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_RMD",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F02",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_DA1R_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_WS2BJF50CL",
+            "name": "INet Wandsender 2K Batt J",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "4",
+                "name": "Transmitter module 2-gang",
+                "articleNo": "FM..5002M",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 8,
+                    "month": 12,
+                    "year": 2015
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_WMT",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS2BJ_CHANNEL_CONFIG_1_INSCS_INGBRS_DUMMY",
+                        "PT_WS2BJ_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS2BJ_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS2BJ_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 2,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS2BJ_CHANNEL_CONFIG_2_INSCS_INGBRS_DUMMY",
+                        "PT_WS2BJ_CHANNEL_CONFIG_2_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 3,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS2BJ_CHANNEL_3_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 4,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS2BJ_CHANNEL_4_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_WS3BJF50CL",
+            "name": "INet Wandsender 3K Batt J",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "4",
+                "name": "Transmitter module 3-gang",
+                "articleNo": "FM..5003M",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 8,
+                    "month": 12,
+                    "year": 2015
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_WMT",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS3BJ_CHANNEL_CONFIG_1_INSCS_INGBRS_DUMMY",
+                        "PT_WS3BJ_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BJ_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BJ_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 2,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS3BJ_CHANNEL_CONFIG_2_INSCS_INGBRS_DUMMY",
+                        "PT_WS3BJ_CHANNEL_CONFIG_2_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 3,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BJ_CHANNEL_3_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 4,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BJ_CHANNEL_4_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 3,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS3BJ_CHANNEL_CONFIG_3_INSCS_INGBRS_DUMMY",
+                        "PT_WS3BJ_CHANNEL_CONFIG_3_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 5,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BJ_CHANNEL_5_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 6,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BJ_CHANNEL_6_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_SJAR",
+            "name": "INet Schalt-/Tast- 8K - Jalousieaktor 4K Modul REG",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Switching/momentary-contact actuator, 8-gang / blind actuator 4-gang DRA",
+                "articleNo": "5435 00",
+                "expirationID": "",
+                "articleGroupID": "AG_ACTUATORS",
+                "releaseDate": {
+                    "day": 27,
+                    "month": 6,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_RMD",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_SJAR_CHANNEL_CONFIG_1_INSA_INBA"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F03",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SJAR_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_1_INSA",
+                                "PT_SJAR_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_1_INBA",
+                                "PT_SJAR_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_2_INBA"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 5,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_SJAR_CHANNEL_5_INFO_ACTIVE_COUNTER_RESETABLE_1_INSA"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 2,
+                    "deviceParameterTypeIDs": [
+                        "PT_SJAR_CHANNEL_CONFIG_2_INSA_INBA"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_1F03",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SJAR_CHANNEL_2_INFO_ACTIVE_COUNTER_RESETABLE_1_INSA",
+                                "PT_SJAR_CHANNEL_2_INFO_ACTIVE_COUNTER_RESETABLE_1_INBA",
+                                "PT_SJAR_CHANNEL_2_INFO_ACTIVE_COUNTER_RESETABLE_2_INBA"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 6,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_SJAR_CHANNEL_6_INFO_ACTIVE_COUNTER_RESETABLE_1_INSA"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 3,
+                    "deviceParameterTypeIDs": [
+                        "PT_SJAR_CHANNEL_CONFIG_3_INSA_INBA"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 3,
+                            "channelTypeID": "CT_1F03",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SJAR_CHANNEL_3_INFO_ACTIVE_COUNTER_RESETABLE_1_INSA",
+                                "PT_SJAR_CHANNEL_3_INFO_ACTIVE_COUNTER_RESETABLE_1_INBA",
+                                "PT_SJAR_CHANNEL_3_INFO_ACTIVE_COUNTER_RESETABLE_2_INBA"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 7,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_SJAR_CHANNEL_7_INFO_ACTIVE_COUNTER_RESETABLE_1_INSA"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 4,
+                    "deviceParameterTypeIDs": [
+                        "PT_SJAR_CHANNEL_CONFIG_4_INSA_INBA"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 4,
+                            "channelTypeID": "CT_1F03",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SJAR_CHANNEL_4_INFO_ACTIVE_COUNTER_RESETABLE_1_INSA",
+                                "PT_SJAR_CHANNEL_4_INFO_ACTIVE_COUNTER_RESETABLE_1_INBA",
+                                "PT_SJAR_CHANNEL_4_INFO_ACTIVE_COUNTER_RESETABLE_2_INBA"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 8,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_SJAR_CHANNEL_8_INFO_ACTIVE_COUNTER_RESETABLE_1_INSA"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_WS1BJF50L",
+            "name": "INet Wandsender 1K Batt J",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "4",
+                "name": "Transmitter module 1-gang",
+                "articleNo": "FMLS5001M",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 8,
+                    "month": 12,
+                    "year": 2015
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_WMT",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS1BJ_CHANNEL_CONFIG_1_INSCS_INGBRS_DUMMY",
+                        "PT_WS1BJ_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS1BJ_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS1BJ_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_WS3BJF50",
+            "name": "INet Wandsender 3K Batt J",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "4",
+                "name": "Transmitter module 3-gang",
+                "articleNo": "FMA5003M",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 8,
+                    "month": 12,
+                    "year": 2015
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_WMT",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS3BJ_CHANNEL_CONFIG_1_INSCS_INGBRS_DUMMY",
+                        "PT_WS3BJ_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BJ_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BJ_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 2,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS3BJ_CHANNEL_CONFIG_2_INSCS_INGBRS_DUMMY",
+                        "PT_WS3BJ_CHANNEL_CONFIG_2_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 3,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BJ_CHANNEL_3_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 4,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BJ_CHANNEL_4_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 3,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS3BJ_CHANNEL_CONFIG_3_INSCS_INGBRS_DUMMY",
+                        "PT_WS3BJ_CHANNEL_CONFIG_3_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 5,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BJ_CHANNEL_5_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 6,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BJ_CHANNEL_6_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_SA1M",
+            "name": "INet Schalt-/Tastaktor 1K mini",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Switching/momentary-contact actuator, 1-gang Mini",
+                "articleNo": "5423 00",
+                "expirationID": "",
+                "articleGroupID": "AG_ACTUATORS",
+                "releaseDate": {
+                    "day": 27,
+                    "month": 6,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_MINI",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F01",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SA1M_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_SENSIQv2",
+            "name": "sensIQ eNet",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "142",
+                "name": "sensIQ eNet V2.1",
+                "articleNo": "0204xx",
+                "expirationID": "",
+                "articleGroupID": "AG_MOTION_DETECTORS",
+                "releaseDate": {
+                    "day": 22,
+                    "month": 9,
+                    "year": 2017
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_NONE",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F1B",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SENSIQ_CHANNEL_1_INMOVS.PIR_SENS[0]",
+                                "PT_SENSIQ_CHANNEL_1_INMOVS.OBSP",
+                                "PT_SENSIQ_CHANNEL_1_INMOVS.ITOD"
+                            ],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_1F08",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SENSIQ_CHANNEL_2_INSAv2.ITOD",
+                                "PT_SENSIQ_CHANNEL_2_INSAv2.LAM",
+                                "PT_SENSIQ_CHANNEL_2_INSAv2.MOE",
+                                "PT_SENSIQ_CHANNEL_2_INSAv2.APPLICATION_MODE_DUMMY",
+                                "PT_SENSIQ_CHANNEL_2_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": false
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_WS3BJ",
+            "name": "INet Wandsender 3K Batt J",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "4",
+                "name": "Transmitter module 3-channel",
+                "articleNo": "FM4003M",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 21,
+                    "month": 1,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_WMT",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS3BJ_CHANNEL_CONFIG_1_INSCS_INGBRS_DUMMY",
+                        "PT_WS3BJ_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BJ_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BJ_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 2,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS3BJ_CHANNEL_CONFIG_2_INSCS_INGBRS_DUMMY",
+                        "PT_WS3BJ_CHANNEL_CONFIG_2_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 3,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BJ_CHANNEL_3_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 4,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BJ_CHANNEL_4_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 3,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS3BJ_CHANNEL_CONFIG_3_INSCS_INGBRS_DUMMY",
+                        "PT_WS3BJ_CHANNEL_CONFIG_3_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 5,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BJ_CHANNEL_5_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 6,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BJ_CHANNEL_6_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_JA1R",
+            "name": "INet Jalousieaktor 1K Modul REG",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Blind actuator, 1-gang DRA",
+                "articleNo": "5437 00",
+                "expirationID": "",
+                "articleGroupID": "AG_ACTUATORS",
+                "releaseDate": {
+                    "day": 28,
+                    "month": 2,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_RMD",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F03",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_JA1R_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_1",
+                                "PT_JA1R_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_2"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_UP1A",
+            "name": "eNet Kurzhubtaste",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Operating top unit Memory",
+                "articleNo": "5492 xx, 5493 xx",
+                "expirationID": "",
+                "articleGroupID": "AG_COVERS",
+                "releaseDate": {
+                    "day": 19,
+                    "month": 7,
+                    "year": 2019
+                },
+                "designTypeID": "DST_COVER",
+                "subDesignTypeID": "SDST_NONE",
+                "powerSupplyTypeID": "PST_LOW_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 2,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_UP1A_CHANNEL_2_INLAv2_DA.BL_OFFSV",
+                                "PT_UP1A_CHANNEL_2_INFO_ACTIVE_COUNTER_RESETABLE_1_INLA",
+                                "PT_UP1A_CHANNEL_2_INFO_ACTIVE_COUNTER_RESETABLE_2_INLA",
+                                "PT_UP1A_CHANNEL_2_INFO_ACTIVE_COUNTER_RESETABLE_1_INBA",
+                                "PT_UP1A_CHANNEL_2_INFO_ACTIVE_COUNTER_RESETABLE_2_INBA"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_WS4BJ",
+            "name": "INet Wandsender 4K Batt J",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "4",
+                "name": "Transmitter module 4-channel",
+                "articleNo": "FM4004M",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 21,
+                    "month": 1,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_WMT",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS4BJ_CHANNEL_CONFIG_1_INSCS_INGBRS_DUMMY",
+                        "PT_WS4BJ_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 2,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS4BJ_CHANNEL_CONFIG_2_INSCS_INGBRS_DUMMY",
+                        "PT_WS4BJ_CHANNEL_CONFIG_2_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 3,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_3_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 4,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_4_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 3,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS4BJ_CHANNEL_CONFIG_3_INSCS_INGBRS_DUMMY",
+                        "PT_WS4BJ_CHANNEL_CONFIG_3_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 5,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_5_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 6,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_6_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 4,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS4BJ_CHANNEL_CONFIG_4_INSCS_INGBRS_DUMMY",
+                        "PT_WS4BJ_CHANNEL_CONFIG_4_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 7,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_7_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 8,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_8_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_WS4BJF50CL",
+            "name": "INet Wandsender 4K Batt J",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "4",
+                "name": "Transmitter module 4-gang",
+                "articleNo": "FM..5004M",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 8,
+                    "month": 12,
+                    "year": 2015
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_WMT",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS4BJ_CHANNEL_CONFIG_1_INSCS_INGBRS_DUMMY",
+                        "PT_WS4BJ_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 2,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS4BJ_CHANNEL_CONFIG_2_INSCS_INGBRS_DUMMY",
+                        "PT_WS4BJ_CHANNEL_CONFIG_2_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 3,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_3_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 4,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_4_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 3,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS4BJ_CHANNEL_CONFIG_3_INSCS_INGBRS_DUMMY",
+                        "PT_WS4BJ_CHANNEL_CONFIG_3_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 5,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_5_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 6,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_6_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 4,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS4BJ_CHANNEL_CONFIG_4_INSCS_INGBRS_DUMMY",
+                        "PT_WS4BJ_CHANNEL_CONFIG_4_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 7,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_7_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 8,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_8_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_SD1M",
+            "name": "INet Steuereinheit DALI 1K mini",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "DALI radio control unit, 1-gang Mini",
+                "articleNo": "5422 00",
+                "expirationID": "",
+                "articleGroupID": "AG_ACTUATORS",
+                "releaseDate": {
+                    "day": 27,
+                    "month": 6,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_MINI",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F02",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SD1M_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_WS1BJ",
+            "name": "INet Wandsender 1K Batt J",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "4",
+                "name": "Transmitter module 1-channel",
+                "articleNo": "FM4001M",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 21,
+                    "month": 1,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_WMT",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS1BJ_CHANNEL_CONFIG_1_INSCS_INGBRS_DUMMY",
+                        "PT_WS1BJ_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS1BJ_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS1BJ_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_WS2BJ",
+            "name": "INet Wandsender 2K Batt J",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "4",
+                "name": "Transmitter module 2-channel",
+                "articleNo": "FM4002M",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 21,
+                    "month": 1,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_WMT",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS2BJ_CHANNEL_CONFIG_1_INSCS_INGBRS_DUMMY",
+                        "PT_WS2BJ_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS2BJ_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS2BJ_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 2,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS2BJ_CHANNEL_CONFIG_2_INSCS_INGBRS_DUMMY",
+                        "PT_WS2BJ_CHANNEL_CONFIG_2_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 3,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS2BJ_CHANNEL_3_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 4,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS2BJ_CHANNEL_4_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_SA1R",
+            "name": "INet Schalt-/Tastaktor 1K Modul REG",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Switching/momentary-contact actuator, 1-gang DRA",
+                "articleNo": "5433 00",
+                "expirationID": "",
+                "articleGroupID": "AG_ACTUATORS",
+                "releaseDate": {
+                    "day": 27,
+                    "month": 6,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_RMD",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F01",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SA1R_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_JA1M",
+            "name": "INet Jalousieaktor 1K mini",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Blind actuator, 1-gang Mini",
+                "articleNo": "5427 00",
+                "expirationID": "",
+                "articleGroupID": "AG_ACTUATORS",
+                "releaseDate": {
+                    "day": 28,
+                    "month": 2,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_MINI",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F03",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_JA1M_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_1",
+                                "PT_JA1M_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_2"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_S2A1",
+            "name": "INet S2000 Aufsatz 1K",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Switching/dimming top unit, 1-gang System 2000",
+                "articleNo": "5490 xx",
+                "expirationID": "",
+                "articleGroupID": "AG_COVERS",
+                "releaseDate": {
+                    "day": 27,
+                    "month": 6,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COVER",
+                "subDesignTypeID": "SDST_NONE",
+                "powerSupplyTypeID": "PST_LOW_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_S2A1_CHANNEL_CONFIG_1_INSA_INDA_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F02",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_S2A1_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_WS1BJF50C",
+            "name": "INet Wandsender 1K Batt J",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "4",
+                "name": "Transmitter module 1-gang",
+                "articleNo": "FMCD5001M",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 8,
+                    "month": 12,
+                    "year": 2015
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_WMT",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS1BJ_CHANNEL_CONFIG_1_INSCS_INGBRS_DUMMY",
+                        "PT_WS1BJ_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS1BJ_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS1BJ_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_ES1Z",
+            "name": "INet Energiesensor 1K ZS",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Energy sensor, 1-gang intermediate plug",
+                "articleNo": "5472 02",
+                "expirationID": "",
+                "articleGroupID": "AG_SENSORS",
+                "releaseDate": {
+                    "day": 23,
+                    "month": 6,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_ADAPTER_PLUG",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F19",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_ES1Z_INFO_ACTIVE_ENERGY_RESETABLE"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_WS1BJF50",
+            "name": "INet Wandsender 1K Batt J",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "4",
+                "name": "Transmitter module 1-gang",
+                "articleNo": "FMA5001M",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 8,
+                    "month": 12,
+                    "year": 2015
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_WMT",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS1BJ_CHANNEL_CONFIG_1_INSCS_INGBRS_DUMMY",
+                        "PT_WS1BJ_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS1BJ_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS1BJ_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_DA1M",
+            "name": "INet Dimmaktor 1K mini",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Dimming actuator, 1-gang Mini",
+                "articleNo": "5420 00",
+                "expirationID": "",
+                "articleGroupID": "AG_ACTUATORS",
+                "releaseDate": {
+                    "day": 27,
+                    "month": 6,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_MINI",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F02",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_DA1M_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_SF1S",
+            "name": "INet Sonnensensor Funk 1K Solar",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Sun sensor Solar",
+                "articleNo": "5461 02",
+                "expirationID": "",
+                "articleGroupID": "AG_SENSORS",
+                "releaseDate": {
+                    "day": 3,
+                    "month": 9,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_NONE",
+                "powerSupplyTypeID": "PST_SOLAR",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F18",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SF1S_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_1F18",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SF1S_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_BS1BP",
+            "name": "eNet Bewegungsmelder mit Präsenzfunktion",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "4",
+                "name": "Motion detector",
+                "articleNo": "FMDW360WW",
+                "expirationID": "",
+                "articleGroupID": "AG_MOTION_DETECTORS",
+                "releaseDate": {
+                    "day": 29,
+                    "month": 10,
+                    "year": 2018
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_NONE",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_BS1BP_CHANNEL_CONFIG_1_ENABLE"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F1B",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_BS1BP_CHANNEL_1_INMOVS.OBSP",
+                                "PT_BS1BP_CHANNEL_1_INMOVS.ITOD"
+                            ],
+                            "dependencyExists": false
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_SA1Z",
+            "name": "eNet Schaltaktor 1K ZS",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Switching actuator, 1-gang intermediate plug",
+                "articleNo": "5448 02",
+                "expirationID": "",
+                "articleGroupID": "AG_ACTUATORS",
+                "releaseDate": {
+                    "day": 1,
+                    "month": 9,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_ADAPTER_PLUG",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F01",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SA1Z_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_SV1M",
+            "name": "INet Steuereinheit 1-10V 1K mini",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Control unit 1-10V, 1-gang Mini",
+                "articleNo": "5421 00",
+                "expirationID": "",
+                "articleGroupID": "AG_ACTUATORS",
+                "releaseDate": {
+                    "day": 27,
+                    "month": 6,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_MINI",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F02",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SV1M_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_ES1M",
+            "name": "INet Energiesensor 1K mini",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Energy sensor, 1-gang Mini",
+                "articleNo": "5471 00",
+                "expirationID": "",
+                "articleGroupID": "AG_SENSORS",
+                "releaseDate": {
+                    "day": 23,
+                    "month": 6,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_MINI",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F19",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_ES1M_INFO_ACTIVE_ENERGY_RESETABLE"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_DA4R",
+            "name": "INet Dimmaktor 4K Modul REG",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Dimming actuator, 4-gang DRA",
+                "articleNo": "5431 00",
+                "expirationID": "",
+                "articleGroupID": "AG_ACTUATORS",
+                "releaseDate": {
+                    "day": 27,
+                    "month": 6,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_RMD",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F02",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_DA4R_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 2,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_1F02",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_DA4R_CHANNEL_2_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 3,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 3,
+                            "channelTypeID": "CT_1F02",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_DA4R_CHANNEL_3_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 4,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 4,
+                            "channelTypeID": "CT_1F02",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_DA4R_CHANNEL_4_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_SA1MP",
+            "name": "INet Schalt-/Tastaktor 1K mini potfrei",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Switching/momentary-contact actuator, 1-gang Mini, zero-voltage",
+                "articleNo": "5424 00",
+                "expirationID": "",
+                "articleGroupID": "AG_ACTUATORS",
+                "releaseDate": {
+                    "day": 27,
+                    "month": 6,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_MINI",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F01",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SA1MP_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_UP1AV",
+            "name": "eNet Kurzhubtaste Standard",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Operating top unit Standard",
+                "articleNo": "5494 xx, 5495 xx",
+                "expirationID": "",
+                "articleGroupID": "AG_COVERS",
+                "releaseDate": {
+                    "day": 29,
+                    "month": 5,
+                    "year": 2020
+                },
+                "designTypeID": "DST_COVER",
+                "subDesignTypeID": "SDST_NONE",
+                "powerSupplyTypeID": "PST_LOW_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_UP1AV_NIGHT_LIGHT_FUNCTION_ENABLE"
+                            ],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 2,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_UP1AV_CHANNEL_2_INLAv2_DA.BL_OFFSV",
+                                "PT_UP1AV_CHANNEL_2_INFO_ACTIVE_COUNTER_RESETABLE_1_INLA",
+                                "PT_UP1AV_CHANNEL_2_INFO_ACTIVE_COUNTER_RESETABLE_2_INLA",
+                                "PT_UP1AV_CHANNEL_2_INFO_ACTIVE_COUNTER_RESETABLE_1_INBA",
+                                "PT_UP1AV_CHANNEL_2_INFO_ACTIVE_COUNTER_RESETABLE_2_INBA"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_SJA1",
+            "name": "INet System Jalousie Aufsatz 1K",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Blind control button, 1-gang",
+                "articleNo": "5491 xx",
+                "expirationID": "",
+                "articleGroupID": "AG_COVERS",
+                "releaseDate": {
+                    "day": 28,
+                    "month": 2,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COVER",
+                "subDesignTypeID": "SDST_NONE",
+                "powerSupplyTypeID": "PST_LOW_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F03",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SJA1_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_1",
+                                "PT_SJA1_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_2"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_WS2BJF50",
+            "name": "INet Wandsender 2K Batt J",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "4",
+                "name": "Transmitter module 2-gang",
+                "articleNo": "FMA5002M",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 8,
+                    "month": 12,
+                    "year": 2015
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_WMT",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS2BJ_CHANNEL_CONFIG_1_INSCS_INGBRS_DUMMY",
+                        "PT_WS2BJ_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS2BJ_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS2BJ_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 2,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS2BJ_CHANNEL_CONFIG_2_INSCS_INGBRS_DUMMY",
+                        "PT_WS2BJ_CHANNEL_CONFIG_2_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 3,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS2BJ_CHANNEL_3_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 4,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS2BJ_CHANNEL_4_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_SA2M",
+            "name": "INet Schalt-/Tastaktor 2K mini",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Switching/momentary-contact actuator, 2-gang Mini",
+                "articleNo": "5425 00",
+                "expirationID": "",
+                "articleGroupID": "AG_ACTUATORS",
+                "releaseDate": {
+                    "day": 27,
+                    "month": 6,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_MINI",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F01",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SA2M_CHANNEL_1_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_1F01",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SA2M_CHANNEL_2_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_XLEDPRO",
+            "name": "XLED PRO eNet",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "142",
+                "name": "XLED PRO eNet",
+                "articleNo": "009991, 010027, 010218, 010249",
+                "expirationID": "",
+                "articleGroupID": "AG_MOTION_DETECTORS",
+                "releaseDate": {
+                    "day": 22,
+                    "month": 9,
+                    "year": 2017
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_NONE",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F1B",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_XLEDPRO_CHANNEL_1_INMOVS.PIR_SENS[0]",
+                                "PT_XLEDPRO_CHANNEL_1_INMOVS.OBSP",
+                                "PT_XLEDPRO_CHANNEL_1_INMOVS.ITOD"
+                            ],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_1F08",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_XLEDPRO_CHANNEL_2_INSAv2.ITOD",
+                                "PT_XLEDPRO_CHANNEL_2_INSAv2.LAM",
+                                "PT_XLEDPRO_CHANNEL_2_INSAv2.MOE",
+                                "PT_XLEDPRO_CHANNEL_2_INSAv2.APPLICATION_MODE_DUMMY",
+                                "PT_XLEDPRO_CHANNEL_2_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 3,
+                            "channelTypeID": "CT_1F09",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_XLEDPRO_CHANNEL_3_INSAv3.ITOD",
+                                "PT_XLEDPRO_CHANNEL_3_INSAv3.LAM",
+                                "PT_XLEDPRO_CHANNEL_3_INSAv3.APPLICATION_MODE_DUMMY",
+                                "PT_XLEDPRO_CHANNEL_3_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": false
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_HS1T",
+            "name": "INet Handsender 1K TOG",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Remote control, 1-gang",
+                "articleNo": "5350 10",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 21,
+                    "month": 1,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_HHT",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_HS1T_CHANNEL_CONFIG_1_INSCS_INGBRS_DUMMY",
+                        "PT_HS1T_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_HS1T_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_WS4BJF50",
+            "name": "INet Wandsender 4K Batt J",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "4",
+                "name": "Transmitter module 4-gang",
+                "articleNo": "FMA5004M",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 8,
+                    "month": 12,
+                    "year": 2015
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_WMT",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS4BJ_CHANNEL_CONFIG_1_INSCS_INGBRS_DUMMY",
+                        "PT_WS4BJ_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 2,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS4BJ_CHANNEL_CONFIG_2_INSCS_INGBRS_DUMMY",
+                        "PT_WS4BJ_CHANNEL_CONFIG_2_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 3,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_3_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 4,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_4_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 3,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS4BJ_CHANNEL_CONFIG_3_INSCS_INGBRS_DUMMY",
+                        "PT_WS4BJ_CHANNEL_CONFIG_3_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 5,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_5_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 6,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_6_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 4,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS4BJ_CHANNEL_CONFIG_4_INSCS_INGBRS_DUMMY",
+                        "PT_WS4BJ_CHANNEL_CONFIG_4_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 7,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_7_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 8,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS4BJ_CHANNEL_8_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_ES4R",
+            "name": "INet Energiesensor 4K Modul REG",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Energy sensor, 4-gang DRA",
+                "articleNo": "5473 00",
+                "expirationID": "",
+                "articleGroupID": "AG_SENSORS",
+                "releaseDate": {
+                    "day": 23,
+                    "month": 6,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_RMD",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F19",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_ES4R_INFO_ACTIVE_ENERGY_RESETABLE"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_1F19",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_ES4R_INFO_ACTIVE_ENERGY_RESETABLE"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 3,
+                            "channelTypeID": "CT_1F19",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_ES4R_INFO_ACTIVE_ENERGY_RESETABLE"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 4,
+                            "channelTypeID": "CT_1F19",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_ES4R_INFO_ACTIVE_ENERGY_RESETABLE"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_RPZS",
+            "name": "eNet Repeater ZS",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Repeater intermediate plug",
+                "articleNo": "5321 02",
+                "expirationID": "",
+                "articleGroupID": "AG_SYSTEM_DEVICES",
+                "releaseDate": {
+                    "day": 23,
+                    "month": 6,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_ADAPTER_PLUG",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F20",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_1F06",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_TADO",
+            "name": "tado°",
+            "sleepModeSupported": false,
+            "maxLinkResources": 0,
+            "metaData": {
+                "manufacturerID": "5070",
+                "name": "tado°",
+                "articleNo": "0466774584778",
+                "expirationID": "",
+                "articleGroupID": "AG_ACTUATORS",
+                "releaseDate": {
+                    "day": 20,
+                    "month": 6,
+                    "year": 2017
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_NONE",
+                "powerSupplyTypeID": "PST_LOW_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_TADO",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 3,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 4,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 5,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 6,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 7,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 8,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 10,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 11,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 12,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 13,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 14,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 15,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 16,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 17,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 18,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 19,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 20,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 21,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 22,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 23,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 24,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 25,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_WS3BG",
+            "name": "INet Wandsender 3K Batt G",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Wall transmitter, 3-gang System 55",
+                "articleNo": "5333 xx",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 21,
+                    "month": 1,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_WMT",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS3BG_CHANNEL_CONFIG_1_INSCS_INGBRS_DUMMY",
+                        "PT_WS3BG_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BG_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BG_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 2,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS3BG_CHANNEL_CONFIG_2_INSCS_INGBRS_DUMMY",
+                        "PT_WS3BG_CHANNEL_CONFIG_2_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 3,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BG_CHANNEL_3_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 4,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BG_CHANNEL_4_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 3,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS3BG_CHANNEL_CONFIG_3_INSCS_INGBRS_DUMMY",
+                        "PT_WS3BG_CHANNEL_CONFIG_3_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 5,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BG_CHANNEL_5_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 6,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS3BG_CHANNEL_6_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_WS1BG",
+            "name": "INet Wandsender 1K Batt G",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Wall transmitter, 1-gang System 55",
+                "articleNo": "5331 xx",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 21,
+                    "month": 1,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_WMT",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_WS1BG_CHANNEL_CONFIG_1_INSCS_INGBRS_DUMMY",
+                        "PT_WS1BG_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS1BG_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_WS1BG_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_US2M",
+            "name": "INet Universalsender 2K mini23",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Universal transmitter, 2-gang Mini",
+                "articleNo": "5453 00",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 26,
+                    "month": 2,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_MINI",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 3,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_US2M_CHANNEL_CONFIG_1_OPERATION_MODE",
+                        "PT_US2M_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_US2M_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_US2M_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_HS4",
+            "name": "INet Handsender 4K",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Remote control, 4-gang",
+                "articleNo": "5354 10",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 21,
+                    "month": 1,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_HHT",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_HS4_CHANNEL_CONFIG_1_INSCS_INGBRS_DUMMY",
+                        "PT_HS4_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_HS4_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_HS4_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 2,
+                    "deviceParameterTypeIDs": [
+                        "PT_HS4_CHANNEL_CONFIG_2_INSCS_INGBRS_DUMMY",
+                        "PT_HS4_CHANNEL_CONFIG_2_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 3,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_HS4_CHANNEL_3_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 4,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_HS4_CHANNEL_4_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 3,
+                    "deviceParameterTypeIDs": [
+                        "PT_HS4_CHANNEL_CONFIG_3_INSCS_INGBRS_DUMMY",
+                        "PT_HS4_CHANNEL_CONFIG_3_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 5,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_HS4_CHANNEL_5_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 6,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_HS4_CHANNEL_6_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 4,
+                    "deviceParameterTypeIDs": [
+                        "PT_HS4_CHANNEL_CONFIG_4_INSCS_INGBRS_DUMMY",
+                        "PT_HS4_CHANNEL_CONFIG_4_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 7,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_HS4_CHANNEL_7_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 8,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_HS4_CHANNEL_8_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_SENSIQ",
+            "name": "sensIQ eNet",
+            "sleepModeSupported": false,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "142",
+                "name": "sensIQ eNet",
+                "articleNo": "0204xx",
+                "expirationID": "",
+                "articleGroupID": "AG_MOTION_DETECTORS",
+                "releaseDate": {
+                    "day": 14,
+                    "month": 9,
+                    "year": 2015
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_NONE",
+                "powerSupplyTypeID": "PST_MAINS_VOLTAGE",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F1B",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SENSIQ_CHANNEL_1_INMOVS.PIR_SENS[0]",
+                                "PT_SENSIQ_CHANNEL_1_INMOVS.OBSP",
+                                "PT_SENSIQ_CHANNEL_1_INMOVS.ITOD"
+                            ],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_1F08",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_SENSIQ_CHANNEL_2_INSAv2.ITOD",
+                                "PT_SENSIQ_CHANNEL_2_INSAv2.LAM",
+                                "PT_SENSIQ_CHANNEL_2_INSAv2.MOE",
+                                "PT_SENSIQ_CHANNEL_2_INSAv2.APPLICATION_MODE_DUMMY",
+                                "PT_SENSIQ_CHANNEL_2_INFO_ACTIVE_COUNTER_RESETABLE_1"
+                            ],
+                            "dependencyExists": false
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "DVT_HS2",
+            "name": "INet Handsender 2K",
+            "sleepModeSupported": true,
+            "maxLinkResources": 250,
+            "metaData": {
+                "manufacturerID": "8",
+                "name": "Remote control, 2-gang",
+                "articleNo": "5352 10",
+                "expirationID": "",
+                "articleGroupID": "AG_SENDERS",
+                "releaseDate": {
+                    "day": 21,
+                    "month": 1,
+                    "year": 2014
+                },
+                "designTypeID": "DST_COMPACT",
+                "subDesignTypeID": "SDST_HHT",
+                "powerSupplyTypeID": "PST_BATTERY",
+                "docManual": "",
+                "docTenderSpec": "",
+                "docCeDeclaration": "",
+                "docPrices": ""
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 9,
+                            "channelTypeID": "CT_1F15",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        },
+                        {
+                            "no": 255,
+                            "channelTypeID": "CT_DEVICE",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [],
+                            "dependencyExists": false
+                        }
+                    ]
+                },
+                {
+                    "no": 1,
+                    "deviceParameterTypeIDs": [
+                        "PT_HS2_CHANNEL_CONFIG_1_INSCS_INGBRS_DUMMY",
+                        "PT_HS2_CHANNEL_CONFIG_1_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 1,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_HS2_CHANNEL_1_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 2,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_HS2_CHANNEL_2_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                },
+                {
+                    "no": 2,
+                    "deviceParameterTypeIDs": [
+                        "PT_HS2_CHANNEL_CONFIG_2_INSCS_INGBRS_DUMMY",
+                        "PT_HS2_CHANNEL_CONFIG_2_SCENE_MODE_DUMMY"
+                    ],
+                    "deviceChannelTypes": [
+                        {
+                            "no": 3,
+                            "channelTypeID": "CT_1F11",
+                            "writeProtected": false,
+                            "active": true,
+                            "deviceParameterTypeIDs": [
+                                "PT_HS2_CHANNEL_3_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        },
+                        {
+                            "no": 4,
+                            "channelTypeID": "CT_DISABLED",
+                            "writeProtected": false,
+                            "active": false,
+                            "deviceParameterTypeIDs": [
+                                "PT_HS2_CHANNEL_4_ACTUAL_SCENE_NUMBER"
+                            ],
+                            "dependencyExists": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "IBOX",
+            "name": "IBOX",
+            "sleepModeSupported": false,
+            "maxLinkResources": 0,
+            "metaData": {
+                "manufacturerID": null,
+                "name": null,
+                "articleNo": null,
+                "expirationID": null,
+                "articleGroupID": null,
+                "releaseDate": null,
+                "designTypeID": null,
+                "subDesignTypeID": null,
+                "powerSupplyTypeID": null,
+                "docManual": null,
+                "docTenderSpec": null,
+                "docCeDeclaration": null,
+                "docPrices": null
+            },
+            "deviceChannelConfigurationGroupTypes": [
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": []
+                },
+                {
+                    "no": 0,
+                    "deviceParameterTypeIDs": [],
+                    "deviceChannelTypes": []
+                }
+            ]
+        }
+    ]
+}

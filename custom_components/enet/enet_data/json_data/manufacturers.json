@@ -1,0 +1,32 @@
+{
+  "manufacturers": [
+    {
+      "id": "5070",
+      "name": "TADO",
+      "emailAddress": null,
+      "webAddress": null,
+      "updateServerAddress": null
+    },
+    {
+      "id": "8",
+      "name": "GIRA",
+      "emailAddress": "info@gira.de",
+      "webAddress": "http://www.gira.de/service/download/index.html",
+      "updateServerAddress": "www.gira.de/deviceupdate"
+    },
+    {
+      "id": "4",
+      "name": "JUNG",
+      "emailAddress": "info@jung.de",
+      "webAddress": "http://www.jung.de/584/downloads/",
+      "updateServerAddress": "www.jung.de/deviceupdate"
+    },
+    {
+      "id": "142",
+      "name": "STEINEL",
+      "emailAddress": null,
+      "webAddress": null,
+      "updateServerAddress": null
+    }
+  ]
+}
