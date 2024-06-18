@@ -86,7 +86,11 @@ class EnetCoordinator(DataUpdateCoordinator):
         while True:
             event = await self.hub.get_events()
             if event:
-                self.handle_event(event)
+                try:
+                    self.handle_event(event)
+                except Exception as e:
+                    log.exception("Failed to handle event: %s", event)
+
 
     def handle_event(self, event_data):
         """Handle events from Enet Server. Either update value of actuator or
