@@ -2,10 +2,10 @@
 from functools import reduce
 from operator import getitem
 
-def getitem_from_dict(dataDict, mapList):
+def getitem_from_dict(data_dict, map_list):
     """Iterate nested dictionary"""
     try:
-        return reduce(getitem, mapList, dataDict)
+        return reduce(getitem, map_list, data_dict)
     except TypeError:
         return None
     except KeyError:

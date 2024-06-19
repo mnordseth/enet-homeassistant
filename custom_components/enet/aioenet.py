@@ -2,9 +2,13 @@
 
 import logging
 import functools
+
 from typing import Any, Dict, Union
-import aiohttp
+
 import asyncio
+import aiohttp
+
+
 
 from homeassistant.const import (
     ATTR_IDENTIFIERS,
@@ -78,6 +82,7 @@ class EnetClient:
         self.devices = []
 
     async def initialize(self):
+        """Initialize the client"""
         await self.simple_login()
         self.devices = await self.get_devices()
         await self.initialize_events()
@@ -94,6 +99,7 @@ class EnetClient:
         return exc_type
 
     async def initialize_events(self):
+        """Initialize events for all output functions"""
         log.debug("Setting up event listners")
         for device in self.devices:
             func_uids = device.get_function_uids_for_event()
@@ -223,11 +229,10 @@ class EnetClient:
         creation and modification dates and other general information
         about the server and its configuration."""
         if self._projectuid is None:
-            result = await self.get_project()
+            await self.get_project()
 
         params = {"projectUID": self._projectuid}
-        result = await self.request(URL_VIZ, "getProjectInformation", params)
-        return result
+        return await self.request(URL_VIZ, "getProjectInformation", params)
 
     def get_account(self):
         """Return the current logged in user account"""
@@ -250,7 +255,7 @@ class EnetClient:
             device = create_device(self, raw_device)
             if not device:
                 continue
-            elif device.serial_number == "" or device.serial_number == None:
+            elif device.serial_number == "" or device.serial_number is None:
                 # Ignore catalog devices, since they are just placeholders until devices are installed (missing serial number)
                 log.info("Ignoring catalog device %s", device.name)
                 continue
@@ -328,7 +333,6 @@ class EnetClient:
 
     async def setup_event_subscription(self, func_uid):
         """Subscribe for outputDeviceFunction events"""
-        # func_uid = "83ec3031-f8f0-4972-a92b-2df300000c6a"  # peis dimmer
         result = await self.request(
             URL_VIZ,
             "registerEventOutputDeviceFunctionCalled",
@@ -416,6 +420,7 @@ class Device:
                 )
 
     def get_channel_use_type(self, device_channel):
+        """Determine if the channel is an actuator or a sensor"""
         channel_type_id = device_channel["channelTypeID"]
         channel_type_config = CHANNEL_TYPE_CONFIGURATION.get(channel_type_id)
         if channel_type_id in CHANNEL_TYPES_IGNORED:
@@ -435,6 +440,7 @@ class Device:
         return ChannelUseType.UNSUPPORTED
 
     def get_device_info(self):
+        """Return device info"""
         return DeviceInfo(
             {
                 ATTR_IDENTIFIERS: {(DOMAIN, self.uid)},
@@ -488,7 +494,7 @@ class DeviceChannel:
         device_output_function_list = self._get_mapped_type_ids("outputDeviceFunctions")
         for output_function in self.channel["outputDeviceFunctions"]:
             if output_function.get("typeID") in device_output_function_list.keys():
-                if output_function.get("active", False) == True:
+                if output_function.get("active", False) is True:
                     type_name = enet_data.get_output_device_function_name(output_function.get("typeID"))
                     name = f"Channel {self.name} - {type_name}"
 
@@ -504,7 +510,7 @@ class DeviceChannel:
         device_input_function_list = self._get_mapped_type_ids("inputDeviceFunctions")
         for input_function in self.channel["inputDeviceFunctions"]:
             if input_function.get("typeID") in device_input_function_list.keys():
-                if input_function.get("active", False) == True:
+                if input_function.get("active", False) is True:
                     type_name = enet_data.get_input_device_function_name(input_function.get("typeID"))
                     input_template = enet_data.get_value_template_from_input_device_function(input_function.get("typeID"))
                     name = f"Channel {self.name} - {type_name}"
@@ -537,7 +543,7 @@ class DeviceChannel:
         device_parameter_list = self._get_mapped_type_ids("deviceParameters")
         for device_parameter in self.channel["deviceParameters"]:
             if device_parameter["typeID"] in device_parameter_list.keys():
-                if device_parameter.get("active", False) == True:
+                if device_parameter.get("active", False) is True:
                     type_name = enet_data.get_device_parameter_name(device_parameter.get("typeID"))
                     parameter_template = enet_data.get_value_template_from_device_parameter (device_parameter.get("typeID"))
                     name = f"Parameter {self.name} - {type_name}"
@@ -567,8 +573,8 @@ class DeviceChannel:
 
         return None
 
-    def _get_current_value_from_dict(self, function_object) -> dict:
-        current_values = getitem_from_dict(function_object, ["currentValues"]);
+    def _get_current_value_from_dict(self, function_object) -> Union[dict, list]:
+        current_values = getitem_from_dict(function_object, ["currentValues"])
         if len(current_values) == 1:
             return self._parse_value(current_values[0])
         else:
@@ -596,9 +602,11 @@ class DeviceChannel:
                 self.active = True
 
     def get_channel_configuration_entry(self, config_group: str, config_param: ChannelTypeFunctionName) -> str:
+        """Return the configuration for a specific config parameter"""
         return getitem_from_dict(CHANNEL_TYPE_CONFIGURATION, [self.channel_type, config_group, config_param])
 
     def update_values(self, function_uid: str, values: Dict) -> None:
+        """Update current values with data from event"""
         if len(values) != 1:
             log.warning(
                 "Event for device '%s' has multiple values: %s, expected 1.",
@@ -649,6 +657,7 @@ class ActuatorChannel(DeviceChannel):
         log.debug("Enet actuator channel type %s initialized", self.channel_type)
 
     def get_operation_mode(self):
+        """Return the operation mode parameter of the actuator"""
         return self._get_parameter_value(ChannelTypeFunctionName.OPERATION_MODE)
 
     async def get_value(self, channel_function_name: ChannelTypeFunctionName) -> Any:

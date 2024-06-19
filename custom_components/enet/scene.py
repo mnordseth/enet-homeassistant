@@ -36,6 +36,7 @@ class EnetSceneEntity(SceneEntity):
 
     @property
     def name(self):
+        """Return the name of the scene."""
         name = self._name
         if name.startswith("[libenet") and "]" in name:
             name = name.split("]", 1)[-1]
@@ -43,6 +44,7 @@ class EnetSceneEntity(SceneEntity):
 
     @property
     def unique_id(self):
+        """Return the unique id of the scene."""
         return self.uid
 
     async def async_activate(self, **kwargs):

@@ -1,3 +1,4 @@
+""" Handle diagnostics for enet smart home."""
 from __future__ import annotations
 
 from typing import Any
@@ -14,5 +15,5 @@ async def async_get_config_entry_diagnostics(
     hub = hass.data[DOMAIN][config_entry.entry_id]
     diagnostics = {"config_entry": config_entry.as_dict(),
                    "enet_data":hub._raw_json}
-    
+
     return diagnostics

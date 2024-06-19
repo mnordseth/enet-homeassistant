@@ -1,19 +1,10 @@
 "Representation of a Enet device in Home Assistant"
 
 import logging
-from homeassistant.const import (
-    ATTR_IDENTIFIERS,
-    ATTR_MANUFACTURER,
-    ATTR_MODEL,
-    ATTR_NAME,
-    ATTR_SERIAL_NUMBER,
-    ATTR_SUGGESTED_AREA,
-    ATTR_VIA_DEVICE,
-)
+
 from homeassistant.core import callback
 from homeassistant.helpers import device_registry
 from .aioenet import ActuatorChannel
-from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 

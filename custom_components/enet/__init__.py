@@ -38,8 +38,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     hass.data.setdefault(DOMAIN, {})
     hub = EnetClient(entry.data["url"], entry.data["username"], entry.data["password"])
-    hub.coordinator = EnetCoordinator(hass, hub)
-    hub.coordinator.config_entry = entry
+    hub.coordinator = EnetCoordinator(hass, hub, entry)
 
     try:
         await hub.simple_login()
@@ -75,10 +74,11 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 class EnetCoordinator(DataUpdateCoordinator):
     """Enet Smart Home coordinator responsible for subscribing to and handling events"""
 
-    def __init__(self, hass: HomeAssistant, hub: EnetClient) -> None:
+    def __init__(self, hass: HomeAssistant, hub: EnetClient, entry: ConfigEntry) -> None:
         """Initialize the coordinator."""
         self.hub = hub
         self.hass = hass
+        self.config_entry = entry
         super().__init__(
             hass,
             _LOGGER,

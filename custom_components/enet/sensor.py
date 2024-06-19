@@ -9,12 +9,12 @@ from homeassistant.components.sensor import (
 )
 
 from homeassistant.const import LIGHT_LUX, PERCENTAGE, EntityCategory
-from .entity import EnetBaseEntity
-from .aioenet import ActuatorChannel, SensorChannel
-from .const import DOMAIN
-from .enet_data.channel_mapping import CHANNEL_TYPE_CONFIGURATION
+
 from custom_components.enet.enet_data.enums import ChannelApplicationMode, ChannelTypeFunctionName
-from custom_components.enet.enet_data.utils import getitem_from_dict
+
+from .entity import EnetBaseEntity
+from .aioenet import SensorChannel
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -58,6 +58,7 @@ class EnetLightLevelSensor(EnetBaseEntity, SensorEntity):
         return self.channel.get_current_value(ChannelTypeFunctionName.BRIGHTNESS)
 
     def update_value(self, value: int) -> None:
+        """Update the value of the sensor."""
         self.channel.set_current_value(ChannelTypeFunctionName.BRIGHTNESS, value)
 
     async def async_added_to_hass(self):

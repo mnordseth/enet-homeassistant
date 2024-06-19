@@ -1,4 +1,7 @@
+"""Constants for enet_data."""
+
 CHANNEL_TYPES_IGNORED = (
+
     "CT_DISABLED", # CH_Disabled
     "CT_DEVICE", # CH_IN_Device_Settings
     "CT_1F01_DUMMY", # CH_IN_Switching_Actuator (Dummy)

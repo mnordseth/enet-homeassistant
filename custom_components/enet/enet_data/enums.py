@@ -1,7 +1,10 @@
-from enum import StrEnum, IntEnum, unique
+"""Enums for enet_data values"""
+
+from enum import StrEnum, unique
 
 @unique
 class ChannelTypeUseType(StrEnum):
+    """The use types of a channel type."""
     ACTUATOR = "UT_ACTUATOR"
     NONE = "UT_NONE"
     SENSOR = "UT_SENSOR"
@@ -9,6 +12,7 @@ class ChannelTypeUseType(StrEnum):
 
 @unique
 class ChannelTypeSubSectionType(StrEnum):
+    """The sub section types of a channel type."""
     BLINDS = "SST_BLINDS"
     HVAC = "SST_HVAC" # Tado
     LIGHT = "SST_LIGHT"
@@ -16,6 +20,7 @@ class ChannelTypeSubSectionType(StrEnum):
 
 @unique
 class ChannelApplicationMode(StrEnum):
+    """The application modes of a channel."""
     BLINDS = "BLINDS"
     ENERGY = "ENERGY"
     HVAC = "HVAC" # Tado
@@ -31,6 +36,7 @@ class ChannelApplicationMode(StrEnum):
 
 @unique
 class DeviceTypeArticleGroup(StrEnum):
+    """The article groups of a device type."""
     ACTUATOR = "AG_ACTUATORS"
     COVER = "AG_COVERS"
     MOTION_DETECTOR = "AG_MOTION_DETECTORS"
@@ -40,6 +46,7 @@ class DeviceTypeArticleGroup(StrEnum):
 
 @unique
 class ChannelTypeFunctionName(StrEnum):
+    """The function names of a channel type."""
     APPLICATION_MODE = "applicationMode"
     APPLICATION_MODE_SWITCH = "applicationModeSwitch"
     ANTI_LOCKOUT_STATE = "antiLockoutState"

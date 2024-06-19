@@ -10,6 +10,7 @@ from .utils import getitem_from_dict
 _LOGGER = logging.getLogger(__name__)
 
 class EnetData:
+    """Class to access static information about the Enet Smart Home."""
     @property
     def channel_types(self) -> Dict[str, Dict]:
         """Returns the channel types dictionary."""
@@ -78,6 +79,7 @@ class EnetData:
         return self._channel_types.get(type_id, {})
 
     def get_channel_meta_data_from_channel_type(self, type_id: str) -> Dict:
+        """Returns the channel meta data dictionary for the given ID."""
         channel_type = self.get_channel_type_by_id(type_id)
         return getitem_from_dict(channel_type, ["metaData"])
 
@@ -86,10 +88,12 @@ class EnetData:
         return self._input_device_function_types.get(type_id, {})
 
     def get_value_template_from_input_device_function(self, type_id: str) -> list:
+        """Returns the value template list for the given ID."""
         function_type = self.get_input_device_function_type_by_id(type_id)
         return self.get_value_template_from_value_container(function_type.get("valueTypeContainerTypeID"))
 
     def get_input_device_function_name(self, type_id: str) -> str:
+        """Returns the input device function name for the given ID."""
         return self.get_input_device_function_type_by_id(type_id).get("name", "Unknown")
 
     def get_output_device_function_type_by_id(self, type_id: str) -> Dict:
@@ -97,6 +101,7 @@ class EnetData:
         return self._output_device_function_types.get(type_id, {})
 
     def get_output_device_function_name(self, type_id: str) -> str:
+        """Returns the output device function name for the given ID."""
         return self.get_output_device_function_type_by_id(type_id).get("name", "Unknown")
 
     def get_device_parameter_type_by_id(self, type_id: str) -> Dict:
@@ -104,9 +109,11 @@ class EnetData:
         return self._device_parameter_types.get(type_id, {})
 
     def get_device_parameter_name(self, type_id: str) -> str:
+        """Returns the device parameter name for the given ID."""
         return self.get_device_parameter_type_by_id(type_id).get("name", "Unknown")
 
     def get_value_template_from_device_parameter(self, type_id: str) -> list:
+        """Returns the value template list for the given ID."""
         function_type = self.get_device_parameter_type_by_id(type_id)
         return self.get_value_template_from_value_container(function_type.get("valueTypeContainerTypeID"))
 
@@ -115,6 +122,7 @@ class EnetData:
         return self._device_types.get(type_id, {})
 
     def get_device_name_from_device_type_id(self, type_id: str) -> str:
+        """Returns the device name for the given device type ID."""
         device_type = self.get_device_type_by_id(type_id)
         return getitem_from_dict(device_type, ["metaData", "name"])
 
@@ -138,6 +146,7 @@ class EnetData:
         return self._value_type_container_types.get(type_id, {})
 
     def get_value_template_from_value_container(self, type_id: str) -> list:
+        """Returns the value template list for the given value type container ID."""
         value_container = self.get_value_type_container_type_by_id(type_id)
 
         value_template = []
@@ -152,6 +161,7 @@ class EnetData:
         return self._value_types.get(type_id, {})
 
     def get_value_template_from_value_type(self, type_id: str) -> Dict:
+        """Returns the value template dictionary for the given value type ID."""
         value_type = self.get_value_type_by_id(type_id)
         return {
             "value": getitem_from_dict(value_type, ["data", "defaultValue"]),
