@@ -225,7 +225,7 @@ class EnetClient:
             device_uids = list(device_locations.keys())
         params = {
             "deviceUIDs": device_uids,
-            "filter": ".+\\\\.(SCV1|SCV2|SNA|PSN)\\\\[(.|1.|2.|3.)\\\\]+",
+            "filter": ".+\\.(SCV1|SCV2|SNA|PSN)\\[(.|1.|2.|3.)\\]+",
         }
         result = await self.request(URL_VIZ, "getDevicesWithParameterFilter", params)
         raw_devices = result["devices"]
