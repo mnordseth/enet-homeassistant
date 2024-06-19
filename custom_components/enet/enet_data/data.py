@@ -77,21 +77,46 @@ class EnetData:
         """Returns the channel type dictionary for the given ID."""
         return self._channel_types.get(type_id, {})
 
+    def get_channel_meta_data_from_channel_type(self, type_id: str) -> Dict:
+        channel_type = self.get_channel_type_by_id(type_id)
+        return getitem_from_dict(channel_type, ["metaData"])
+
     def get_input_device_function_type_by_id(self, type_id: str) -> Dict:
         """Returns the input device function type dictionary for the given ID."""
         return self._input_device_function_types.get(type_id, {})
+
+    def get_value_template_from_input_device_function(self, type_id: str) -> list:
+        function_type = self.get_input_device_function_type_by_id(type_id)
+        return self.get_value_template_from_value_container(function_type.get("valueTypeContainerTypeID"))
+
+    def get_input_device_function_name(self, type_id: str) -> str:
+        return self.get_input_device_function_type_by_id(type_id).get("name", "Unknown")
 
     def get_output_device_function_type_by_id(self, type_id: str) -> Dict:
         """Returns the output device function type dictionary for the given ID."""
         return self._output_device_function_types.get(type_id, {})
 
+    def get_output_device_function_name(self, type_id: str) -> str:
+        return self.get_output_device_function_type_by_id(type_id).get("name", "Unknown")
+
     def get_device_parameter_type_by_id(self, type_id: str) -> Dict:
         """Returns the device parameter type dictionary for the given ID."""
         return self._device_parameter_types.get(type_id, {})
 
+    def get_device_parameter_name(self, type_id: str) -> str:
+        return self.get_device_parameter_type_by_id(type_id).get("name", "Unknown")
+
+    def get_value_template_from_device_parameter(self, type_id: str) -> list:
+        function_type = self.get_device_parameter_type_by_id(type_id)
+        return self.get_value_template_from_value_container(function_type.get("valueTypeContainerTypeID"))
+
     def get_device_type_by_id(self, type_id: str) -> Dict:
         """Returns the device type dictionary for the given ID."""
         return self._device_types.get(type_id, {})
+
+    def get_device_name_from_device_type_id(self, type_id: str) -> str:
+        device_type = self.get_device_type_by_id(type_id)
+        return getitem_from_dict(device_type, ["metaData", "name"])
 
     def get_manufacturer_by_id(self, manufacturer_id: str) -> Dict:
         """Returns the manufacturer dictionary for the given ID."""
@@ -103,13 +128,36 @@ class EnetData:
         manufacturer_id = getitem_from_dict(device_type, ["metaData", "manufacturerID"])
         return self.get_manufacturer_by_id(manufacturer_id)
 
+    def get_manufacturer_name_from_device_type_id(self, type_id: str) -> str:
+        """Returns the manufacturer dictionary for the given device type ID."""
+        manufacturer = self.get_manufacturer_from_device_type_id(type_id)
+        return manufacturer.get("name")
+
     def get_value_type_container_type_by_id(self, type_id: str) -> Dict:
         """Returns the value type container type dictionary for the given ID."""
         return self._value_type_container_types.get(type_id, {})
 
+    def get_value_template_from_value_container(self, type_id: str) -> list:
+        value_container = self.get_value_type_container_type_by_id(type_id)
+
+        value_template = []
+
+        for value_type_id in value_container.get("valueTypeIDs", []):
+            value_template.append(self.get_value_template_from_value_type(value_type_id))
+
+        return value_template
+
     def get_value_type_by_id(self, type_id: str) -> Dict:
         """Returns the value type dictionary for the given ID."""
         return self._value_types.get(type_id, {})
+
+    def get_value_template_from_value_type(self, type_id: str) -> Dict:
+        value_type = self.get_value_type_by_id(type_id)
+        return {
+            "value": getitem_from_dict(value_type, ["data", "defaultValue"]),
+            "valueTypeID": value_type.get("id"),
+        }
+
 
     async def import_channel_types(self) -> None:
         """Imports channel types from a JSON file and updates the internal dictionary."""

@@ -13,7 +13,6 @@ from homeassistant.const import (
 from homeassistant.core import callback
 from homeassistant.helpers import device_registry
 from .aioenet import ActuatorChannel
-from . import enet_devices
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -29,16 +28,7 @@ async def async_setup_devices(coordinator):
     def add_device(enet_device):
         """Register a Enet device in device registry."""
         _LOGGER.debug("add_device() %s", enet_device)
-        device_info = enet_devices.device_info.get(enet_device.device_type)
-        params = {
-            ATTR_IDENTIFIERS: {(DOMAIN, enet_device.uid)},
-            ATTR_NAME: enet_device.name,
-            ATTR_MODEL: f"{enet_device.device_type} ({device_info.get('description')})",
-            ATTR_MANUFACTURER: device_info.get("manufacturer"),
-            ATTR_SERIAL_NUMBER: enet_device.serial_number,
-            ATTR_SUGGESTED_AREA: enet_device.location.replace("My home:", ""),
-            ATTR_VIA_DEVICE: (DOMAIN, "Enet Controller"),
-        }
+        params = enet_device.get_device_info()
         return dev_reg.async_get_or_create(config_entry_id=entry.entry_id, **params)
 
     # create/update all current devices found in controller

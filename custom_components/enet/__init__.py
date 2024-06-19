@@ -10,11 +10,9 @@ import async_timeout
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import entity
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .aioenet import EnetClient, ActuatorChannel
+from .aioenet import EnetClient, ActuatorChannel, SensorChannel
 from .const import DOMAIN
 from .device import async_setup_devices
 
@@ -129,18 +127,9 @@ class EnetCoordinator(DataUpdateCoordinator):
                     continue
 
                 values = data["values"]
-                if isinstance(device, ActuatorChannel):
-                    if len(values) != 1:
-                        _LOGGER.warning(
-                            "Event for device '%s' has multiple values: %s, expected 1.",
-                            device,
-                            values,
-                        )
-                    for value_spec in values:
-                        value = value_spec["value"]
-                        device.state = value
-                        _LOGGER.debug("Updating value of %s to %s", device, value)
-                        self.async_update_listeners()
+                if isinstance(device, ActuatorChannel) or isinstance(device, SensorChannel):
+                    device.update_values(function_uid, values)
+                    self.async_update_listeners()
                 else:
                     # Decode sensor / button events and forward to hass bus
                     subtype = data["channelNumber"]
@@ -162,8 +151,8 @@ class EnetCoordinator(DataUpdateCoordinator):
                             event_type = EVENT_TYPE_SHORT_RELEASE
 
                     bus_data = {
-                        "device_id": device.hass_device_entry.id,
-                        "unique_id": device.uid,
+                        "device_id": device.device.hass_device_entry.id,
+                        "unique_id": device.device.uid,
                         "type": event_type,
                         "subtype": subtype,
                     }

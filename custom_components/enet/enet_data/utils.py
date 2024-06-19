@@ -4,7 +4,12 @@ from operator import getitem
 
 def getitem_from_dict(dataDict, mapList):
     """Iterate nested dictionary"""
-    return reduce(getitem, mapList, dataDict)
+    try:
+        return reduce(getitem, mapList, dataDict)
+    except TypeError:
+        return None
+    except KeyError:
+        return None
 
 def filter_device_parameter_type_ids(data):
     """Filter device parameter type IDs from device channels."""

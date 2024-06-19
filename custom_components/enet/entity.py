@@ -1,7 +1,6 @@
 """Generic Enet Smart Home Entity Model"""
 import logging
-from homeassistant.helpers.entity import Entity, DeviceInfo
-from . import enet_devices
+from homeassistant.helpers.entity import Entity
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -14,7 +13,7 @@ class EnetBaseEntity(Entity):
         self._name = channel.name
         self.channel = channel
         self.coordinator = coordinator
-        _LOGGER.info("Enet sensor %s", self._name)
+        _LOGGER.info("Enet entity %s", self._name)
 
     @property
     def available(self):
@@ -30,18 +29,7 @@ class EnetBaseEntity(Entity):
 
     @property
     def device_info(self):
-        device_info = enet_devices.device_info.get(self.channel.device.device_type)
-        return DeviceInfo(
-            {
-                "identifiers": {(DOMAIN, self.channel.device.uid)},
-                "name": self.channel.device.name,
-                "manufacturer": device_info.get("manufacturer"),
-                "model": f"{self.channel.device.device_type} ({device_info.get('description')})",
-                "serial_number": self.channel.device.serial_number,
-                "suggested_area": self.channel.device.location.replace("My home:", ""),
-                "via_device": (DOMAIN, "Enet Controller"),
-            }
-        )
+        return self.channel.device.get_device_info()
 
     @property
     def should_poll(self):
