@@ -104,13 +104,13 @@ class EnetCoordinator(DataUpdateCoordinator):
         """
         # _LOGGER.debug("_async_update_data()")
         while True:
-            try:
-                event = await self.hub.get_events()
-                if event:
+            event = await self.hub.get_events()
+            if event:
+                try:
                     self.handle_event(event)
-            except Exception as e:
-                _LOGGER.error("Failed to fetch events: %s", e)
-                raise UpdateFailed from e
+                except Exception as e:
+                    _LOGGER.exception("Failed to handle event: %s (%s)", event, e)
+                    raise UpdateFailed from e
 
     def handle_event(self, event_data: Dict[str, Any]) -> None:
         """Handle events from Enet Server. Either update value of actuator or
