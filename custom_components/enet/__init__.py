@@ -29,7 +29,7 @@ EVENT_TYPE_INITIAL_PRESS = "initial_press"
 EVENT_TYPE_SHORT_RELEASE = "short_release"
 VALUE_TYPE_ROCKER_STATE = "VT_ROCKER_STATE"
 VALUE_TYPE_ROCKER_SWITCH_TIME = "VT_ROCKER_SWITCH_TIME"
-EVENT_ENET = "enet_event"#
+EVENT_ENET = "enet_event"
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
