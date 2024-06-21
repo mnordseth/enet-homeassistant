@@ -25,7 +25,13 @@ from .const import DOMAIN, NAME_ENET_CONTROLLER
 from .enums import ChannelUseType
 from .enet_data.data import enet_data
 from .enet_data.constants import CHANNEL_TYPES_IGNORED
-from .enet_data.enums import ChannelTypeUseType, ChannelTypeSubSectionType, ChannelApplicationMode, ChannelTypeFunctionName
+from .enet_data.enums import (
+    ChannelTypeUseType,
+    ChannelTypeSubSectionType,
+    ChannelApplicationMode,
+    ChannelTypeFunctionName,
+    DeviceBatteryState
+)
 from .enet_data.channel_mapping import CHANNEL_TYPE_CONFIGURATION
 from .enet_data.utils import getitem_from_dict
 
@@ -101,6 +107,7 @@ class EnetClient:
     async def initialize_events(self):
         """Initialize events for all output functions"""
         log.debug("Setting up event listners")
+        await self.setup_event_subscription_battery_state()
         for device in self.devices:
             func_uids = device.get_function_uids_for_event()
             self.function_uid_map.update(func_uids)
@@ -340,6 +347,15 @@ class EnetClient:
         )
         return result
 
+    async def setup_event_subscription_battery_state(self):
+        """Subscribe for batteryStateChanged events"""
+        result = await self.request(
+            URL_VIZ,
+            "registerEventDeviceBatteryStateChanged",
+            None,
+        )
+        return result
+
     async def get_events(self):
         """Poll Enet server for events"""
         try:
@@ -452,6 +468,16 @@ class Device:
                 ATTR_VIA_DEVICE: (DOMAIN, NAME_ENET_CONTROLLER),
             }
         )
+
+    def get_battery_state(self):
+        return self.battery_state
+
+    def update_battery_state(self, battery_state):
+        if battery_state in [state.value for state in DeviceBatteryState]:
+            log.debug("Updating battery state for %s from %s to %s", self.name, self.battery_state, battery_state)
+            self.battery_state = battery_state
+        else:
+            log.warning("Unknown battery state: %s", battery_state)
 
     def get_function_uids_for_event(self):
         """Return a list of function uids we should setup event listeners for"""

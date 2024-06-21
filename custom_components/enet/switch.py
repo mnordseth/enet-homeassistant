@@ -5,7 +5,7 @@ from homeassistant.components.switch import SwitchEntity, SwitchDeviceClass
 
 from custom_components.enet.enet_data.enums import ChannelApplicationMode, ChannelTypeFunctionName
 
-from .entity import EnetBaseEntity
+from .entity import EnetBaseChannelEntity
 from .aioenet import ActuatorChannel
 from .const import DOMAIN
 
@@ -27,7 +27,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     _LOGGER.info("Finished async setup()")
 
 
-class EnetSwitch(EnetBaseEntity, SwitchEntity):
+class EnetSwitch(EnetBaseChannelEntity, SwitchEntity):
     """A representation of a Enet Smart Home switch channel"""
 
     def __init__(self, channel, coordinator):

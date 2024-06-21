@@ -8,11 +8,11 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 
-from homeassistant.const import LIGHT_LUX, PERCENTAGE, EntityCategory
+from homeassistant.const import LIGHT_LUX, EntityCategory
 
-from custom_components.enet.enet_data.enums import ChannelApplicationMode, ChannelTypeFunctionName
+from custom_components.enet.enet_data.enums import ChannelApplicationMode, ChannelTypeFunctionName, DeviceBatteryState
 
-from .entity import EnetBaseEntity
+from .entity import EnetBaseChannelEntity, EnetBaseDeviceEntity
 from .aioenet import SensorChannel
 from .const import DOMAIN
 
@@ -30,6 +30,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
     ]
 
     for device in hub.devices:
+        if device.get_battery_state() is not None:
+            async_add_entities([EnetBatterySensor(device, hub.coordinator)])
         for channel in device.channels:
             if (
                 isinstance(channel, SensorChannel)
@@ -45,7 +47,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     _LOGGER.info("Finished async setup(sensor)")
 
 
-class EnetLightLevelSensor(EnetBaseEntity, SensorEntity):
+class EnetLightLevelSensor(EnetBaseChannelEntity, SensorEntity):
     """Representation of a Hue LightLevel (illuminance) sensor."""
 
     _attr_native_unit_of_measurement = LIGHT_LUX
@@ -68,20 +70,21 @@ class EnetLightLevelSensor(EnetBaseEntity, SensorEntity):
         )
 
 
-class EnetBatterySensor(EnetBaseEntity, SensorEntity):
+class EnetBatterySensor(EnetBaseDeviceEntity, SensorEntity):
     """Representation of a Enet Battery sensor."""
 
-    _attr_native_unit_of_measurement = PERCENTAGE
-    _attr_device_class = SensorDeviceClass.BATTERY
+    _attr_device_class = SensorDeviceClass.ENUM
     _attr_entity_category = EntityCategory.DIAGNOSTIC
-    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_options = [state.value for state in DeviceBatteryState]
 
     @property
     def native_value(self) -> int:
         """Return the value reported by the sensor."""
-        return None  # self.resource.power_state.battery_level
+        return self.device.get_battery_state()
 
-    @property
-    def extra_state_attributes(self):
-        """Return the optional state attributes."""
-        return None  # {"battery_state": self.resource.power_state.battery_state.value}
+    async def async_added_to_hass(self):
+        """Subscribe entity to updates when added to hass."""
+        self.async_on_remove(
+            self.coordinator.async_add_listener(self.async_write_ha_state)
+        )
+
