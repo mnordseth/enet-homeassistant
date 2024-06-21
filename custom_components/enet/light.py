@@ -19,7 +19,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
     hub = hass.data[DOMAIN][entry.entry_id]
 
     supported_app_modes = [
-        ChannelApplicationMode.SWITCHING,
         ChannelApplicationMode.LIGHT_SWITCHING,
         ChannelApplicationMode.LIGHT_DIMMING,
     ]

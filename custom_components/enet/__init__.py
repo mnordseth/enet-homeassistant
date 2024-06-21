@@ -23,6 +23,7 @@ PLATFORMS: list[Platform] = [
     Platform.SCENE,
     Platform.COVER,
     Platform.SENSOR,
+    Platform.SWITCH
 ]
 
 EVENT_TYPE_CHANNELS = [
