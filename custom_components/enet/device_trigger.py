@@ -5,28 +5,25 @@ from typing import Any
 import logging
 import voluptuous as vol
 
-from homeassistant.components.automation import (
-    AutomationActionType,
-    AutomationTriggerInfo,
-)
 from homeassistant.components.device_automation import DEVICE_TRIGGER_BASE_SCHEMA
 from homeassistant.components.homeassistant.triggers import event as event_trigger
 from homeassistant.const import CONF_DEVICE_ID, CONF_DOMAIN, CONF_PLATFORM, CONF_TYPE
 
 
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant
+from homeassistant.helpers.trigger import TriggerActionType, TriggerInfo
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers import device_registry
 
-from .const import DOMAIN, ATTR_ENET_EVENT, CONF_UNIQUE_ID, CONF_SUBTYPE
+from .const import DOMAIN, ATTR_ENET_EVENT, EVENT_TYPE_INITIAL_PRESS, EVENT_TYPE_SHORT_RELEASE, CONF_UNIQUE_ID, CONF_SUBTYPE
 from .aioenet import SensorChannel
 
 _LOGGER = logging.getLogger(__name__)
 
-BUTTON_EVENT_TYPES = (
-    "initial_press",  # ButtonEvent.INITIAL_PRESS,
-    #    "short_release",  # ButtonEvent.SHORT_RELEASE,
-)
+BUTTON_EVENT_TYPES = {
+    EVENT_TYPE_INITIAL_PRESS,  # ButtonEvent.INITIAL_PRESS,
+    #    EVENT_TYPE_SHORT_RELEASE,  # ButtonEvent.SHORT_RELEASE,
+}
 
 TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
     {
@@ -35,7 +32,6 @@ TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
         vol.Required(CONF_UNIQUE_ID): vol.Union(int, str),
     }
 )
-
 
 async def async_get_triggers(
     hass: HomeAssistant, device_id: str
@@ -48,7 +44,7 @@ async def async_get_triggers(
 
     enet_device_id = get_enet_device_id(device_entry)
     enet_device = next((d for d in hub.devices if d.uid == enet_device_id), None)
-    _LOGGER.debug("Enet device: %s", enet_device)
+    _LOGGER.debug("Enet Trigger device: %s", enet_device)
 
     # if not isinstance(enet_device, Sensor):
     if not any([isinstance(c, SensorChannel) for c in enet_device.channels]):
@@ -60,8 +56,8 @@ async def async_get_triggers(
         number = channel.channel["no"]
         channel_numbers.append(number)
         # If rocker switch, also add channel number + 1
-        for output_function in channel.output_functions:
-            if output_function["typeID"] in ["FT_INGBRS.GBR"]:
+        for output_function in channel.output_functions.values():
+            if output_function.get("typeID") in ["FT_INGBRS.GBR"]:
                 channel_numbers.append(number + 1)
 
     for channel_no in channel_numbers:
@@ -83,8 +79,8 @@ async def async_get_triggers(
 async def async_attach_trigger(
     hass: HomeAssistant,
     config: ConfigType,
-    action: AutomationActionType,
-    automation_info: AutomationTriggerInfo,
+    action: TriggerActionType,
+    trigger_info: TriggerInfo,
 ) -> CALLBACK_TYPE:
     """Attach a trigger."""
     event_config = event_trigger.TRIGGER_SCHEMA(
@@ -100,7 +96,7 @@ async def async_attach_trigger(
     )
     _LOGGER.debug("Attaching trigger: %s", event_config)
     return await event_trigger.async_attach_trigger(
-        hass, event_config, action, automation_info, platform_type="device"
+        hass, event_config, action, trigger_info, platform_type="device"
     )
 
 
