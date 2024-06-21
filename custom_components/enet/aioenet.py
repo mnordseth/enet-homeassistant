@@ -522,10 +522,11 @@ class DeviceChannel:
                         "template": input_template,
                     }
 
-    def _get_output_function_by_uid(self, uid: str) -> dict:
+    def _get_output_function_by_uid(self, uid: str) -> Union[dict, None]:
         for output_function in self.output_functions.values():
             if output_function["uid"] == uid:
                 return output_function
+        return None
 
     def get_function_uids_for_event(self) -> dict:
         """Return a list of function uids we should setup event listeners for"""
@@ -538,6 +539,12 @@ class DeviceChannel:
     def _get_mapped_type_ids(self, list_name) -> dict:
         channel_map = getitem_from_dict(CHANNEL_TYPE_CONFIGURATION.get(self.channel_type), [list_name])
         return {value: key for key, value in channel_map.items()}
+
+    def get_channel_type_function_name_from_output_function_uid(self, uid: str) -> str:
+        output_function = self._get_output_function_by_uid(uid)
+        if output_function is not None:
+            channel_map = self._get_mapped_type_ids("outputDeviceFunctions")
+            return channel_map.get(output_function["typeID"])
 
     def _find_device_parameters(self):
         device_parameter_list = self._get_mapped_type_ids("deviceParameters")
@@ -615,11 +622,11 @@ class DeviceChannel:
             )
         else:
             output_function = self._get_output_function_by_uid(function_uid)
-
-            for value_container in values:
-                new_value = self._parse_value(value_container)
-                self.current_values[output_function.get("typeID")] = new_value
-                log.debug("Updating value of %s to %s", self.name, new_value)
+            if output_function is not None:
+                for value_container in values:
+                    new_value = self._parse_value(value_container)
+                    self.current_values[output_function.get("typeID")] = new_value
+                    log.debug("Updating value of %s to %s", self.name, new_value)
 
     def get_current_value(self, channel_function_name: ChannelTypeFunctionName) -> Any:
         """Set channel to new value"""
@@ -651,10 +658,6 @@ class SensorChannel(DeviceChannel):
 
 class ActuatorChannel(DeviceChannel):
     """A class representing a actuator channel that can dim or switch a load"""
-
-    def __init__(self, device, raw_channel):
-        super().__init__(device, raw_channel)
-        log.debug("Enet actuator channel type %s initialized", self.channel_type)
 
     def get_operation_mode(self):
         """Return the operation mode parameter of the actuator"""

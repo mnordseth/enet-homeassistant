@@ -7,13 +7,14 @@ from typing import Any, Dict
 
 import async_timeout
 
+from custom_components.enet.enet_data.enums import ChannelTypeFunctionName
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .aioenet import EnetClient, ActuatorChannel, SensorChannel
-from .const import DOMAIN
+from .const import DOMAIN, ATTR_ENET_EVENT, EVENT_TYPE_INITIAL_PRESS, EVENT_TYPE_SHORT_RELEASE
 from .device import async_setup_devices
 
 _LOGGER = logging.getLogger(__name__)
@@ -24,13 +25,15 @@ PLATFORMS: list[Platform] = [
     Platform.SENSOR,
 ]
 
-EVENT_TYPE_OUTPUT_DEVICE_FUNCTION_CALLED = "outputDeviceFunctionCalled"
-EVENT_TYPE_INITIAL_PRESS = "initial_press"
-EVENT_TYPE_SHORT_RELEASE = "short_release"
+EVENT_TYPE_CHANNELS = [
+    ChannelTypeFunctionName.BUTTON_ROCKER,
+    ChannelTypeFunctionName.MASTER_DIMMING,
+    ChannelTypeFunctionName.SCENE_CONTROL,
+    ChannelTypeFunctionName.TRIGGER_START
+]
+EVENT_OUTPUT_DEVICE_FUNCTION_CALLED = "outputDeviceFunctionCalled"
 VALUE_TYPE_ROCKER_STATE = "VT_ROCKER_STATE"
 VALUE_TYPE_ROCKER_SWITCH_TIME = "VT_ROCKER_SWITCH_TIME"
-EVENT_ENET = "enet_event"
-
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Enet Smart Home from a config entry."""
@@ -118,7 +121,7 @@ class EnetCoordinator(DataUpdateCoordinator):
         """
         for event in event_data["events"]:
             # _LOGGER.debug("Handling event: %s", event)
-            if event["event"] == EVENT_TYPE_OUTPUT_DEVICE_FUNCTION_CALLED:
+            if event["event"] == EVENT_OUTPUT_DEVICE_FUNCTION_CALLED:
                 data = event["eventData"]
                 function_uid = data["deviceFunctionUID"]
                 device = self.function_uid_map.get(function_uid)
@@ -127,7 +130,9 @@ class EnetCoordinator(DataUpdateCoordinator):
                     continue
 
                 values = data["values"]
-                if isinstance(device, ActuatorChannel) or isinstance(device, SensorChannel):
+                channel_type = device.get_channel_type_function_name_from_output_function_uid(function_uid)
+
+                if channel_type not in [ChannelTypeFunctionName.BUTTON_ROCKER, ChannelTypeFunctionName.MASTER_DIMMING, ChannelTypeFunctionName.SCENE_CONTROL, ChannelTypeFunctionName.TRIGGER_START]:
                     device.update_values(function_uid, values)
                     self.async_update_listeners()
                 else:
@@ -156,5 +161,4 @@ class EnetCoordinator(DataUpdateCoordinator):
                         "type": event_type,
                         "subtype": subtype,
                     }
-
-                    self.hass.bus.async_fire(EVENT_ENET, bus_data)
+                    self.hass.bus.async_fire(ATTR_ENET_EVENT, bus_data)
