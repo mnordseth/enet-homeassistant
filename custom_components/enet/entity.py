@@ -39,24 +39,13 @@ class EnetBaseChannelEntity(EnetBaseEntity, Entity):
     def device_info(self):
         """Return the device information."""
         return self.channel.device.get_device_info()
+
 class EnetBaseDeviceEntity(EnetBaseEntity, Entity):
     """Generic Entity Class for Enet Smart Home devices"""
 
     def __init__(self, device, coordinator):
-        self._name = device.name
         self.device = device
         self.coordinator = coordinator
-        _LOGGER.info("Enet entity %s", self._name)
-
-    @property
-    def unique_id(self):
-        """Return a unique ID."""
-        return self.device.uid
-
-    @property
-    def name(self):
-        """Return the name of the device."""
-        return self._name
 
     @property
     def device_info(self):

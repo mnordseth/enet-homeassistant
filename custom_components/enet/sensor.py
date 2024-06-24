@@ -76,6 +76,24 @@ class EnetBatterySensor(EnetBaseDeviceEntity, SensorEntity):
     _attr_device_class = SensorDeviceClass.ENUM
     _attr_entity_category = EntityCategory.DIAGNOSTIC
     _attr_options = [state.value for state in DeviceBatteryState]
+    _attr_has_entity_name = True
+
+    def __init__(self, device, coordinator):
+        super().__init__(
+            device,
+            coordinator
+        )
+        self._uid = f"{self.device.uid}_battery_state"
+
+    @property
+    def unique_id(self):
+        """Return a unique ID."""
+        return self._uid
+
+    @property
+    def translation_key(self):
+        """Return the translation key to translate the entity's name and states."""
+        return "battery_state"
 
     @property
     def native_value(self) -> int:
