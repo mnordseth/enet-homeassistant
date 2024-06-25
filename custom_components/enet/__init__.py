@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import timedelta
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, NoReturn
 
 import async_timeout
 
@@ -11,7 +11,7 @@ from custom_components.enet.enet_data.enums import ChannelTypeFunctionName
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .aioenet import EnetClient, ActuatorChannel, SensorChannel
 from .const import DOMAIN, ATTR_ENET_EVENT, EVENT_TYPE_INITIAL_PRESS, EVENT_TYPE_SHORT_RELEASE
@@ -103,11 +103,16 @@ class EnetCoordinator(DataUpdateCoordinator):
             self.function_uid_map.update(func_uids)
             await device.register_events()
 
-    async def _async_update_data(self) -> None:
-        """Fetch data from API endpoint.
+    async def _async_update_data(self) -> NoReturn:
+        """Fetch events from Enet server
 
-        This is the place to pre-process the data to lookup tables
-        so entities can quickly look up their data.
+        This endpoint blocks for 30s if no events are available
+        or returns immediatly when events are there. Loop forever
+        to get next events.
+
+        This function and event processing should be moved to aioenet
+        at some point.
+
         """
         # _LOGGER.debug("_async_update_data()")
         while True:
@@ -117,7 +122,6 @@ class EnetCoordinator(DataUpdateCoordinator):
                     self.handle_event(event)
                 except Exception as e:
                     _LOGGER.exception("Failed to handle event: %s (%s)", event, e)
-                    raise UpdateFailed from e
 
     def handle_event(self, event_data: Dict[str, Any]) -> None:
         """Handle events from Enet Server. Either update value of actuator or
