@@ -1,0 +1,1614 @@
+{
+    "valueTypeContainerTypes": [
+        {
+            "id": "VTCT_LAM_INSAv2_XLEDPRO",
+            "valueTypeIDs": [
+                "VT_LIGHT_APPLICATION_MODE_INSAv2_XLEDPRO"
+            ]
+        },
+        {
+            "id": "VTCT_7.002_CONST_0",
+            "valueTypeIDs": [
+                "VT_TIME_PERIOD_MSEC_CONST_0"
+            ]
+        },
+        {
+            "id": "VTCT_SDDK4FM_CHANNEL_CONFIG_DEF_3",
+            "valueTypeIDs": [
+                "VT_SDDK4FM_CHANNEL_CONFIG_DEF_3"
+            ]
+        },
+        {
+            "id": "VTCT_SDDK4FM_CHANNEL_CONFIG_DEF_4",
+            "valueTypeIDs": [
+                "VT_SDDK4FM_CHANNEL_CONFIG_DEF_4"
+            ]
+        },
+        {
+            "id": "VTCT_SDDK4FM_CHANNEL_CONFIG_DEF_1",
+            "valueTypeIDs": [
+                "VT_SDDK4FM_CHANNEL_CONFIG_DEF_1"
+            ]
+        },
+        {
+            "id": "VTCT_SDDK4FM_CHANNEL_CONFIG_DEF_2",
+            "valueTypeIDs": [
+                "VT_SDDK4FM_CHANNEL_CONFIG_DEF_2"
+            ]
+        },
+        {
+            "id": "VTCT_13.010_INES",
+            "valueTypeIDs": [
+                "VT_ACTIVE_ENERGY_-1073741823_1073741823_DEF_0"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_PREPARATION_MODE",
+            "valueTypeIDs": [
+                "VT_TADO_PREPARATION_MODE"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_ZONE_TYPE",
+            "valueTypeIDs": [
+                "VT_TADO_ZONE_TYPE"
+            ]
+        },
+        {
+            "id": "VTCT_IBOX_SCENE_NUMBER",
+            "valueTypeIDs": [
+                "VT_SCENE_NUMBER"
+            ]
+        },
+        {
+            "id": "VTCT_9.001_RANGE_-273.0_670760.97_DEF_670760.97",
+            "valueTypeIDs": [
+                "VT_VALUE_TEMP_RANGE_-273.0_670760.97_DEF_670760.97"
+            ]
+        },
+        {
+            "id": "VTCT_GBR",
+            "valueTypeIDs": [
+                "VT_ROCKER_SWITCH_TIME",
+                "VT_ROCKER_STATE"
+            ]
+        },
+        {
+            "id": "VTCT_CHANNEL_CONFIG_INSCS_INGBRS_DEF_6",
+            "valueTypeIDs": [
+                "VT_CHANNEL_CONFIG_INSCS_INGBRS_DEF_6"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_17",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_17"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_15",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_15"
+            ]
+        },
+        {
+            "id": "VTCT_INLS_APPLICATION_MODE",
+            "valueTypeIDs": [
+                "VT_INLS_APPLICATION_MODE_DEF_ROCKER"
+            ]
+        },
+        {
+            "id": "VTCT_SCENE_SENSOR_MODE_DEF_MD",
+            "valueTypeIDs": [
+                "VT_SCENE_SENSOR_MODE_DEF_MD"
+            ]
+        },
+        {
+            "id": "VTCT_LAM_INSAv2_SENSIQ",
+            "valueTypeIDs": [
+                "VT_LIGHT_APPLICATION_MODE_INSAv2_SENSIQ"
+            ]
+        },
+        {
+            "id": "VTCT_SJAR_CHANNEL_CONFIG_1_INSA_INBA",
+            "valueTypeIDs": [
+                "VT_SJAR_CHANNEL_CONFIG_1_INSA_INBA"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_EMPTY",
+            "valueTypeIDs": []
+        },
+        {
+            "id": "VTCT_CHANNEL_COMBINATION_MODE_INDA",
+            "valueTypeIDs": [
+                "VT_CHANNEL_COMBINATION_MODE_INDA"
+            ]
+        },
+        {
+            "id": "VTCT_5.001_RANGE_0.4_67.0",
+            "valueTypeIDs": [
+                "VT_SCALING_RANGE_0.4_67.0"
+            ]
+        },
+        {
+            "id": "VTCT_BTMPU_INDA",
+            "valueTypeIDs": [
+                "VT_BEHAVIOUR_TIMER_MAINS_POWER_UP_INDA"
+            ]
+        },
+        {
+            "id": "VTCT_7.004_RANGE_0_300000_DEF_0",
+            "valueTypeIDs": [
+                "VT_TIME_PERIOD_100MSEC_RANGE_0_300000_DEF_0"
+            ]
+        },
+        {
+            "id": "VTCT_US2M_OPERATION_MODE_DEF_2",
+            "valueTypeIDs": [
+                "VT_US2M_OPERATION_MODE_DEF_2"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_CAP_TEMP_STEP",
+            "valueTypeIDs": [
+                "VT_TADO_CAP_TEMP_STEP"
+            ]
+        },
+        {
+            "id": "VTCT_14.056_INES",
+            "valueTypeIDs": [
+                "VT_VALUE_POWER_-100000_100000"
+            ]
+        },
+        {
+            "id": "VTCT_9.021_RANGE_0.0_670760.97",
+            "valueTypeIDs": [
+                "VT_VALUE_CURR_RANGE_0.0_670760.97"
+            ]
+        },
+        {
+            "id": "VTCT_SJAR_CHANNEL_CONFIG_2_INSA_INBA",
+            "valueTypeIDs": [
+                "VT_SJAR_CHANNEL_CONFIG_2_INSA_INBA"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_42_43_DEF_42",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_42_43_DEF_42"
+            ]
+        },
+        {
+            "id": "VTCT_BTMPU_INSA",
+            "valueTypeIDs": [
+                "VT_BEHAVIOUR_TIMER_MAINS_POWER_UP_INSA"
+            ]
+        },
+        {
+            "id": "VTCT_SF1S_CHARGE_VOLTAGE",
+            "valueTypeIDs": [
+                "VT_SF1S_CHARGE_VOLTAGE"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_SETTING",
+            "valueTypeIDs": [
+                "VT_TADO_POWER",
+                "VT_TEMPERATURE_RANGE_0.0_100.0_DEF_0.0"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_42_43_DEF_43",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_42_43_DEF_43"
+            ]
+        },
+        {
+            "id": "VTCT_INLNS3_SA_APPLICATION_MODE",
+            "valueTypeIDs": [
+                "VT_INLNS3_SA_APPLICATION_MODE_DEF_LIGHT"
+            ]
+        },
+        {
+            "id": "VTCT_TADOZAC_SETTING",
+            "valueTypeIDs": [
+                "VT_TADO_POWER",
+                "VT_TADO_ACMODE",
+                "VT_TEMPERATURE_RANGE_0.0_100.0_DEF_0.0",
+                "VT_TADO_FAN_SPEED",
+                "VT_TADO_SWING"
+            ]
+        },
+        {
+            "id": "VTCT_1.003_DEF_FALSE",
+            "valueTypeIDs": [
+                "VT_ENABLE_DEF_FALSE"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_TEMPERATURE_RANGE_18.0_30.0_DEF_18.0",
+            "valueTypeIDs": [
+                "VT_TEMPERATURE_RANGE_18.0_30.0_DEF_18.0",
+                "VT_TADO_TIMESTAMP"
+            ]
+        },
+        {
+            "id": "VTCT_2.008",
+            "valueTypeIDs": [
+                "VT_UP_DOWN",
+                "VT_CONTROL"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_10",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_10"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_13",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_13"
+            ]
+        },
+        {
+            "id": "VTCT_DIMMING_ACTUATOR_MODE_DEF_0",
+            "valueTypeIDs": [
+                "VT_DIMMING_ACTUATOR_MODE_DEF_0"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_14",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_14"
+            ]
+        },
+        {
+            "id": "VTCT_DIMMING_ACTUATOR_MODE_DEF_1",
+            "valueTypeIDs": [
+                "VT_DIMMING_ACTUATOR_MODE_DEF_1"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_11",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_11"
+            ]
+        },
+        {
+            "id": "VTCT_14.056_INES.TH_ACPW_MIN",
+            "valueTypeIDs": [
+                "VT_VALUE_POWER_0_2000_DEF_1"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_12",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_12"
+            ]
+        },
+        {
+            "id": "VTCT_2.001",
+            "valueTypeIDs": [
+                "VT_SWITCH",
+                "VT_CONTROL"
+            ]
+        },
+        {
+            "id": "VTCT_CHANNEL_CONFIG_ENABLE",
+            "valueTypeIDs": [
+                "VT_ENABLE_DEF_TRUE"
+            ]
+        },
+        {
+            "id": "VTCT_7.001_RANGE_0_65535_X10",
+            "valueTypeIDs": [
+                "VT_VALUE_2_UCOUNT_RANGE_0_65535_X10"
+            ]
+        },
+        {
+            "id": "VTCT_1.011_DEF_1",
+            "valueTypeIDs": [
+                "VT_STATE_DEF_1"
+            ]
+        },
+        {
+            "id": "VTCT_CHANNEL_CONFIG_INSCS_INGBRS_DUMMY",
+            "valueTypeIDs": [
+                "VT_CHANNEL_CONFIG_INSCS_INGBRS_DUMMY"
+            ]
+        },
+        {
+            "id": "VTCT_9.001_RANGE_-273.0_670760.0_DEF_0.0",
+            "valueTypeIDs": [
+                "VT_VALUE_TEMP_RANGE_-273.0_670760.0_DEF_0.0"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_MODE",
+            "valueTypeIDs": [
+                "VT_TADO_MODE"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_APPLICATION_MODE",
+            "valueTypeIDs": [
+                "VT_TADO_APPLICATION_MODE"
+            ]
+        },
+        {
+            "id": "VTCT_SDDK4FMB_CHANNEL_CONFIG_DEF_1",
+            "valueTypeIDs": [
+                "VT_SDDK4FMB_CHANNEL_CONFIG_DEF_1"
+            ]
+        },
+        {
+            "id": "VTCT_SDDK4FMB_CHANNEL_CONFIG_DEF_2",
+            "valueTypeIDs": [
+                "VT_SDDK4FMB_CHANNEL_CONFIG_DEF_2"
+            ]
+        },
+        {
+            "id": "VTCT_5.001_RANGE_0.0_100.0",
+            "valueTypeIDs": [
+                "VT_SCALING_RANGE_0.0_100.0"
+            ]
+        },
+        {
+            "id": "VTCT_240.800",
+            "valueTypeIDs": [
+                "VT_VALID_HEIGHT_POS",
+                "VT_VALID_SLATS_POS",
+                "VT_SLATS_POSITION",
+                "VT_HEIGHT_POSITION"
+            ]
+        },
+        {
+            "id": "VTCT_9.010_RANGE_0.0_86400.0_DEF_0.0",
+            "valueTypeIDs": [
+                "VT_VALUE_TIME1_RANGE_0.0_86400.0_DEF_0.0"
+            ]
+        },
+        {
+            "id": "VTCT_20.600_INSAv2",
+            "valueTypeIDs": [
+                "VT_BEHAVIOUR_LOCK_UNLOCK_INSAv2"
+            ]
+        },
+        {
+            "id": "VTCT_IBOX_LINK_COUNTER",
+            "valueTypeIDs": [
+                "VT_COUNTER"
+            ]
+        },
+        {
+            "id": "VTCT_LAM_INSA",
+            "valueTypeIDs": [
+                "VT_LIGHT_APPLICATION_MODE_INSA"
+            ]
+        },
+        {
+            "id": "VTCT_9.010_RANGE_0.0_3600.0_DEF_300.0",
+            "valueTypeIDs": [
+                "VT_VALUE_TIME1_RANGE_0.0_3600.0_DEF_300.0"
+            ]
+        },
+        {
+            "id": "VTCT_INFO_MOVE_BLINDS",
+            "valueTypeIDs": [
+                "VT_INFO_MOVE_BLINDS"
+            ]
+        },
+        {
+            "id": "VTCT_S2A1_CHANNEL_CONFIG_1_INSA_INDA_DUMMY",
+            "valueTypeIDs": [
+                "VT_CHANNEL_CONFIG_INSA_INDA_DUMMY"
+            ]
+        },
+        {
+            "id": "VTCT_SJAR_CHANNEL_CONFIG_4_INSA_INBA",
+            "valueTypeIDs": [
+                "VT_SJAR_CHANNEL_CONFIG_4_INSA_INBA"
+            ]
+        },
+        {
+            "id": "VTCT_1.003_DEF_TRUE",
+            "valueTypeIDs": [
+                "VT_ENABLE_DEF_TRUE"
+            ]
+        },
+        {
+            "id": "VTCT_14.056_INES.REPW",
+            "valueTypeIDs": [
+                "VT_REACTIVE_POWER_-100000_100000"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_50_51_DEF_51",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_50_51_DEF_51"
+            ]
+        },
+        {
+            "id": "VTCT_LAM_INSA_DA",
+            "valueTypeIDs": [
+                "VT_LIGHT_APPLICATION_MODE_INSA_DA"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_50_51_DEF_50",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_50_51_DEF_50"
+            ]
+        },
+        {
+            "id": "VTCT_7.002_RANGE_300_10000_DEF_1000",
+            "valueTypeIDs": [
+                "VT_TIME_PERIOD_MSEC_RANGE_300_10000_DEF_1000"
+            ]
+        },
+        {
+            "id": "VTCT_BS1BP_SENSOR_DEAD_TIME",
+            "valueTypeIDs": [
+                "VT_BS1BP_SENSOR_DEAD_TIME"
+            ]
+        },
+        {
+            "id": "VTCT_MASTER_DIMMING",
+            "valueTypeIDs": [
+                "VT_MASTER_DIMMING_TIME",
+                "VT_MASTER_DIMMING_RESOL",
+                "VT_SCENE_NUMBER",
+                "VT_ROCKER_STATE"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_CAP_TEMP_MAX",
+            "valueTypeIDs": [
+                "VT_TADO_CAP_TEMP_MAX"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_TERMINATION_TYPE",
+            "valueTypeIDs": [
+                "VT_TADO_TERMINATION_TYPE"
+            ]
+        },
+        {
+            "id": "VTCT_ES_TRANSMISSION_MODE",
+            "valueTypeIDs": [
+                "VT_ES_TRANSMISSION_MODE"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_LINK",
+            "valueTypeIDs": [
+                "VT_TADO_STATE",
+                "VT_TADO_REASON_CODE",
+                "VT_TADO_REASON_TITLE"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_18_19_DEF_18",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_18_19_DEF_18"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_ZONE_NAME",
+            "valueTypeIDs": [
+                "VT_TADO_ZONE_NAME"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_18_19_DEF_19",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_18_19_DEF_19"
+            ]
+        },
+        {
+            "id": "VTCT_7.002_CONST_300",
+            "valueTypeIDs": [
+                "VT_TIME_PERIOD_MSEC_CONST_300"
+            ]
+        },
+        {
+            "id": "VTCT_CHANNEL_CONFIG_INSCS_INGBRS_DEF_12",
+            "valueTypeIDs": [
+                "VT_CHANNEL_CONFIG_INSCS_INGBRS_DEF_12"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_CAP_FAN_SPEEDS",
+            "valueTypeIDs": [
+                "VT_TADO_CAP_FAN_SPEEDS"
+            ]
+        },
+        {
+            "id": "VTCT_LAM_INLAv2_SAS",
+            "valueTypeIDs": [
+                "VT_LIGHT_APPLICATION_MODE_INLAv2_SAS"
+            ]
+        },
+        {
+            "id": "VTCT_CHANNEL_CONFIG_INSCS_INGBRS_DEF_15",
+            "valueTypeIDs": [
+                "VT_CHANNEL_CONFIG_INSCS_INGBRS_DEF_15"
+            ]
+        },
+        {
+            "id": "VTCT_CHANNEL_CONFIG_INSCS_INGBRS_DEF_13",
+            "valueTypeIDs": [
+                "VT_CHANNEL_CONFIG_INSCS_INGBRS_DEF_13"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_HUMIDITY",
+            "valueTypeIDs": [
+                "VT_HUMIDITY_RANGE_0.0_100.0_DEF_0.0",
+                "VT_TADO_TIMESTAMP"
+            ]
+        },
+        {
+            "id": "VTCT_CHANNEL_CONFIG_INSCS_INGBRS_DEF_14",
+            "valueTypeIDs": [
+                "VT_CHANNEL_CONFIG_INSCS_INGBRS_DEF_14"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_HEALTH",
+            "valueTypeIDs": [
+                "VT_TADO_HEALTH",
+                "VT_TADO_MESSAGE",
+                "VT_TADO_TIMESTAMP"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_TEMPERATURE_RANGE_5.0_25.0_DEF_18.0",
+            "valueTypeIDs": [
+                "VT_TEMPERATURE_RANGE_5.0_25.0_DEF_18.0",
+                "VT_TADO_TIMESTAMP"
+            ]
+        },
+        {
+            "id": "VTCT_9.010_RANGE_0.0_3600.0_DEF_120.0",
+            "valueTypeIDs": [
+                "VT_VALUE_TIME1_RANGE_0.0_3600.0_DEF_120.0"
+            ]
+        },
+        {
+            "id": "VTCT_7.005_RANGE_1_600_DEF_120",
+            "valueTypeIDs": [
+                "VT_TIME_PERIOD_SEC_RANGE_1_600_DEF_120"
+            ]
+        },
+        {
+            "id": "VTCT_SCENE_MODE_NRM_MD_LP_FC_WA_SP_TF_DUMMY",
+            "valueTypeIDs": [
+                "VT_SCENE_MODE_NRM_MD_LP_FC_WA_SP_TF_DUMMY"
+            ]
+        },
+        {
+            "id": "VTCT_5.001_RANGE_1_100_DEF_20",
+            "valueTypeIDs": [
+                "VT_SCALING_RANGE_1_100_DEF_20"
+            ]
+        },
+        {
+            "id": "VTCT_INScS_APPLICATION_MODE",
+            "valueTypeIDs": [
+                "VT_INScS_APPLICATION_MODE_DEF_SCENE"
+            ]
+        },
+        {
+            "id": "VTCT_SUMSTATE_MODE_DEF_1",
+            "valueTypeIDs": [
+                "VT_SUMSTATE_MODE_DEF_1"
+            ]
+        },
+        {
+            "id": "VTCT_SUMSTATE_MODE_DEF_0",
+            "valueTypeIDs": [
+                "VT_SUMSTATE_MODE_DEF_0"
+            ]
+        },
+        {
+            "id": "VTCT_7.002_RANGE_300_10000_DEF_300",
+            "valueTypeIDs": [
+                "VT_TIME_PERIOD_MSEC_RANGE_300_10000_DEF_300"
+            ]
+        },
+        {
+            "id": "VTCT_9.004_RANGE_0.0_670760.97_DEF_670760.97",
+            "valueTypeIDs": [
+                "VT_VALUE_LUX_RANGE_0.0_670760.97_DEF_670760.97"
+            ]
+        },
+        {
+            "id": "VTCT_CHANNEL_CONFIG_ENABLE_DEF_FALSE",
+            "valueTypeIDs": [
+                "VT_ENABLE_DEF_FALSE"
+            ]
+        },
+        {
+            "id": "VTCT_LAM_INDA",
+            "valueTypeIDs": [
+                "VT_LIGHT_APPLICATION_MODE_INDA"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_51",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_51"
+            ]
+        },
+        {
+            "id": "VTCT_SUMSTATE_MODE_DEF_254",
+            "valueTypeIDs": [
+                "VT_SUMSTATE_MODE_DEF_254"
+            ]
+        },
+        {
+            "id": "VTCT_UP1AV_OPERATION_MODE_INLNS3_INLNS3_SA_DEF_INLNS3",
+            "valueTypeIDs": [
+                "VT_UP1AV_OPERATION_MODE_INLNS3_INLNS3_SA_DEF_INLNS3"
+            ]
+        },
+        {
+            "id": "VTCT_7.002_RANGE_0_10000_DEF_0",
+            "valueTypeIDs": [
+                "VT_TIME_PERIOD_MSEC_RANGE_0_10000_DEF_0"
+            ]
+        },
+        {
+            "id": "VTCT_BMPU_INBA",
+            "valueTypeIDs": [
+                "VT_BEHAVIOUR_MAINS_POWER_UP_INBA"
+            ]
+        },
+        {
+            "id": "VTCT_TADOZHW_ECO_TEMP",
+            "valueTypeIDs": [
+                "VT_TADOZHW_ECO_TEMP"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_50",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_50"
+            ]
+        },
+        {
+            "id": "VTCT_10.001",
+            "valueTypeIDs": [
+                "VT_SECONDS",
+                "VT_MINUTES",
+                "VT_HOUR",
+                "VT_DAY"
+            ]
+        },
+        {
+            "id": "VTCT_3.008",
+            "valueTypeIDs": [
+                "VT_STEP_CODE",
+                "VT_UP_DOWN"
+            ]
+        },
+        {
+            "id": "VTCT_BMPU_INSA",
+            "valueTypeIDs": [
+                "VT_BEHAVIOUR_MAINS_POWER_UP_INSA"
+            ]
+        },
+        {
+            "id": "VTCT_FORCED_VALUE_INBA",
+            "valueTypeIDs": [
+                "VT_VALUE2_SCALING_RANGE_0_100_DEF_0",
+                "VT_VALUE1_SCALING_RANGE_0_100_DEF_0",
+                "VT_FORCED_CONTROL"
+            ]
+        },
+        {
+            "id": "VTCT_3.007",
+            "valueTypeIDs": [
+                "VT_STEP_CODE",
+                "VT_STEP"
+            ]
+        },
+        {
+            "id": "VTCT_SJAR_CHANNEL_CONFIG_3_INSA_INBA",
+            "valueTypeIDs": [
+                "VT_SJAR_CHANNEL_CONFIG_3_INSA_INBA"
+            ]
+        },
+        {
+            "id": "VTCT_5.001_RANGE_75.0_100.0",
+            "valueTypeIDs": [
+                "VT_SCALING_RANGE_75.0_100.0"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_48",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_48"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_49",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_49"
+            ]
+        },
+        {
+            "id": "VTCT_SCV_SWITCH_DEF_OFF",
+            "valueTypeIDs": [
+                "VT_SCV_SWITCH_DEF_OFF"
+            ]
+        },
+        {
+            "id": "VTCT_5.001_RANGE_1_67_DEF_5",
+            "valueTypeIDs": [
+                "VT_SCALING_RANGE_1_67_DEF_5"
+            ]
+        },
+        {
+            "id": "VTCT_BS1BP_SEND_BEHAVIOUR",
+            "valueTypeIDs": [
+                "VT_BS1BP_SEND_BEHAVIOUR"
+            ]
+        },
+        {
+            "id": "VTCT_SUMSTATE_MAX_TIMEOUT_DEF_7",
+            "valueTypeIDs": [
+                "VT_SUMSTATE_MAX_TIMEOUT_DEF_7"
+            ]
+        },
+        {
+            "id": "VTCT_5.001_RANGE_0_100_DEF_100",
+            "valueTypeIDs": [
+                "VT_SCALING_RANGE_0_100_DEF_100"
+            ]
+        },
+        {
+            "id": "VTCT_5.001_RANGE_0.4_100.0",
+            "valueTypeIDs": [
+                "VT_SCALING_RANGE_0.4_100.0"
+            ]
+        },
+        {
+            "id": "VTCT_5.001_RANGE_1_100_DEF_100",
+            "valueTypeIDs": [
+                "VT_SCALING_RANGE_1_100_DEF_100"
+            ]
+        },
+        {
+            "id": "VTCT_5.001_RANGE_0.0_100.0_DEF_100.0",
+            "valueTypeIDs": [
+                "VT_SCALING_RANGE_0.0_100.0_DEF_100.0"
+            ]
+        },
+        {
+            "id": "VTCT_1.008",
+            "valueTypeIDs": [
+                "VT_UP_DOWN"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_9",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_9"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_48_49_DEF_49",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_48_49_DEF_49"
+            ]
+        },
+        {
+            "id": "VTCT_DIMMING_ACTUATOR_LOAD_TYPE_STATE",
+            "valueTypeIDs": [
+                "VT_DIMMING_ACTUATOR_LOAD_TYPE_STATE"
+            ]
+        },
+        {
+            "id": "VTCT_1.007",
+            "valueTypeIDs": [
+                "VT_STEP"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_8",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_8"
+            ]
+        },
+        {
+            "id": "VTCT_1.005",
+            "valueTypeIDs": [
+                "VT_ALARM"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_48_49_DEF_48",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_48_49_DEF_48"
+            ]
+        },
+        {
+            "id": "VTCT_7.004_RANGE_200_300000_DEF_1000",
+            "valueTypeIDs": [
+                "VT_TIME_PERIOD_100MSEC_RANGE_200_300000_DEF_1000"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_5",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_5"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_4",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_4"
+            ]
+        },
+        {
+            "id": "VTCT_1.002",
+            "valueTypeIDs": [
+                "VT_BOOL"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_7",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_7"
+            ]
+        },
+        {
+            "id": "VTCT_1.001",
+            "valueTypeIDs": [
+                "VT_SWITCH"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_6",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_6"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_1",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_1"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_0",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_0"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_3",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_3"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_2",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_2"
+            ]
+        },
+        {
+            "id": "VTCT_INLNS3_APPLICATION_MODE",
+            "valueTypeIDs": [
+                "VT_INLNS3_APPLICATION_MODE_DEF_LIGHT"
+            ]
+        },
+        {
+            "id": "VTCT_9.020_RANGE_0.0_670760.97",
+            "valueTypeIDs": [
+                "VT_VALUE_VOLT_RANGE_0.0_670760.97"
+            ]
+        },
+        {
+            "id": "VTCT_TADOZAC_ECO_TEMP",
+            "valueTypeIDs": [
+                "VT_TADOZAC_ECO_TEMP"
+            ]
+        },
+        {
+            "id": "VTCT_TADOZAC_OVERLAY",
+            "valueTypeIDs": [
+                "VT_TADO_OPMODE",
+                "VT_TADO_POWER",
+                "VT_TADO_ACMODE",
+                "VT_TEMPERATURE_RANGE_0.0_100.0_DEF_0.0",
+                "VT_TADO_FAN_SPEED",
+                "VT_TADO_SWING",
+                "VT_TADO_TERMINATION_TYPE",
+                "VT_TADO_DURATION",
+                "VT_TADO_EXPIRY"
+            ]
+        },
+        {
+            "id": "VTCT_BMPU_INDA",
+            "valueTypeIDs": [
+                "VT_BEHAVIOUR_MAINS_POWER_UP_INDA"
+            ]
+        },
+        {
+            "id": "VTCT_EMODE_CHANNEL_ENABLE_DEF_DISABLE",
+            "valueTypeIDs": [
+                "VT_EMODE_CHANNEL_ENABLE_DEF_DISABLE"
+            ]
+        },
+        {
+            "id": "VTCT_INBS_APPLICATION_MODE",
+            "valueTypeIDs": [
+                "VT_INBS_APPLICATION_MODE_DEF_ROCKER"
+            ]
+        },
+        {
+            "id": "VTCT_5.001_RANGE_0_50",
+            "valueTypeIDs": [
+                "VT_PERCENT_U8_RANGE_0_50_DEF_10"
+            ]
+        },
+        {
+            "id": "VTCT_9.004_RANGE_0.0_2000.0",
+            "valueTypeIDs": [
+                "VT_VALUE_LUX_RANGE_0.0_2000.0"
+            ]
+        },
+        {
+            "id": "VTCT_7.002_RANGE_1000_60000_DEF_4000",
+            "valueTypeIDs": [
+                "VT_TIME_PERIOD_MSEC_RANGE_1000_60000_DEF_4000"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_OVERLAY",
+            "valueTypeIDs": [
+                "VT_TADO_OPMODE",
+                "VT_TADO_POWER",
+                "VT_TEMPERATURE_RANGE_0.0_100.0_DEF_0.0",
+                "VT_TADO_TERMINATION_TYPE",
+                "VT_TADO_DURATION",
+                "VT_TADO_EXPIRY"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_46_47_DEF_46",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_46_47_DEF_46"
+            ]
+        },
+        {
+            "id": "VTCT_7.002_CONST_100",
+            "valueTypeIDs": [
+                "VT_TIME_PERIOD_MSEC_CONST_100"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_CAN_SET_TEMP",
+            "valueTypeIDs": [
+                "VT_TADO_CAN_SET_TEMP"
+            ]
+        },
+        {
+            "id": "VTCT_TADOZH_SET_OVERLAY",
+            "valueTypeIDs": [
+                "VT_TADO_POWER",
+                "VT_TEMPERATURE_RANGE_5.0_25.0_DEF_18.0",
+                "VT_TADO_TERMINATION_TYPE",
+                "VT_TADO_DURATION"
+            ]
+        },
+        {
+            "id": "VTCT_INBA_APPLICATION_MODE",
+            "valueTypeIDs": [
+                "VT_INBA_APPLICATION_MODE_DEF_BLINDS"
+            ]
+        },
+        {
+            "id": "VTCT_IN_GSTAT",
+            "valueTypeIDs": [
+                "VT_OUT_OF_SERVICE",
+                "VT_FAULT",
+                "VT_OVERRIDDEN",
+                "VT_IN_ALARM",
+                "VT_ALARM_UN_ACK",
+                "VT_CLK_SYNC_FAULT"
+            ]
+        },
+        {
+            "id": "VTCT_OPMODE_INBA",
+            "valueTypeIDs": [
+                "VT_OPMODE_INBA"
+            ]
+        },
+        {
+            "id": "VTCT_INSAv3_APPLICATION_MODE_XLEDPRO",
+            "valueTypeIDs": [
+                "VT_INSAv3_APPLICATION_MODE_XLEDPRO_DEF_LIGHT"
+            ]
+        },
+        {
+            "id": "VTCT_5.001_RANGE_75_100_DEF_100",
+            "valueTypeIDs": [
+                "VT_SCALING_RANGE_75_100_DEF_100"
+            ]
+        },
+        {
+            "id": "VTCT_7.007_RANGE_0_65535",
+            "valueTypeIDs": [
+                "VT_TIME_PERIOD_HRS_RANGE_0_65535"
+            ]
+        },
+        {
+            "id": "VTCT_US2M_BINARY_INPUT_TRIGGER_EDGE_DEF_RISING",
+            "valueTypeIDs": [
+                "VT_US2M_BINARY_INPUT_TRIGGER_EDGE_DEF_RISING"
+            ]
+        },
+        {
+            "id": "VTCT_LAM_INSAv3_XLEDPRO",
+            "valueTypeIDs": [
+                "VT_LIGHT_APPLICATION_MODE_INSAv3_XLEDPRO"
+            ]
+        },
+        {
+            "id": "VTCT_9.010_RANGE_0.0_86400.0_DEF_1.0",
+            "valueTypeIDs": [
+                "VT_VALUE_TIME1_RANGE_0.0_86400.0_DEF_1.0"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_46_47_DEF_47",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_46_47_DEF_47"
+            ]
+        },
+        {
+            "id": "VTCT_SCV_SWITCH_DEF_ON",
+            "valueTypeIDs": [
+                "VT_SCV_SWITCH_DEF_ON"
+            ]
+        },
+        {
+            "id": "VTCT_LAM_INLAv2_DA",
+            "valueTypeIDs": [
+                "VT_LIGHT_APPLICATION_MODE_INLAv2_DA"
+            ]
+        },
+        {
+            "id": "VTCT_UP1A_COVER_OPERATION_MODE_SA_2K_DEF_SA_SC",
+            "valueTypeIDs": [
+                "VT_UP1A_COVER_OPERATION_MODE_SA_2K_DEF_SA_SC"
+            ]
+        },
+        {
+            "id": "VTCT_TADOZH_ECO_TEMP",
+            "valueTypeIDs": [
+                "VT_TADOZH_ECO_TEMP"
+            ]
+        },
+        {
+            "id": "VTCT_LAM_INLNS3",
+            "valueTypeIDs": [
+                "VT_LIGHT_APPLICATION_MODE_INLNS3"
+            ]
+        },
+        {
+            "id": "VTCT_TADOZHW_SET_OVERLAY",
+            "valueTypeIDs": [
+                "VT_TADO_POWER",
+                "VT_TEMPERATURE_RANGE_30.0_70.0_DEF_55.0",
+                "VT_TADO_TERMINATION_TYPE",
+                "VT_TADO_DURATION"
+            ]
+        },
+        {
+            "id": "VTCT_IN_SCENE_CONTROL",
+            "valueTypeIDs": [
+                "VT_SCENE_NUMBER",
+                "VT_IN_SCENE_CONTROL"
+            ]
+        },
+        {
+            "id": "VTCT_BMPD_INSA",
+            "valueTypeIDs": [
+                "VT_BEHAVIOUR_MAINS_POWER_DOWN_INSA"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_GEO_OVERRIDE",
+            "valueTypeIDs": [
+                "VT_TADO_GEO_OVERRIDE"
+            ]
+        },
+        {
+            "id": "VTCT_IN_SCENE_CONTROL_0_4",
+            "valueTypeIDs": [
+                "VT_SCENE_NUMBER_0_4",
+                "VT_IN_SCENE_CONTROL"
+            ]
+        },
+        {
+            "id": "VTCT_INDA_APPLICATION_MODE",
+            "valueTypeIDs": [
+                "VT_INDA_APPLICATION_MODE_DEF_LIGHT"
+            ]
+        },
+        {
+            "id": "VTCT_CYCLE_TIME",
+            "valueTypeIDs": [
+                "VT_CYCLE_TIME"
+            ]
+        },
+        {
+            "id": "VTCT_LAM_INSAv2",
+            "valueTypeIDs": [
+                "VT_LIGHT_APPLICATION_MODE_INSAv2"
+            ]
+        },
+        {
+            "id": "VTCT_CHANNEL_CONFIG_INSCS_INGBRS_DISABLE",
+            "valueTypeIDs": [
+                "VT_CHANNEL_CONFIG_INSCS_INGBRS_DISABLE"
+            ]
+        },
+        {
+            "id": "VTCT_INES_APPLICATION_MODE",
+            "valueTypeIDs": [
+                "VT_INES_APPLICATION_MODE_DEF_ENERGY"
+            ]
+        },
+        {
+            "id": "VTCT_INLAv2_SA_APPLICATION_MODE",
+            "valueTypeIDs": [
+                "VT_INLAv2_SA_APPLICATION_MODE_DEF_LIGHT"
+            ]
+        },
+        {
+            "id": "VTCT_SUMSTATUS_GENERIC_INFO",
+            "valueTypeIDs": [
+                "VT_SSGI_SEQUENCE_NUMBER",
+                "VT_SSGI_VALUE_PERCENT",
+                "VT_SSGI_SWITCH_VALUE"
+            ]
+        },
+        {
+            "id": "VTCT_INGBRS_APPLICATION_MODE",
+            "valueTypeIDs": [
+                "VT_INGBRS_APPLICATION_MODE_DEF_ROCKER"
+            ]
+        },
+        {
+            "id": "VTCT_SUMSTATUS_GET",
+            "valueTypeIDs": [
+                "VT_SSGET_CONNECTION_CODE",
+                "VT_SSGET_SEQUENCE_NUMBER",
+                "VT_SSGET_COMMAND",
+                "VT_SSGET_GROUP_ADDRESS",
+                "VT_SSGET_SERIAL_NUMBER",
+                "VT_SSGET_REQUEST_TYPE",
+                "VT_SSGET_NO_COMMAND_FLAG",
+                "VT_SSGET_REPEAT_FLAG"
+            ]
+        },
+        {
+            "id": "VTCT_9.004_RANGE_10.0_2000.0",
+            "valueTypeIDs": [
+                "VT_VALUE_LUX_RANGE_10.0_2000.0"
+            ]
+        },
+        {
+            "id": "VTCT_LAM_INLAv2_SA",
+            "valueTypeIDs": [
+                "VT_LIGHT_APPLICATION_MODE_INLAv2_SA"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_44_45_DEF_45",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_44_45_DEF_45"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_44_45_DEF_44",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_44_45_DEF_44"
+            ]
+        },
+        {
+            "id": "VTCT_7.002_RANGE_100_10000_DEF_100",
+            "valueTypeIDs": [
+                "VT_TIME_PERIOD_MSEC_RANGE_100_10000_DEF_100"
+            ]
+        },
+        {
+            "id": "VTCT_LAM_INLNS3_SA",
+            "valueTypeIDs": [
+                "VT_LIGHT_APPLICATION_MODE_INLNS3_SA"
+            ]
+        },
+        {
+            "id": "VTCT_20.600_INBA",
+            "valueTypeIDs": [
+                "VT_BEHAVIOUR_LOCK_UNLOCK_INBA"
+            ]
+        },
+        {
+            "id": "VTCT_FOLLOW_UP_TIME",
+            "valueTypeIDs": [
+                "VT_VALUE_TIME1_RANGE_0.0_86400.0_DEF_0.0",
+                "VT_DYNAMIC_CONTROL",
+                "VT_LEARN_CONTROL"
+            ]
+        },
+        {
+            "id": "VTCT_INSAv2_APPLICATION_MODE_XLEDPRO",
+            "valueTypeIDs": [
+                "VT_INSAv2_APPLICATION_MODE_XLEDPRO_DEF_LIGHT"
+            ]
+        },
+        {
+            "id": "VTCT_20.600_INSA",
+            "valueTypeIDs": [
+                "VT_BEHAVIOUR_LOCK_UNLOCK_INSA"
+            ]
+        },
+        {
+            "id": "VTCT_9.004_RANGE_2.0_2000.0_DEF_2000.0",
+            "valueTypeIDs": [
+                "VT_VALUE_LUX_RANGE_2.0_2000.0_DEF_2000.0"
+            ]
+        },
+        {
+            "id": "VTCT_BASIC_LIGHT_FUNCTION_ENABLE_BASICLIGHT",
+            "valueTypeIDs": [
+                "VT_BASIC_LIGHT_FUNCTION_ENABLE_BASICLIGHT"
+            ]
+        },
+        {
+            "id": "VTCT_9.010_RANGE_5.0_900.0_DEF_10.0",
+            "valueTypeIDs": [
+                "VT_VALUE_TIME1_RANGE_5.0_900.0_DEF_10.0"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_10",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_10"
+            ]
+        },
+        {
+            "id": "VTCT_14.056_INES.APPW",
+            "valueTypeIDs": [
+                "VT_APPARENT_POWER_0_100000"
+            ]
+        },
+        {
+            "id": "VTCT_EMODE_CHANNEL_ENABLE",
+            "valueTypeIDs": [
+                "VT_EMODE_CHANNEL_ENABLE"
+            ]
+        },
+        {
+            "id": "VTCT_TADOZAC_SET_OVERLAY",
+            "valueTypeIDs": [
+                "VT_TADO_POWER",
+                "VT_TADO_ACMODE",
+                "VT_TEMPERATURE_RANGE_18.0_30.0_DEF_18.0",
+                "VT_TADO_FAN_SPEED",
+                "VT_TADO_SWING",
+                "VT_TADO_TERMINATION_TYPE",
+                "VT_TADO_DURATION"
+            ]
+        },
+        {
+            "id": "VTCT_UP1AV_INSERT_CUSTOMER_VERSION_DEF_0",
+            "valueTypeIDs": [
+                "VT_UP1AV_INSERT_CUSTOMER_VERSION_DEF_0"
+            ]
+        },
+        {
+            "id": "VTCT_INMOVS_APPLICATION_MODE",
+            "valueTypeIDs": [
+                "VT_INMOVS_APPLICATION_MODE_DEF_MOVEMENT"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_CAP_SWINGS",
+            "valueTypeIDs": [
+                "VT_TADO_CAP_SWINGS"
+            ]
+        },
+        {
+            "id": "VTCT_9.010_RANGE_10.0_3600.0_DEF_120.0",
+            "valueTypeIDs": [
+                "VT_VALUE_TIME1_RANGE_10.0_3600.0_DEF_120.0"
+            ]
+        },
+        {
+            "id": "VTCT_IN_SCENE_CONTROL_0_17",
+            "valueTypeIDs": [
+                "VT_SCENE_NUMBER_0_17",
+                "VT_IN_SCENE_CONTROL"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_TEMPERATURE_RANGE_30.0_70.0_DEF_55.0",
+            "valueTypeIDs": [
+                "VT_TEMPERATURE_RANGE_30.0_70.0_DEF_55.0",
+                "VT_TADO_TIMESTAMP"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_8",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_8"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_9",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_9"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_4",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_4"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_5",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_5"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_6",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_6"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_7",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_7"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_0",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_0"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_1",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_1"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_2",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_2"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_DEF_3",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_DEF_3"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_CAP_TEMP_MIN",
+            "valueTypeIDs": [
+                "VT_TADO_CAP_TEMP_MIN"
+            ]
+        },
+        {
+            "id": "VTCT_UP1A_OPERATION_MODE_INLNS3_INLNS3_SA_DEF_INLNS3",
+            "valueTypeIDs": [
+                "VT_UP1A_OPERATION_MODE_INLNS3_INLNS3_SA_DEF_INLNS3"
+            ]
+        },
+        {
+            "id": "VTCT_SCENE_SENSOR_MODE_DEF_SP",
+            "valueTypeIDs": [
+                "VT_SCENE_SENSOR_MODE_DEF_SP"
+            ]
+        },
+        {
+            "id": "VTCT_INLAv2_DA_APPLICATION_MODE",
+            "valueTypeIDs": [
+                "VT_INLAv2_DA_APPLICATION_MODE_DEF_LIGHT"
+            ]
+        },
+        {
+            "id": "VTCT_UP1AV_COVER_OPERATION_MODE_SA_2K_DEF_SA_SC",
+            "valueTypeIDs": [
+                "VT_UP1AV_COVER_OPERATION_MODE_SA_2K_DEF_SA_SC"
+            ]
+        },
+        {
+            "id": "VTCT_20.600_INDA",
+            "valueTypeIDs": [
+                "VT_BEHAVIOUR_LOCK_UNLOCK_INDA"
+            ]
+        },
+        {
+            "id": "VTCT_DIMMING_ACTUATOR_LOAD_TYPE",
+            "valueTypeIDs": [
+                "VT_DIMMING_ACTUATOR_LOAD_TYPE"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_DEFAULT_DURATION",
+            "valueTypeIDs": [
+                "VT_TADO_DURATION_RANGE_1_86400_DEF_600"
+            ]
+        },
+        {
+            "id": "VTCT_9.010_RANGE_5.0_900.0_DEF_600.0",
+            "valueTypeIDs": [
+                "VT_VALUE_TIME1_RANGE_5.0_900.0_DEF_600.0"
+            ]
+        },
+        {
+            "id": "VTCT_9.004_RANGE_5.0_2000.0_DEF_2000.0",
+            "valueTypeIDs": [
+                "VT_VALUE_LUX_RANGE_5.0_2000.0_DEF_2000.0"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_13",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_13"
+            ]
+        },
+        {
+            "id": "VTCT_TADO_INSIDE_TEMP",
+            "valueTypeIDs": [
+                "VT_TEMPERATURE_RANGE_0.0_100.0_DEF_0.0",
+                "VT_TADO_TIMESTAMP"
+            ]
+        },
+        {
+            "id": "VTCT_5.001_RANGE_0_100_DEF_0",
+            "valueTypeIDs": [
+                "VT_SCALING_RANGE_0_100_DEF_0"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_14",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_14"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_11",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_11"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_12",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_12"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_17",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_17"
+            ]
+        },
+        {
+            "id": "VTCT_INLAv2_SAS_APPLICATION_MODE",
+            "valueTypeIDs": [
+                "VT_INLAv2_SAS_APPLICATION_MODE_DEF_LIGHT"
+            ]
+        },
+        {
+            "id": "VTCT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_15",
+            "valueTypeIDs": [
+                "VT_ACTUAL_SCENE_NUMBER_RANGE_0_17_DEF_15"
+            ]
+        },
+        {
+            "id": "VTCT_FORCED_VALUE",
+            "valueTypeIDs": [
+                "VT_VALUE2_CONST_0",
+                "VT_VALUE1_SCALING_RANGE_0_100_DEF_0",
+                "VT_FORCED_CONTROL"
+            ]
+        },
+        {
+            "id": "VTCT_INSA_APPLICATION_MODE",
+            "valueTypeIDs": [
+                "VT_INSA_APPLICATION_MODE_DEF_LIGHT"
+            ]
+        },
+        {
+            "id": "VTCT_7.001_RANGE_0_65535",
+            "valueTypeIDs": [
+                "VT_VALUE_2_UCOUNT_RANGE_0_65535"
+            ]
+        },
+        {
+            "id": "VTCT_PSN_RANGE_0_4_DEF_2",
+            "valueTypeIDs": [
+                "VT_PSN_RANGE_0_4_DEF_2"
+            ]
+        },
+        {
+            "id": "VTCT_PSN_RANGE_0_4_DEF_3",
+            "valueTypeIDs": [
+                "VT_PSN_RANGE_0_4_DEF_3"
+            ]
+        },
+        {
+            "id": "VTCT_SCENE_SENSOR_MODE_DEF_TF",
+            "valueTypeIDs": [
+                "VT_SCENE_SENSOR_MODE_DEF_TF"
+            ]
+        },
+        {
+            "id": "VTCT_9.010_RANGE_5.0_86400.0_DEF_120.0",
+            "valueTypeIDs": [
+                "VT_VALUE_TIME1_RANGE_5.0_86400.0_DEF_120.0"
+            ]
+        },
+        {
+            "id": "VTCT_INBAv3_APPLICATION_MODE",
+            "valueTypeIDs": [
+                "VT_INBAv3_APPLICATION_MODE_DEF_BLINDS"
+            ]
+        },
+        {
+            "id": "VTCT_1.017",
+            "valueTypeIDs": [
+                "VT_TRIGGER"
+            ]
+        },
+        {
+            "id": "VTCT_UP1A_INSERT_CUSTOMER_VERSION_DEF_0",
+            "valueTypeIDs": [
+                "VT_UP1A_INSERT_CUSTOMER_VERSION_DEF_0"
+            ]
+        },
+        {
+            "id": "VTCT_1.011",
+            "valueTypeIDs": [
+                "VT_STATE"
+            ]
+        },
+        {
+            "id": "VTCT_PSN_RANGE_0_4_DEF_0",
+            "valueTypeIDs": [
+                "VT_PSN_RANGE_0_4_DEF_0"
+            ]
+        },
+        {
+            "id": "VTCT_PSN_RANGE_0_4_DEF_1",
+            "valueTypeIDs": [
+                "VT_PSN_RANGE_0_4_DEF_1"
+            ]
+        },
+        {
+            "id": "VTCT_9.004_RANGE_0.0_670760.0",
+            "valueTypeIDs": [
+                "VT_VALUE_LUX_RANGE_0.0_670760.0"
+            ]
+        }
+    ]
+}

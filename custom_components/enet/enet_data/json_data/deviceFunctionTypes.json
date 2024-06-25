@@ -1,0 +1,1230 @@
+{
+    "inputDeviceFunctionTypes": [
+        {
+            "id": "FT_INDA.SOO",
+            "name": "Switch OnOff",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INDA.RSC",
+            "name": "Relativ Setvalue Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_3.007",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INDA.ASC",
+            "name": "Absolute Setvalue Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_5.001_RANGE_0_100_DEF_0",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INDA.OSVST",
+            "name": "Switch On Setvalue Store",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.017",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INDA.SC",
+            "name": "Scene Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_IN_SCENE_CONTROL",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INDA.MD",
+            "name": "MasterDimming",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_MASTER_DIMMING",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INDA.TRT",
+            "name": "Trigger Retrigger",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.017",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INDA.FOT",
+            "name": "Forced Timed",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_2.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INDA.FOV",
+            "name": "Forced Value",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_FORCED_VALUE",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INDA.BBE",
+            "name": "Basic Brightness Enable",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.003_DEF_FALSE",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INDA.BCE",
+            "name": "Brightness Control Enable",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.003_DEF_FALSE",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSArGO.SOO",
+            "name": "Switch OnOff",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSArGO.BCE",
+            "name": "Brightness Control Enable",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.003_DEF_FALSE",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSArGO.SC",
+            "name": "Scene Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_IN_SCENE_CONTROL",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSArGO.FOT",
+            "name": "Forced Timed",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_2.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSArGO.FOV",
+            "name": "Forced Value",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_FORCED_VALUE",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBA.MUD",
+            "name": "Move UpDown",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.008",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBA.SSUD",
+            "name": "StopStep UpDown",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.007",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBA.STOP",
+            "name": "Dedicated Stop",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.017",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBA.SAPBP",
+            "name": "Set Absolute Position Blinds Percentage",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_5.001_RANGE_0_100_DEF_0",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBA.SAPSP",
+            "name": "Set Absolute Position Slats Percentage",
+            "active": false,
+            "valueTypeContainerTypeID": "VTCT_5.001_RANGE_0_100_DEF_0",
+            "dependencyExists": true
+        },
+        {
+            "id": "FT_INBA.SC",
+            "name": "Scene Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_IN_SCENE_CONTROL",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBA.FOV",
+            "name": "Forced Value",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_FORCED_VALUE_INBA",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSA.SOO",
+            "name": "Switch OnOff",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSA.SC",
+            "name": "Scene Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_IN_SCENE_CONTROL",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSA.FOT",
+            "name": "Forced Timed",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_2.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSA.FOV",
+            "name": "Forced Value",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_FORCED_VALUE",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSA.BCE",
+            "name": "Brightness Control Enable",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.003_DEF_FALSE",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INMOVS.OBSPST",
+            "name": "Switch On Brightness Setpoint Store",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.017",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSAv2.SOO",
+            "name": "Switch OnOff",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSAv2.SC",
+            "name": "Scene Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_IN_SCENE_CONTROL",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSAv2.FOT",
+            "name": "Forced Timed",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_2.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSAv2.FOV",
+            "name": "Forced Value",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_FORCED_VALUE",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_SA.SOO",
+            "name": "Switch OnOff",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_SA.SC",
+            "name": "Scene Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_IN_SCENE_CONTROL",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_SA.FOT",
+            "name": "Forced Timed",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_2.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_SA.FOV",
+            "name": "Forced Value",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_FORCED_VALUE",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_DA.SOO",
+            "name": "Switch OnOff",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_DA.RSC",
+            "name": "Relativ Setvalue Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_3.007",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_DA.ASC",
+            "name": "Absolute Setvalue Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_5.001_RANGE_0_100_DEF_0",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_DA.OSVST",
+            "name": "Switch On Setvalue Store",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.017",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_DA.SC",
+            "name": "Scene Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_IN_SCENE_CONTROL",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_DA.MD",
+            "name": "MasterDimming",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_MASTER_DIMMING",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_DA.TRT",
+            "name": "Trigger Retrigger",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.017",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_DA.FOT",
+            "name": "Forced Timed",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_2.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_DA.FOV",
+            "name": "Forced Value",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_FORCED_VALUE",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_DA.BLFE",
+            "name": "Basic Light Function Enable",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_BASIC_LIGHT_FUNCTION_ENABLE_BASICLIGHT",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLNS3.SOO",
+            "name": "Switch OnOff",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLNS3.RSC",
+            "name": "Relativ Setvalue Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_3.007",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLNS3.ASC",
+            "name": "Absolute Setvalue Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_5.001_RANGE_0_100_DEF_0",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLNS3.OSVST",
+            "name": "Switch On Setvalue Store",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.017",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLNS3.SC",
+            "name": "Scene Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_IN_SCENE_CONTROL",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLNS3.TRT",
+            "name": "Trigger Retrigger",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.017",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLNS3.FOT",
+            "name": "Forced Timed",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_2.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLNS3.FOV",
+            "name": "Forced Value",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_FORCED_VALUE",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBAv3.MUD",
+            "name": "Move UpDown",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.008",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBAv3.SSUD",
+            "name": "StopStep UpDown",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.007",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBAv3.STOP",
+            "name": "Dedicated Stop",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.017",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBAv3.SAPBP",
+            "name": "Set Absolute Position Blinds Percentage",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_5.001_RANGE_0_100_DEF_0",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBAv3.SAPSP",
+            "name": "Set Absolute Position Slats Percentage",
+            "active": false,
+            "valueTypeContainerTypeID": "VTCT_5.001_RANGE_0_100_DEF_0",
+            "dependencyExists": true
+        },
+        {
+            "id": "FT_INBAv3.SAPBSP",
+            "name": "Set Absolute Position Blinds/Slat Percentage",
+            "active": false,
+            "valueTypeContainerTypeID": "VTCT_240.800",
+            "dependencyExists": true
+        },
+        {
+            "id": "FT_INBAv3.SC",
+            "name": "Scene Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_IN_SCENE_CONTROL",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBAv3.FOV",
+            "name": "Forced Value",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_FORCED_VALUE_INBA",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_SAS.SOO",
+            "name": "Switch OnOff",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_SAS.SC",
+            "name": "Scene Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_IN_SCENE_CONTROL",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_SAS.FOT",
+            "name": "Forced Timed",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_2.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_SAS.FOV",
+            "name": "Forced Value",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_FORCED_VALUE",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLNS3_SA.SOO",
+            "name": "Switch OnOff",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLNS3_SA.SC",
+            "name": "Scene Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_IN_SCENE_CONTROL",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLNS3_SA.FOT",
+            "name": "Forced Timed",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_2.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLNS3_SA.FOV",
+            "name": "Forced Value",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_FORCED_VALUE",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSAv3.SOO",
+            "name": "Switch OnOff",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSAv3.AMS",
+            "name": "Application Mode Switch",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSAv3.SC",
+            "name": "Scene Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_IN_SCENE_CONTROL",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZH.SET_OVERLAY",
+            "name": "Set Overlay",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADOZH_SET_OVERLAY",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZH.DELETE_OVERLAY",
+            "name": "Delete Overlay",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_EMPTY",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZAC.SET_OVERLAY",
+            "name": "Set Overlay",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADOZAC_SET_OVERLAY",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZAC.DELETE_OVERLAY",
+            "name": "Delete Overlay",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_EMPTY",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZHW.SET_OVERLAY",
+            "name": "Set Overlay",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADOZHW_SET_OVERLAY",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZHW.DELETE_OVERLAY",
+            "name": "Delete Overlay",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_EMPTY",
+            "dependencyExists": false
+        }
+    ],
+    "outputDeviceFunctionTypes": [
+        {
+            "id": "FT_INDA.IOO",
+            "name": "Info On Off",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "correspondingInputDeviceFunctionTypeID": "FT_INDA.SOO",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INDA.ADV",
+            "name": "Actual Dimming Value",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_5.001_RANGE_0_100_DEF_0",
+            "correspondingInputDeviceFunctionTypeID": "FT_INDA.ASC",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INDA.IFOS",
+            "name": "Info Forced State",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.011",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INScS.SC",
+            "name": "Scene Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_IN_SCENE_CONTROL",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": true
+        },
+        {
+            "id": "FT_INScS.MD",
+            "name": "MasterDimming",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_MASTER_DIMMING",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": true
+        },
+        {
+            "id": "FT_INScS.FOT",
+            "name": "Forced Timed",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_2.001",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": true
+        },
+        {
+            "id": "FT_INScS.FOV",
+            "name": "Forced Value",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_FORCED_VALUE",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": true
+        },
+        {
+            "id": "FT_INGBRS.GBR",
+            "name": "Generic Button, Rocker",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_GBR",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INAOOS.SC",
+            "name": "Scene Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_IN_SCENE_CONTROL",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSArGO.IFOS",
+            "name": "Info Forced State",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.011",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSArGO.IOO",
+            "name": "Info On Off",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "correspondingInputDeviceFunctionTypeID": "FT_INSArGO.SOO",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBA.IMUDS",
+            "name": "Info Move Up Down Stop",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_INFO_MOVE_BLINDS",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBA.CAPBP",
+            "name": "Current Absolute Position Blinds Percentage",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_5.001_RANGE_0_100_DEF_0",
+            "correspondingInputDeviceFunctionTypeID": "FT_INBA.SAPBP",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBA.CAPSP",
+            "name": "Current Absolute Position Slats Percentage",
+            "active": false,
+            "valueTypeContainerTypeID": "VTCT_5.001_RANGE_0_100_DEF_0",
+            "correspondingInputDeviceFunctionTypeID": "FT_INBA.SAPSP",
+            "dependencyExists": true
+        },
+        {
+            "id": "FT_INBA.IFOS",
+            "name": "Info Forced State",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.011",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBA.IALFS",
+            "name": "Info Anti Lockout Function State",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.011",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSA.IOO",
+            "name": "Info On Off",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "correspondingInputDeviceFunctionTypeID": "FT_INSA.SOO",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSA.IFOS",
+            "name": "Info Forced State",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.011",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INMOVS.TSPT",
+            "name": "Timed Start Period Trigger",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_9.010_RANGE_0.0_86400.0_DEF_0.0",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INMOVS.BA",
+            "name": "Brightness Actual",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_9.004_RANGE_0.0_670760.0",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSAv2.IOO",
+            "name": "Info On Off",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "correspondingInputDeviceFunctionTypeID": "FT_INSAv2.SOO",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSAv2.IFOS",
+            "name": "Info Forced State",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.011",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLS.GBR",
+            "name": "Generic Button, Rocker",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_GBR",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLS.SOO",
+            "name": "Switch OnOff",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBS.GBR",
+            "name": "Generic Button, Rocker",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_GBR",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBS.MUD",
+            "name": "Move UpDown",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.008",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBS.STOP",
+            "name": "Dedicated Stop",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.017",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_SA.IOO",
+            "name": "Info On Off",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "correspondingInputDeviceFunctionTypeID": "FT_INLAv2_SA.SOO",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_SA.IFOS",
+            "name": "Info Forced State",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.011",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_SA.IBFS",
+            "name": "Info Blocking Function State",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.011",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_DA.IOO",
+            "name": "Info On Off",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "correspondingInputDeviceFunctionTypeID": "FT_INLAv2_DA.SOO",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_DA.ADV",
+            "name": "Actual Dimming Value",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_5.001_RANGE_0_100_DEF_0",
+            "correspondingInputDeviceFunctionTypeID": "FT_INLAv2_DA.ASC",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_DA.IFOS",
+            "name": "Info Forced State",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.011",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_DA.IBFS",
+            "name": "Info Blocking Function State",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.011",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLNS3.IBFS",
+            "name": "Info Blocking Function State",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.011",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBAv3.IMUDS",
+            "name": "Info Move Up Down Stop",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_INFO_MOVE_BLINDS",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBAv3.CAPBP",
+            "name": "Current Absolute Position Blinds Percentage",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_5.001_RANGE_0_100_DEF_0",
+            "correspondingInputDeviceFunctionTypeID": "FT_INBAv3.SAPBP",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBAv3.CAPSP",
+            "name": "Current Absolute Position Slats Percentage",
+            "active": false,
+            "valueTypeContainerTypeID": "VTCT_5.001_RANGE_0_100_DEF_0",
+            "correspondingInputDeviceFunctionTypeID": "FT_INBAv3.SAPSP",
+            "dependencyExists": true
+        },
+        {
+            "id": "FT_INBAv3.IFOS",
+            "name": "Info Forced State",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.011",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBAv3.IALFS",
+            "name": "Info Anti Lockout Function State",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.011",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INBAv3.IBFS",
+            "name": "Info Blocking Function State",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.011",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_SAS.IOO",
+            "name": "Info On Off",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "correspondingInputDeviceFunctionTypeID": "FT_INLAv2_SAS.SOO",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_SAS.IFOS",
+            "name": "Info Forced State",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.011",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_SAS.IBFS",
+            "name": "Info Blocking Function State",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.011",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLAv2_SAS.IDOO",
+            "name": "Info Dependent On Off",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INLNS3_SA.IBFS",
+            "name": "Info Blocking Function State",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.011",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INES.VOLT",
+            "name": "Voltage",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_9.020_RANGE_0.0_670760.97",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INES.CURR",
+            "name": "Current",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_9.021_RANGE_0.0_670760.97",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INES.ACPW",
+            "name": "Active Power",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_14.056_INES",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INES.REPW",
+            "name": "Reactive Power",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_14.056_INES.REPW",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INES.APPW",
+            "name": "Apparent Power",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_14.056_INES.APPW",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INES.ABAE",
+            "name": "Absolute Active Energy",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_13.010_INES",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INThScS.SC",
+            "name": "Scene Control",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_IN_SCENE_CONTROL",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INThScS.CAVTH1",
+            "name": "Current Absolute Value Threshold1",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_9.004_RANGE_0.0_670760.0",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": true
+        },
+        {
+            "id": "FT_INSAv3.IOO",
+            "name": "Info On Off",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.001",
+            "correspondingInputDeviceFunctionTypeID": "FT_INSAv3.SOO",
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_INSAv3.IFOS",
+            "name": "Info Forced State",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_1.011",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZH.OVERLAY",
+            "name": "Overlay",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_OVERLAY",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZH.MODE",
+            "name": "Mode",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_MODE",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZH.PREPARATION",
+            "name": "Preparation Mode",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_PREPARATION_MODE",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZH.GEO_OVERRIDE",
+            "name": "Geolocation Override",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_GEO_OVERRIDE",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZH.SETTING",
+            "name": "Setting",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_SETTING",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZH.LINK",
+            "name": "Link",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_LINK",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZH.INSIDE_TEMP",
+            "name": "Inside Temperature",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_INSIDE_TEMP",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZH.HUMIDITY",
+            "name": "Humidity",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_HUMIDITY",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZAC.OVERLAY",
+            "name": "Overlay",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADOZAC_OVERLAY",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZAC.MODE",
+            "name": "Mode",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_MODE",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZAC.PREPARATION",
+            "name": "Preparation Mode",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_PREPARATION_MODE",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZAC.GEO_OVERRIDE",
+            "name": "Geolocation Override",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_GEO_OVERRIDE",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZAC.SETTING",
+            "name": "Setting",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADOZAC_SETTING",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZAC.LINK",
+            "name": "Link",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_LINK",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZAC.INSIDE_TEMP",
+            "name": "Inside Temperature",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_INSIDE_TEMP",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZAC.HUMIDITY",
+            "name": "Humidity",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_HUMIDITY",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZHW.OVERLAY",
+            "name": "Overlay",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_OVERLAY",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZHW.MODE",
+            "name": "Mode",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_MODE",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZHW.PREPARATION",
+            "name": "Preparation Mode",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_PREPARATION_MODE",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZHW.GEO_OVERRIDE",
+            "name": "Geolocation Override",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_GEO_OVERRIDE",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZHW.SETTING",
+            "name": "Setting",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_SETTING",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZHW.LINK",
+            "name": "Link",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_LINK",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZHW.INSIDE_TEMP",
+            "name": "Inside Temperature",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_INSIDE_TEMP",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADOZHW.HUMIDITY",
+            "name": "Humidity",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_HUMIDITY",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADO.HEALTH",
+            "name": "Health",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_HEALTH",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADO.MODE",
+            "name": "Mode",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_MODE",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        },
+        {
+            "id": "FT_TADO.PREPARATION",
+            "name": "Preparation Mode",
+            "active": true,
+            "valueTypeContainerTypeID": "VTCT_TADO_PREPARATION_MODE",
+            "correspondingInputDeviceFunctionTypeID": null,
+            "dependencyExists": false
+        }
+    ]
+}
