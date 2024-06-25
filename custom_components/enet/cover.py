@@ -10,7 +10,7 @@ from homeassistant.components.cover import (
 )
 
 from custom_components.enet.enet_data.enums import ChannelApplicationMode, ChannelTypeFunctionName
-from .entity import EnetBaseEntity
+from .entity import EnetBaseChannelEntity
 from .aioenet import ActuatorChannel
 from .const import DOMAIN
 
@@ -32,7 +32,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     _LOGGER.info("Finished async setup()")
 
 
-class EnetCover(EnetBaseEntity, CoverEntity):
+class EnetCover(EnetBaseChannelEntity, CoverEntity):
     """A representation of an Enet Smart Home cover / blinds channel"""
 
     def __init__(self, channel, coordinator):

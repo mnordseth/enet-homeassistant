@@ -23,6 +23,7 @@ PLATFORMS: list[Platform] = [
     Platform.SCENE,
     Platform.COVER,
     Platform.SENSOR,
+    Platform.SWITCH
 ]
 
 EVENT_TYPE_CHANNELS = [
@@ -31,9 +32,11 @@ EVENT_TYPE_CHANNELS = [
     ChannelTypeFunctionName.SCENE_CONTROL,
     ChannelTypeFunctionName.TRIGGER_START
 ]
+EVENT_DEVICE_BATTERY_STATE_CHANGED = "deviceBatteryStateChanged"
 EVENT_OUTPUT_DEVICE_FUNCTION_CALLED = "outputDeviceFunctionCalled"
-VALUE_TYPE_ROCKER_STATE = "VT_ROCKER_STATE"
-VALUE_TYPE_ROCKER_SWITCH_TIME = "VT_ROCKER_SWITCH_TIME"
+EVENT_VALUE_TYPE_ROCKER_STATE = "VT_ROCKER_STATE"
+EVENT_VALUE_TYPE_ROCKER_SWITCH_TIME = "VT_ROCKER_SWITCH_TIME"
+EVENT_VALUE_DOWN_BUTTON = "DOWN_BUTTON"
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Enet Smart Home from a config entry."""
@@ -94,6 +97,7 @@ class EnetCoordinator(DataUpdateCoordinator):
     async def setup_event_listeners(self) -> None:
         """Setup event listener for all output functions"""
         _LOGGER.debug("Setting up event listeners")
+        await self.hub.setup_event_subscription_battery_state()
         for device in self.hub.devices:
             func_uids = device.get_function_uids_for_event()
             self.function_uid_map.update(func_uids)
@@ -143,12 +147,12 @@ class EnetCoordinator(DataUpdateCoordinator):
                         continue
 
                     event_type = EVENT_TYPE_INITIAL_PRESS
-                    if values[0]["valueTypeID"] == VALUE_TYPE_ROCKER_STATE:
+                    if values[0]["valueTypeID"] == EVENT_VALUE_TYPE_ROCKER_STATE:
                         # If a button is configured as a rocker, you have the UP and Down
                         # button on the same channel.
-                        if values[0]["value"] == "DOWN_BUTTON":
+                        if values[0]["value"] == EVENT_VALUE_DOWN_BUTTON:
                             subtype += 1
-                    if values[1]["valueTypeID"] == VALUE_TYPE_ROCKER_SWITCH_TIME:
+                    if values[1]["valueTypeID"] == EVENT_VALUE_TYPE_ROCKER_SWITCH_TIME:
                         # Switch time is 0 on press and a number for release.
                         # We don't distinguish between long and short press for the
                         # moment.
@@ -162,3 +166,12 @@ class EnetCoordinator(DataUpdateCoordinator):
                         "subtype": subtype,
                     }
                     self.hass.bus.async_fire(ATTR_ENET_EVENT, bus_data)
+            elif event["event"] == EVENT_DEVICE_BATTERY_STATE_CHANGED:
+                # _LOGGER.debug("Battery state changed: %s", event["eventData"])
+                data = event["eventData"]
+                device_uid = data.get("deviceUID", None)
+                battery_state = data.get("batteryState", None)
+                device = next((d for d in self.hub.devices if d.uid == device_uid), None)
+                if device:
+                    device.update_battery_state(battery_state)
+                    self.async_update_listeners()

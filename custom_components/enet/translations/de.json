@@ -1,0 +1,50 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Das Gerät ist bereits konfiguriert."
+        },
+        "error": {
+            "cannot_connect": "Verbindungsfehler",
+            "invalid_auth": "Ungültige Zugangsdaten",
+            "unknown": "Unerwarteter Fehler"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "password": "Passwort",
+                    "url": "URL",
+                    "username": "Benutzername"
+                }
+            }
+        }
+    },
+    "entity": {
+    "sensor": {
+      "battery_state": {
+        "name": "Batterie-Status",
+        "state": {
+          "NO_STATE": "Unbekannt",
+          "BATTERY_OK": "Ok",
+          "BATTERY_WEAK": "Schwach"
+        }
+      }
+    }
+  },
+    "device_automation": {
+        "trigger_subtype": {
+            "1": "Schalter 1",
+            "2": "Schalter 2",
+            "3": "Schalter 3",
+            "4": "Schalter 4",
+            "5": "Schalter 5",
+            "6": "Schalter 6",
+            "7": "Schalter 7",
+            "8": "Schalter 8"
+        },
+        "trigger_type": {
+            "initial_press": "\"{subtype}\" wurde gedrückt",
+            "long_release": "\"{subtype}\" wurde nach langem Drücken losgelassen",
+            "short_release": "\"{subtype}\" wurde nach kurzem Drücken losgelassen"
+        }
+    }
+}

@@ -71,3 +71,9 @@ class ChannelTypeFunctionName(StrEnum):
     TRIGGER_START = "triggerStart"
     UP_DOWN = "upDown"
     VOLTAGE = "voltage"
+
+@unique
+class DeviceBatteryState(StrEnum):
+    NO_STATE = "NO_STATE",
+    BATTERY_OK = "BATTERY_OK",
+    BATTERY_WEAK = "BATTERY_WEAK"

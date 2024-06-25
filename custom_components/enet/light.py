@@ -7,7 +7,7 @@ from homeassistant.util.scaling import scale_ranged_value_to_int_range
 
 from custom_components.enet.enet_data.enums import ChannelApplicationMode, ChannelTypeFunctionName
 
-from .entity import EnetBaseEntity
+from .entity import EnetBaseChannelEntity
 from .aioenet import ActuatorChannel
 from .const import DOMAIN
 
@@ -19,7 +19,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
     hub = hass.data[DOMAIN][entry.entry_id]
 
     supported_app_modes = [
-        ChannelApplicationMode.SWITCHING,
         ChannelApplicationMode.LIGHT_SWITCHING,
         ChannelApplicationMode.LIGHT_DIMMING,
     ]
@@ -31,7 +30,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     _LOGGER.info("Finished async setup()")
 
 
-class EnetLight(EnetBaseEntity, LightEntity):
+class EnetLight(EnetBaseChannelEntity, LightEntity):
     """A representation of a Enet Smart Home dimmer or switch channel"""
 
     @property

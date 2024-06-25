@@ -18,6 +18,18 @@
             }
         }
     },
+    "entity": {
+    "sensor": {
+      "battery_state": {
+        "name": "Battery state",
+        "state": {
+          "NO_STATE": "Unknown",
+          "BATTERY_OK": "Ok",
+          "BATTERY_WEAK": "Weak"
+        }
+      }
+    }
+  },
     "device_automation": {
         "trigger_subtype": {
             "1": "Button 1",
