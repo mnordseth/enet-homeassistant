@@ -439,20 +439,23 @@ class Device:
         """Determine if the channel is an actuator or a sensor"""
         channel_type_id = device_channel["channelTypeID"]
         channel_type_config = CHANNEL_TYPE_CONFIGURATION.get(channel_type_id)
+
         if channel_type_id in CHANNEL_TYPES_IGNORED:
             return ChannelUseType.IGNORED
-        elif channel_type_config is None:
-            return ChannelUseType.UNSUPPORTED
-        else:
-            channel_meta_data =  enet_data.get_channel_meta_data_from_channel_type(channel_type_id)
-            if channel_meta_data.get("useTypeID", "") == ChannelTypeUseType.ACTUATOR:
-                if channel_meta_data.get("subSectionTypeID", "") in {ChannelTypeSubSectionType.BLINDS, ChannelTypeSubSectionType.LIGHT}:
-                    return ChannelUseType.ACTUATOR
-                else: # Special case for CT_1F19 energy sensor
-                    return ChannelUseType.SENSOR
-            elif channel_meta_data.get("useTypeID", "") == ChannelTypeUseType.SENSOR:
-                return ChannelUseType.SENSOR
 
+        # CT_1F01_DUMMY has type None, but needs to be supported as well
+        channel_meta_data =  enet_data.get_channel_meta_data_from_channel_type(channel_type_id)
+        if channel_meta_data.get("useTypeID", "") == ChannelTypeUseType.ACTUATOR:
+            if channel_meta_data.get("subSectionTypeID", "") in {ChannelTypeSubSectionType.BLINDS, ChannelTypeSubSectionType.LIGHT}:
+                return ChannelUseType.ACTUATOR
+            else: # Special case for CT_1F19 energy sensor
+                return ChannelUseType.SENSOR
+        elif channel_meta_data.get("useTypeID", "") == ChannelTypeUseType.SENSOR:
+            return ChannelUseType.SENSOR
+
+        if channel_type_config is None:
+            return ChannelUseType.UNSUPPORTED
+        
         return ChannelUseType.UNSUPPORTED
 
     def get_device_info(self):
