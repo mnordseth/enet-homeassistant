@@ -81,6 +81,19 @@ CHANNEL_TYPE_CONFIGURATION = {
             "applicationMode": "PT_INSA.APPLICATION_MODE_DUMMY"
         }
     },
+    "CT_1F01_DUMMY": {
+        "inputDeviceFunctions": {
+            "onOff": "FT_INSA.SOO",
+            "sceneControl": "FT_INSA.SC",
+        },
+        "outputDeviceFunctions": {
+            "onOff": "FT_INSA.IOO",
+            "forcedState": "FT_INSA.IFOS",
+        },
+        "deviceParameters": {
+            "applicationMode": "PT_INSA.APPLICATION_MODE_DUMMY"
+        }
+    },
     "CT_1F1B": {
         "inputDeviceFunctions": {},
         "outputDeviceFunctions": {
