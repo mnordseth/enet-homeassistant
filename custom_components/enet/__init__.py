@@ -7,7 +7,7 @@ from typing import Any, Dict, NoReturn
 
 import async_timeout
 
-from custom_components.enet.enet_data.enums import ChannelTypeFunctionName
+from .enet_data.enums import ChannelTypeFunctionName
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
