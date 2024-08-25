@@ -8,20 +8,6 @@ from typing import Any, Dict, Union
 import asyncio
 import aiohttp
 
-
-
-from homeassistant.const import (
-    ATTR_IDENTIFIERS,
-    ATTR_MANUFACTURER,
-    ATTR_MODEL,
-    ATTR_NAME,
-    ATTR_SERIAL_NUMBER,
-    ATTR_SUGGESTED_AREA,
-    ATTR_VIA_DEVICE,
-)
-from homeassistant.helpers.entity import DeviceInfo
-
-from .const import DOMAIN, NAME_ENET_CONTROLLER
 from .enums import ChannelUseType
 from .enet_data.data import enet_data
 from .enet_data.constants import CHANNEL_TYPES_IGNORED
@@ -455,22 +441,8 @@ class Device:
 
         if channel_type_config is None:
             return ChannelUseType.UNSUPPORTED
-        
-        return ChannelUseType.UNSUPPORTED
 
-    def get_device_info(self):
-        """Return device info"""
-        return DeviceInfo(
-            {
-                ATTR_IDENTIFIERS: {(DOMAIN, self.uid)},
-                ATTR_NAME: self.name,
-                ATTR_MANUFACTURER: enet_data.get_manufacturer_name_from_device_type_id(self.device_type),
-                ATTR_MODEL: f"{self.device_type} ({enet_data.get_device_name_from_device_type_id(self.device_type)})",
-                ATTR_SERIAL_NUMBER: self.serial_number,
-                ATTR_SUGGESTED_AREA: self.location.partition(":")[2],
-                ATTR_VIA_DEVICE: (DOMAIN, NAME_ENET_CONTROLLER),
-            }
-        )
+        return ChannelUseType.UNSUPPORTED
 
     def get_battery_state(self):
         return self.battery_state

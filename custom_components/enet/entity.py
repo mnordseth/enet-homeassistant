@@ -1,6 +1,7 @@
 """Generic Enet Smart Home Entity Model"""
 import logging
 from homeassistant.helpers.entity import Entity
+from .utils import get_device_info
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -38,7 +39,7 @@ class EnetBaseChannelEntity(EnetBaseEntity, Entity):
     @property
     def device_info(self):
         """Return the device information."""
-        return self.channel.device.get_device_info()
+        return get_device_info(self.channel.device)
 
 class EnetBaseDeviceEntity(EnetBaseEntity, Entity):
     """Generic Entity Class for Enet Smart Home devices"""
@@ -50,4 +51,4 @@ class EnetBaseDeviceEntity(EnetBaseEntity, Entity):
     @property
     def device_info(self):
         """Return the device information."""
-        return self.device.get_device_info()
+        return get_device_info(self.device)
