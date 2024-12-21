@@ -1,3 +1,6 @@
+# Misc
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -26,6 +29,8 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+*/build/*
+*/dist/*
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -49,7 +54,7 @@ coverage.xml
 *.cover
 *.py,cover
 .hypothesis/
-.pytest_cache/
+.pytest*
 
 # Translations
 *.mo
@@ -116,6 +121,9 @@ venv.bak/
 
 # Rope project settings
 .ropeproject
+
+# ruff stuff
+.ruff_cache
 
 # mkdocs documentation
 /site
