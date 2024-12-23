@@ -1,12 +1,13 @@
 """Support for Enet scenes"""
-import logging
-from homeassistant.components.scene import Scene as SceneEntity
-from homeassistant.helpers.entity import DeviceInfo
 
+import logging
+
+from homeassistant.components.scene import Scene as SceneEntity
 from homeassistant.const import (
     ATTR_IDENTIFIERS,
     ATTR_NAME,
 )
+from homeassistant.helpers.entity import DeviceInfo
 
 from .const import DOMAIN, NAME_ENET_CONTROLLER, NAME_ENET_SERVER
 

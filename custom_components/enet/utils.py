@@ -1,4 +1,4 @@
-"Helper functions for Enet Smart Home integration"
+"""Helper functions for Enet Smart Home integration"""
 
 from homeassistant.const import (
     ATTR_IDENTIFIERS,
@@ -21,7 +21,9 @@ def get_device_info(enet_device):
         {
             ATTR_IDENTIFIERS: {(DOMAIN, enet_device.uid)},
             ATTR_NAME: enet_device.name,
-            ATTR_MANUFACTURER: enet_data.get_manufacturer_name_from_device_type_id(enet_device.device_type),
+            ATTR_MANUFACTURER: enet_data.get_manufacturer_name_from_device_type_id(
+                enet_device.device_type
+            ),
             ATTR_MODEL: f"{enet_device.device_type} ({enet_data.get_device_name_from_device_type_id(enet_device.device_type)})",
             ATTR_SERIAL_NUMBER: enet_device.serial_number,
             ATTR_SUGGESTED_AREA: enet_device.location.partition(":")[2],

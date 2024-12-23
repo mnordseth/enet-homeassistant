@@ -1,25 +1,24 @@
 """async library for communicating with a Enet Smart Home server from Jung / Gira"""
 
-import logging
-import functools
-
-from typing import Any, Dict, Union
-
 import asyncio
+import functools
+import logging
+from typing import Any
+
 import aiohttp
 
-from .enums import ChannelUseType
-from .enet_data.data import enet_data
+from .enet_data.channel_mapping import CHANNEL_TYPE_CONFIGURATION
 from .enet_data.constants import CHANNEL_TYPES_IGNORED
+from .enet_data.data import enet_data
 from .enet_data.enums import (
-    ChannelTypeUseType,
-    ChannelTypeSubSectionType,
     ChannelApplicationMode,
     ChannelTypeFunctionName,
-    DeviceBatteryState
+    ChannelTypeSubSectionType,
+    ChannelTypeUseType,
+    DeviceBatteryState,
 )
-from .enet_data.channel_mapping import CHANNEL_TYPE_CONFIGURATION
 from .enet_data.utils import getitem_from_dict
+from .enums import ChannelUseType
 
 log = logging.getLogger(__name__)
 
@@ -28,19 +27,19 @@ URL_VIZ = "/jsonrpc/visualization"
 URL_COM = "/jsonrpc/commissioning"
 URL_TELEGRAM = URL_COM + "/app_telegrams"
 URL_SCENE = "/jsonrpc/visualization/app_scene"
-ID_FILTER_ALL="*"
+ID_FILTER_ALL = "*"
 
 
 class AuthError(Exception):
-    "Authentication error"
+    """Authentication error"""
 
 
 def auth_if_needed(func):
-    "Decorator used to reauthenticate if we get a AuthError"
+    """Decorator used to reauthenticate if we get a AuthError"""
 
     @functools.wraps(func)
     def auth_wrapper(self, *args, **kwargs):
-        "Perform re-authentication"
+        """Perform re-authentication"""
         try:
             return func(self, *args, **kwargs)
         except AuthError:
@@ -99,7 +98,6 @@ class EnetClient:
             self.function_uid_map.update(func_uids)
             await device.register_events()
 
-
     def subscribe(self, callback, id_filter=ID_FILTER_ALL):
         """
         Subscribe to status changes
@@ -121,9 +119,9 @@ class EnetClient:
             if event:
                 await self.__handle_event(event)
 
-
     async def __handle_event(self, events):
-        """Handle events from Enet Server. Either update value of actuator or
+        """
+        Handle events from Enet Server. Either update value of actuator or
         forward event from sensor
         """
         for event in events["events"]:
@@ -151,14 +149,12 @@ class EnetClient:
                         log.debug("Updating value of %s to %s", device, value)
                         device.state = value
 
-
                 for callback in self._subscribers:
                     callback(data, device)
 
-
     @auth_if_needed
     async def request(self, url, method, params, get_raw=False):
-        "Request data from the Enet Server"
+        """Request data from the Enet Server"""
         return await self._do_request(url, method, params, get_raw)
 
     async def _do_request(self, url, method, params, get_raw=False):
@@ -188,14 +184,12 @@ class EnetClient:
             if returned_error["code"] in (-29998, -29997):
                 log.warning("Got auth error: %s", json["error"])
                 raise AuthError
-            elif returned_error["code"] == -29999:
+            if returned_error["code"] == -29999:
                 raise aiohttp.ServerTimeoutError
-            else:
-                log.warning(error_msg)
-                raise Exception(error_msg)
-        else:
-            if self._debug_requests:
-                log.debug("-> %s %s returned: %s", url, method, json["result"])
+            log.warning(error_msg)
+            raise Exception(error_msg)
+        if self._debug_requests:
+            log.debug("-> %s %s returned: %s", url, method, json["result"])
         return json["result"]
 
     async def simple_login(self):
@@ -218,9 +212,11 @@ class EnetClient:
         return result
 
     async def get_project_information(self):
-        """Get the project information which includes version numbers,
+        """
+        Get the project information which includes version numbers,
         creation and modification dates and other general information
-        about the server and its configuration."""
+        about the server and its configuration.
+        """
         if self._projectuid is None:
             await self.get_project()
 
@@ -248,7 +244,7 @@ class EnetClient:
             device = create_device(self, raw_device)
             if not device:
                 continue
-            elif device.serial_number == "" or device.serial_number is None:
+            if device.serial_number == "" or device.serial_number is None:
                 # Ignore catalog devices, since they are just placeholders until devices are installed (missing serial number)
                 log.info("Ignoring catalog device %s", device.name)
                 continue
@@ -348,7 +344,7 @@ class EnetClient:
             result = await self.request(URL_VIZ, "requestEvents", None)
             return result
         except aiohttp.ServerTimeoutError:
-            return
+            return None
 
 
 def create_device(client, raw):
@@ -361,9 +357,12 @@ def create_device(client, raw):
         )
     try:
         return Device(client, raw)
-    except Exception as e:
-        log.exception("Failed to create device: typeID=%s name=%s", raw["typeID"], raw["installationArea"])
-
+    except Exception:
+        log.exception(
+            "Failed to create device: typeID=%s name=%s",
+            raw["typeID"],
+            raw["installationArea"],
+        )
 
 
 class Device:
@@ -410,7 +409,9 @@ class Device:
                     case ChannelUseType.IGNORED:
                         continue
                     case ChannelUseType.UNSUPPORTED:
-                        log.warning("Unsupported enet channel type: %s", channel_type_id)
+                        log.warning(
+                            "Unsupported enet channel type: %s", channel_type_id
+                        )
                         continue
 
                 log.debug(
@@ -430,13 +431,18 @@ class Device:
             return ChannelUseType.IGNORED
 
         # CT_1F01_DUMMY has type None, but needs to be supported as well
-        channel_meta_data =  enet_data.get_channel_meta_data_from_channel_type(channel_type_id)
+        channel_meta_data = enet_data.get_channel_meta_data_from_channel_type(
+            channel_type_id
+        )
         if channel_meta_data.get("useTypeID", "") == ChannelTypeUseType.ACTUATOR:
-            if channel_meta_data.get("subSectionTypeID", "") in {ChannelTypeSubSectionType.BLINDS, ChannelTypeSubSectionType.LIGHT}:
+            if channel_meta_data.get("subSectionTypeID", "") in {
+                ChannelTypeSubSectionType.BLINDS,
+                ChannelTypeSubSectionType.LIGHT,
+            }:
                 return ChannelUseType.ACTUATOR
-            else: # Special case for CT_1F19 energy sensor
-                return ChannelUseType.SENSOR
-        elif channel_meta_data.get("useTypeID", "") == ChannelTypeUseType.SENSOR:
+            # Special case for CT_1F19 energy sensor
+            return ChannelUseType.SENSOR
+        if channel_meta_data.get("useTypeID", "") == ChannelTypeUseType.SENSOR:
             return ChannelUseType.SENSOR
 
         if channel_type_config is None:
@@ -449,7 +455,12 @@ class Device:
 
     def update_battery_state(self, battery_state):
         if battery_state in [state.value for state in DeviceBatteryState]:
-            log.debug("Updating battery state for %s from %s to %s", self.name, self.battery_state, battery_state)
+            log.debug(
+                "Updating battery state for %s from %s to %s",
+                self.name,
+                self.battery_state,
+                battery_state,
+            )
             self.battery_state = battery_state
         else:
             log.warning("Unknown battery state: %s", battery_state)
@@ -468,6 +479,7 @@ class Device:
                 "Register event subscription for %s - %s", self.name, function_uid
             )
             await self.client.setup_event_subscription(function_uid)
+
 
 class DeviceChannel:
     """A generic class representing a device channel"""
@@ -496,24 +508,34 @@ class DeviceChannel:
         for output_function in self.channel["outputDeviceFunctions"]:
             if output_function.get("typeID") in device_output_function_list.keys():
                 if output_function.get("active", False) is True:
-                    type_name = enet_data.get_output_device_function_name(output_function.get("typeID"))
+                    type_name = enet_data.get_output_device_function_name(
+                        output_function.get("typeID")
+                    )
                     name = f"Channel {self.name} - {type_name}"
 
                     self.output_functions[output_function.get("typeID")] = dict(
                         uid=output_function["uid"],
                         typeID=output_function["typeID"],
-                        name=name
+                        name=name,
                     )
 
-                    self.current_values[output_function.get("typeID")] = self._get_current_value_from_dict(output_function)
+                    self.current_values[output_function.get("typeID")] = (
+                        self._get_current_value_from_dict(output_function)
+                    )
 
     def _find_input_functions(self) -> None:
         device_input_function_list = self._get_mapped_type_ids("inputDeviceFunctions")
         for input_function in self.channel["inputDeviceFunctions"]:
             if input_function.get("typeID") in device_input_function_list.keys():
                 if input_function.get("active", False) is True:
-                    type_name = enet_data.get_input_device_function_name(input_function.get("typeID"))
-                    input_template = enet_data.get_value_template_from_input_device_function(input_function.get("typeID"))
+                    type_name = enet_data.get_input_device_function_name(
+                        input_function.get("typeID")
+                    )
+                    input_template = (
+                        enet_data.get_value_template_from_input_device_function(
+                            input_function.get("typeID")
+                        )
+                    )
                     name = f"Channel {self.name} - {type_name}"
 
                     self.input_functions[input_function.get("typeID")] = {
@@ -523,7 +545,7 @@ class DeviceChannel:
                         "template": input_template,
                     }
 
-    def _get_output_function_by_uid(self, uid: str) -> Union[dict, None]:
+    def _get_output_function_by_uid(self, uid: str) -> dict | None:
         for output_function in self.output_functions.values():
             if output_function["uid"] == uid:
                 return output_function
@@ -538,7 +560,9 @@ class DeviceChannel:
         return function_uids
 
     def _get_mapped_type_ids(self, list_name) -> dict:
-        channel_map = getitem_from_dict(CHANNEL_TYPE_CONFIGURATION.get(self.channel_type), [list_name])
+        channel_map = getitem_from_dict(
+            CHANNEL_TYPE_CONFIGURATION.get(self.channel_type), [list_name]
+        )
         return {value: key for key, value in channel_map.items()}
 
     def get_channel_type_function_name_from_output_function_uid(self, uid: str) -> str:
@@ -552,28 +576,41 @@ class DeviceChannel:
         for device_parameter in self.channel["deviceParameters"]:
             if device_parameter["typeID"] in device_parameter_list.keys():
                 if device_parameter.get("active", False) is True:
-                    type_name = enet_data.get_device_parameter_name(device_parameter.get("typeID"))
-                    parameter_template = enet_data.get_value_template_from_device_parameter (device_parameter.get("typeID"))
+                    type_name = enet_data.get_device_parameter_name(
+                        device_parameter.get("typeID")
+                    )
+                    parameter_template = (
+                        enet_data.get_value_template_from_device_parameter(
+                            device_parameter.get("typeID")
+                        )
+                    )
                     name = f"Parameter {self.name} - {type_name}"
 
                     self.device_parameters[device_parameter.get("typeID")] = {
                         "uid": device_parameter.get("uid"),
                         "typeID": device_parameter.get("typeID"),
                         "name": name,
-                        "template": parameter_template
+                        "template": parameter_template,
                     }
 
-                    self.parameter_values[device_parameter.get("typeID")] = self._get_current_value_from_dict(device_parameter)
+                    self.parameter_values[device_parameter.get("typeID")] = (
+                        self._get_current_value_from_dict(device_parameter)
+                    )
 
-    def _get_device_parameter(self, channel_param_name: ChannelTypeFunctionName) -> Union[Dict, None]:
-        device_param_id = self.get_channel_configuration_entry("deviceParameters", channel_param_name)
+    def _get_device_parameter(
+        self, channel_param_name: ChannelTypeFunctionName
+    ) -> dict | None:
+        device_param_id = self.get_channel_configuration_entry(
+            "deviceParameters", channel_param_name
+        )
         if device_param_id is not None:
             return self.device_parameters.get(device_param_id, None)
-        else:
-            return None
+        return None
 
     def _get_parameter_value(self, channel_param_name: ChannelTypeFunctionName) -> Any:
-        device_param_id = self.get_channel_configuration_entry("deviceParameters", channel_param_name)
+        device_param_id = self.get_channel_configuration_entry(
+            "deviceParameters", channel_param_name
+        )
         if device_param_id is not None:
             param_value = self.parameter_values.get(device_param_id, None)
             if param_value is not None:
@@ -581,39 +618,42 @@ class DeviceChannel:
 
         return None
 
-    def _get_current_value_from_dict(self, function_object) -> Union[dict, list]:
+    def _get_current_value_from_dict(self, function_object) -> dict | list:
         current_values = getitem_from_dict(function_object, ["currentValues"])
         if len(current_values) == 1:
             return self._parse_value(current_values[0])
-        else:
-            return [self._parse_value(value) for value in current_values]
+        return [self._parse_value(value) for value in current_values]
 
     def _parse_value(self, value_to_parse: dict) -> dict:
-        value = value_to_parse.get("value", None)
+        value = value_to_parse.get("value")
         value_type_id = value_to_parse.get("valueTypeID", "")
 
-        if value is not None and value_type_id!= "":
-            return {
-                "value": value,
-                "valueTypeID": value_type_id
-            }
-        else:
-            log.error("Invalid value: %s", value_type_id)
+        if value is not None and value_type_id != "":
+            return {"value": value, "valueTypeID": value_type_id}
+        log.error("Invalid value: %s", value_type_id)
 
     def _set_application_mode(self):
-        application_mode_value = self._get_parameter_value(ChannelTypeFunctionName.APPLICATION_MODE)
+        application_mode_value = self._get_parameter_value(
+            ChannelTypeFunctionName.APPLICATION_MODE
+        )
         if application_mode_value is not None:
             self.application_mode = ChannelApplicationMode[application_mode_value]
 
     def _set_active(self) -> bool:
-        if self.application_mode != ChannelApplicationMode.UNUSED and (len(self.output_functions) > 0 or len(self.input_functions) > 0):
-                self.active = True
+        if self.application_mode != ChannelApplicationMode.UNUSED and (
+            len(self.output_functions) > 0 or len(self.input_functions) > 0
+        ):
+            self.active = True
 
-    def get_channel_configuration_entry(self, config_group: str, config_param: ChannelTypeFunctionName) -> str:
+    def get_channel_configuration_entry(
+        self, config_group: str, config_param: ChannelTypeFunctionName
+    ) -> str:
         """Return the configuration for a specific config parameter"""
-        return getitem_from_dict(CHANNEL_TYPE_CONFIGURATION, [self.channel_type, config_group, config_param])
+        return getitem_from_dict(
+            CHANNEL_TYPE_CONFIGURATION, [self.channel_type, config_group, config_param]
+        )
 
-    def update_values(self, function_uid: str, values: Dict) -> None:
+    def update_values(self, function_uid: str, values: dict) -> None:
         """Update current values with data from event"""
         if len(values) != 1:
             log.warning(
@@ -631,20 +671,29 @@ class DeviceChannel:
 
     def get_current_value(self, channel_function_name: ChannelTypeFunctionName) -> Any:
         """Set channel to new value"""
-        channel_config_id = self.get_channel_configuration_entry("outputDeviceFunctions", channel_function_name)
+        channel_config_id = self.get_channel_configuration_entry(
+            "outputDeviceFunctions", channel_function_name
+        )
         value_container = self.current_values.get(channel_config_id, {})
         value = value_container.get("value", None)
 
         if value is not None:
             return value
-        else:
-            raise Exception("No value found for channel %s and function %s" % (self.name, channel_config_id))
+        raise Exception(
+            "No value found for channel %s and function %s"
+            % (self.name, channel_config_id)
+        )
 
-    def set_current_value(self, channel_function_name: ChannelTypeFunctionName, value = None) -> None:
+    def set_current_value(
+        self, channel_function_name: ChannelTypeFunctionName, value=None
+    ) -> None:
         """Set channel to new value"""
-        channel_config_id = self.get_channel_configuration_entry("outputDeviceFunctions", channel_function_name)
+        channel_config_id = self.get_channel_configuration_entry(
+            "outputDeviceFunctions", channel_function_name
+        )
         if value is not None:
             self.current_values[channel_config_id]["value"] = value
+
 
 class SensorChannel(DeviceChannel):
     """A class representing a sensor channel"""
@@ -666,7 +715,9 @@ class ActuatorChannel(DeviceChannel):
 
     async def get_value(self, channel_function_name: ChannelTypeFunctionName) -> Any:
         """Fetch the updated state from the sever"""
-        channel_config_id = self.get_channel_configuration_entry("outputDeviceFunctions", channel_function_name)
+        channel_config_id = self.get_channel_configuration_entry(
+            "outputDeviceFunctions", channel_function_name
+        )
         channel_config = self.output_functions.get(channel_config_id)
         if channel_config is not None:
             params = {"deviceFunctionUID": channel_config["uid"]}
@@ -678,16 +729,17 @@ class ActuatorChannel(DeviceChannel):
             log.info("%s get_value() returned %s", self.name, current_value)
             return current_value.get("value")
 
-    async def set_value(self, channel_function_name: ChannelTypeFunctionName, value = None) -> None:
+    async def set_value(
+        self, channel_function_name: ChannelTypeFunctionName, value=None
+    ) -> None:
         """Set channel to new value"""
-        channel_config_id = self.get_channel_configuration_entry("inputDeviceFunctions", channel_function_name)
+        channel_config_id = self.get_channel_configuration_entry(
+            "inputDeviceFunctions", channel_function_name
+        )
         channel_config = self.input_functions.get(channel_config_id)
         input_function_uid = channel_config.get("uid", "")
 
-        params = {
-            "deviceFunctionUID": input_function_uid,
-            "values": []
-        }
+        params = {"deviceFunctionUID": input_function_uid, "values": []}
 
         value_template = channel_config.get("template", []).copy()
 
@@ -703,12 +755,12 @@ class ActuatorChannel(DeviceChannel):
         await self.device.client.request(URL_VIZ, "callInputDeviceFunction", params)
 
     async def turn_off(self):
-        "Turn off device"
+        """Turn off device"""
         log.info("%s turn_off()", self.name)
         await self.set_value(ChannelTypeFunctionName.ON_OFF, False)
 
     async def turn_on(self):
-        "Turn on device"
+        """Turn on device"""
         log.info("%s turn_on()", self.name)
         await self.set_value(ChannelTypeFunctionName.ON_OFF, True)
 

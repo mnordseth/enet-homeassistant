@@ -1,18 +1,23 @@
 """Enet Smart Home cover / blinds support"""
 
 import logging
+
 from homeassistant.components.cover import (
     ATTR_POSITION,
     ATTR_TILT_POSITION,
+    CoverDeviceClass,
     CoverEntity,
     CoverEntityFeature,
-    CoverDeviceClass
 )
 
-from custom_components.enet.enet_data.enums import ChannelApplicationMode, ChannelTypeFunctionName
-from .entity import EnetBaseChannelEntity
+from custom_components.enet.enet_data.enums import (
+    ChannelApplicationMode,
+    ChannelTypeFunctionName,
+)
+
 from .aioenet import ActuatorChannel
 from .const import DOMAIN
+from .entity import EnetBaseChannelEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -21,13 +26,14 @@ async def async_setup_entry(hass, entry, async_add_entities):
     """Add Enet cover devices from a config entry"""
     hub = hass.data[DOMAIN][entry.entry_id]
 
-    supported_app_modes = [
-        ChannelApplicationMode.BLINDS
-    ]
+    supported_app_modes = [ChannelApplicationMode.BLINDS]
 
     for device in hub.devices:
         for channel in device.channels:
-            if isinstance(channel, ActuatorChannel) and channel.application_mode in supported_app_modes:
+            if (
+                isinstance(channel, ActuatorChannel)
+                and channel.application_mode in supported_app_modes
+            ):
                 async_add_entities([EnetCover(channel, hub.coordinator)])
     _LOGGER.info("Finished async setup()")
 
@@ -67,28 +73,36 @@ class EnetCover(EnetBaseChannelEntity, CoverEntity):
 
         Returns:
             bool: True if the cover is fully closed, False otherwise.
+
         """
-        current_value = self.channel.get_current_value(ChannelTypeFunctionName.COVER_POSITION)
+        current_value = self.channel.get_current_value(
+            ChannelTypeFunctionName.COVER_POSITION
+        )
         return current_value == 100
 
     @property
     def current_cover_position(self) -> int:
-        """Return current position of cover tilt.
+        """
+        Return current position of cover tilt.
 
         None is unknown, 0 is fully closed, 100 is fully open.
         """
-
-        current_value = self.channel.get_current_value(ChannelTypeFunctionName.COVER_POSITION)
+        current_value = self.channel.get_current_value(
+            ChannelTypeFunctionName.COVER_POSITION
+        )
         return 100 - current_value
 
     @property
     def current_cover_tilt_position(self):
-        """Return current position of cover tilt.
+        """
+        Return current position of cover tilt.
 
         None is unknown, 0 is fully closed, 100 is fully open.
         """
         if self._operation_mode == "BLINDS":
-            current_value = self.channel.get_current_value(ChannelTypeFunctionName.TILT_POSITION)
+            current_value = self.channel.get_current_value(
+                ChannelTypeFunctionName.TILT_POSITION
+            )
             return 100 - current_value
 
         return None
@@ -112,7 +126,9 @@ class EnetCover(EnetBaseChannelEntity, CoverEntity):
     async def async_set_cover_position(self, **kwargs) -> None:
         """Move the cover to a specific position."""
         enet_position = 100 - kwargs[ATTR_POSITION]
-        await self.channel.set_value(ChannelTypeFunctionName.COVER_POSITION, enet_position)
+        await self.channel.set_value(
+            ChannelTypeFunctionName.COVER_POSITION, enet_position
+        )
         self.async_write_ha_state()
 
     async def async_stop_cover(self, **kwargs) -> None:
@@ -133,7 +149,9 @@ class EnetCover(EnetBaseChannelEntity, CoverEntity):
     async def async_set_cover_tilt_position(self, **kwargs) -> None:
         """Move the cover tilt to a specific position."""
         enet_tilt_position = 100 - kwargs[ATTR_TILT_POSITION]
-        await self.channel.set_value(ChannelTypeFunctionName.TILT_POSITION, enet_tilt_position)
+        await self.channel.set_value(
+            ChannelTypeFunctionName.TILT_POSITION, enet_tilt_position
+        )
         self.async_write_ha_state()
 
     async def async_stop_cover_tilt(self, **kwargs) -> None:

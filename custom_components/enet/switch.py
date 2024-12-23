@@ -1,13 +1,17 @@
 """Enet Smart Home switch support"""
+
 import logging
 
-from homeassistant.components.switch import SwitchEntity, SwitchDeviceClass
+from homeassistant.components.switch import SwitchDeviceClass, SwitchEntity
 
-from custom_components.enet.enet_data.enums import ChannelApplicationMode, ChannelTypeFunctionName
+from custom_components.enet.enet_data.enums import (
+    ChannelApplicationMode,
+    ChannelTypeFunctionName,
+)
 
-from .entity import EnetBaseChannelEntity
 from .aioenet import ActuatorChannel
 from .const import DOMAIN
+from .entity import EnetBaseChannelEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -16,13 +20,14 @@ async def async_setup_entry(hass, entry, async_add_entities):
     """Add Enet switch devices from a config entry"""
     hub = hass.data[DOMAIN][entry.entry_id]
 
-    supported_app_modes = [
-        ChannelApplicationMode.SWITCHING
-    ]
+    supported_app_modes = [ChannelApplicationMode.SWITCHING]
 
     for device in hub.devices:
         for channel in device.channels:
-            if isinstance(channel, ActuatorChannel) and channel.application_mode in supported_app_modes:
+            if (
+                isinstance(channel, ActuatorChannel)
+                and channel.application_mode in supported_app_modes
+            ):
                 async_add_entities([EnetSwitch(channel, hub.coordinator)])
     _LOGGER.info("Finished async setup()")
 

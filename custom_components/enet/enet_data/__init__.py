@@ -1,4 +1,5 @@
 """The Enet Smart Home configuration & data."""
+
 import asyncio
 
 from .data import enet_data

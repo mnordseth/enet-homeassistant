@@ -1,5 +1,7 @@
 """Support for Enet sensors."""
+
 from __future__ import annotations
+
 import logging
 
 from homeassistant.components.sensor import (
@@ -7,14 +9,17 @@ from homeassistant.components.sensor import (
     SensorEntity,
     SensorStateClass,
 )
-
 from homeassistant.const import LIGHT_LUX, EntityCategory
 
-from custom_components.enet.enet_data.enums import ChannelApplicationMode, ChannelTypeFunctionName, DeviceBatteryState
+from custom_components.enet.enet_data.enums import (
+    ChannelApplicationMode,
+    ChannelTypeFunctionName,
+    DeviceBatteryState,
+)
 
-from .entity import EnetBaseChannelEntity, EnetBaseDeviceEntity
 from .aioenet import SensorChannel
 from .const import DOMAIN
+from .entity import EnetBaseChannelEntity, EnetBaseDeviceEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -37,7 +42,9 @@ async def async_setup_entry(hass, entry, async_add_entities):
                 isinstance(channel, SensorChannel)
                 and channel.application_mode in supported_app_modes
             ):
-                channel_type_brightness = channel.get_channel_configuration_entry("outputDeviceFunctions", ChannelTypeFunctionName.BRIGHTNESS)
+                channel_type_brightness = channel.get_channel_configuration_entry(
+                    "outputDeviceFunctions", ChannelTypeFunctionName.BRIGHTNESS
+                )
                 # Check if brightness is supported by channel, since light sensor provides one off spec channel without brightness
                 if (
                     channel_type_brightness is not None
@@ -79,10 +86,7 @@ class EnetBatterySensor(EnetBaseDeviceEntity, SensorEntity):
     _attr_has_entity_name = True
 
     def __init__(self, device, coordinator):
-        super().__init__(
-            device,
-            coordinator
-        )
+        super().__init__(device, coordinator)
         self._uid = f"{self.device.uid}_battery_state"
 
     @property
@@ -105,4 +109,3 @@ class EnetBatterySensor(EnetBaseDeviceEntity, SensorEntity):
         self.async_on_remove(
             self.coordinator.async_add_listener(self.async_write_ha_state)
         )
-

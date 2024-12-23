@@ -2,28 +2,34 @@
 
 from enum import StrEnum, unique
 
+
 @unique
 class ChannelTypeUseType(StrEnum):
     """The use types of a channel type."""
+
     ACTUATOR = "UT_ACTUATOR"
     NONE = "UT_NONE"
     SENSOR = "UT_SENSOR"
-    SENSOR_ACTUATOR = "UT_SENSOR_ACTUATOR" # Tado
+    SENSOR_ACTUATOR = "UT_SENSOR_ACTUATOR"  # Tado
+
 
 @unique
 class ChannelTypeSubSectionType(StrEnum):
     """The sub section types of a channel type."""
+
     BLINDS = "SST_BLINDS"
-    HVAC = "SST_HVAC" # Tado
+    HVAC = "SST_HVAC"  # Tado
     LIGHT = "SST_LIGHT"
     NONE = "SST_NONE"
+
 
 @unique
 class ChannelApplicationMode(StrEnum):
     """The application modes of a channel."""
+
     BLINDS = "BLINDS"
     ENERGY = "ENERGY"
-    HVAC = "HVAC" # Tado
+    HVAC = "HVAC"  # Tado
     LIGHT_DIMMING = "LIGHT_DIMMING"
     LIGHT_SWITCHING = "LIGHT_SWITCHING"
     LIGHT_SWITCHING_SLAVE = "LIGHT_SWITCHING_SLAVE"
@@ -34,9 +40,11 @@ class ChannelApplicationMode(StrEnum):
     SWITCHING_SLAVE = "SWITCHING_SLAVE"
     UNUSED = "UNUSED"
 
+
 @unique
 class DeviceTypeArticleGroup(StrEnum):
     """The article groups of a device type."""
+
     ACTUATOR = "AG_ACTUATORS"
     COVER = "AG_COVERS"
     MOTION_DETECTOR = "AG_MOTION_DETECTORS"
@@ -44,9 +52,11 @@ class DeviceTypeArticleGroup(StrEnum):
     SENSOR = "AG_SENSORS"
     SYSTEM_DEVICE = "AG_SYSTEM_DEVICES"
 
+
 @unique
 class ChannelTypeFunctionName(StrEnum):
     """The function names of a channel type."""
+
     APPLICATION_MODE = "applicationMode"
     APPLICATION_MODE_SWITCH = "applicationModeSwitch"
     ANTI_LOCKOUT_STATE = "antiLockoutState"
@@ -72,8 +82,9 @@ class ChannelTypeFunctionName(StrEnum):
     UP_DOWN = "upDown"
     VOLTAGE = "voltage"
 
+
 @unique
 class DeviceBatteryState(StrEnum):
-    NO_STATE = "NO_STATE",
-    BATTERY_OK = "BATTERY_OK",
+    NO_STATE = "NO_STATE"
+    BATTERY_OK = "BATTERY_OK"
     BATTERY_WEAK = "BATTERY_WEAK"

@@ -1,20 +1,23 @@
-"Load a debug file downloaded from Home Assistant"
+"""Load a debug file downloaded from Home Assistant"""
 
 import argparse
 import asyncio
+import json
 import logging
 from os.path import abspath, dirname
 from sys import path
-import json
 
-path.insert(1, dirname(dirname(abspath(__file__)))+"/custom_components/")
+path.insert(1, dirname(dirname(abspath(__file__))) + "/custom_components/")
 
 from enet import aioenet
 
-parser = argparse.ArgumentParser(description="Load Home Assistant debug file to view enet devices and channels")
+parser = argparse.ArgumentParser(
+    description="Load Home Assistant debug file to view enet devices and channels"
+)
 parser.add_argument("filename", help="/path/to/file to load")
 parser.add_argument("--debug", help="enable debug logging", action="store_true")
 args = parser.parse_args()
+
 
 async def main():
     if args.debug:
@@ -38,10 +41,7 @@ async def main():
             print("  " + str(c))
 
 
-
-
 try:
     asyncio.run(main())
 except KeyboardInterrupt:
     pass
-

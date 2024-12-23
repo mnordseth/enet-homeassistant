@@ -1,12 +1,17 @@
 """Generic Enet Smart Home Entity Model"""
+
 import logging
+
 from homeassistant.helpers.entity import Entity
+
 from .utils import get_device_info
 
 _LOGGER = logging.getLogger(__name__)
 
+
 class EnetBaseEntity(Entity):
     """Generic Entity Class for Enet Smart Home entities"""
+
     @property
     def available(self):
         """Return True if entity is available."""
@@ -16,6 +21,7 @@ class EnetBaseEntity(Entity):
     def should_poll(self):
         """Return the polling state. False means the entity will only update when it has new data."""
         return False
+
 
 class EnetBaseChannelEntity(EnetBaseEntity, Entity):
     """Generic Entity Class for Enet Smart Home channel"""
@@ -40,6 +46,7 @@ class EnetBaseChannelEntity(EnetBaseEntity, Entity):
     def device_info(self):
         """Return the device information."""
         return get_device_info(self.channel.device)
+
 
 class EnetBaseDeviceEntity(EnetBaseEntity, Entity):
     """Generic Entity Class for Enet Smart Home devices"""

@@ -1,15 +1,18 @@
 """Enet Smart Home light support"""
+
 import logging
-from typing import Optional
 
 from homeassistant.components.light import ColorMode, LightEntity
 from homeassistant.util.scaling import scale_ranged_value_to_int_range
 
-from custom_components.enet.enet_data.enums import ChannelApplicationMode, ChannelTypeFunctionName
+from custom_components.enet.enet_data.enums import (
+    ChannelApplicationMode,
+    ChannelTypeFunctionName,
+)
 
-from .entity import EnetBaseChannelEntity
 from .aioenet import ActuatorChannel
 from .const import DOMAIN
+from .entity import EnetBaseChannelEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -25,7 +28,10 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     for device in hub.devices:
         for channel in device.channels:
-            if isinstance(channel, ActuatorChannel) and channel.application_mode in supported_app_modes:
+            if (
+                isinstance(channel, ActuatorChannel)
+                and channel.application_mode in supported_app_modes
+            ):
                 async_add_entities([EnetLight(channel, hub.coordinator)])
     _LOGGER.info("Finished async setup()")
 
@@ -39,7 +45,7 @@ class EnetLight(EnetBaseChannelEntity, LightEntity):
         return self.channel.get_current_value(ChannelTypeFunctionName.ON_OFF)
 
     @property
-    def brightness(self) -> Optional[int]:
+    def brightness(self) -> int | None:
         """Return the current brightness."""
         return scale_ranged_value_to_int_range(
             (1, 100),

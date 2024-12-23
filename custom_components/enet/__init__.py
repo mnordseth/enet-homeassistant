@@ -1,21 +1,26 @@
 """The Enet Smart Home integration."""
+
 from __future__ import annotations
 
-from datetime import timedelta
 import logging
+from datetime import timedelta
 from typing import Any, Dict, NoReturn
 
 import async_timeout
-
-from .enet_data.enums import ChannelTypeFunctionName
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .aioenet import EnetClient, ActuatorChannel, SensorChannel
-from .const import DOMAIN, ATTR_ENET_EVENT, EVENT_TYPE_INITIAL_PRESS, EVENT_TYPE_SHORT_RELEASE
+from .aioenet import ActuatorChannel, EnetClient, SensorChannel
+from .const import (
+    ATTR_ENET_EVENT,
+    DOMAIN,
+    EVENT_TYPE_INITIAL_PRESS,
+    EVENT_TYPE_SHORT_RELEASE,
+)
 from .device import async_setup_devices
+from .enet_data.enums import ChannelTypeFunctionName
 
 _LOGGER = logging.getLogger(__name__)
 PLATFORMS: list[Platform] = [
@@ -23,20 +28,21 @@ PLATFORMS: list[Platform] = [
     Platform.SCENE,
     Platform.COVER,
     Platform.SENSOR,
-    Platform.SWITCH
+    Platform.SWITCH,
 ]
 
 EVENT_TYPE_CHANNELS = [
     ChannelTypeFunctionName.BUTTON_ROCKER,
     ChannelTypeFunctionName.MASTER_DIMMING,
     ChannelTypeFunctionName.SCENE_CONTROL,
-    ChannelTypeFunctionName.TRIGGER_START
+    ChannelTypeFunctionName.TRIGGER_START,
 ]
 EVENT_DEVICE_BATTERY_STATE_CHANGED = "deviceBatteryStateChanged"
 EVENT_OUTPUT_DEVICE_FUNCTION_CALLED = "outputDeviceFunctionCalled"
 EVENT_VALUE_TYPE_ROCKER_STATE = "VT_ROCKER_STATE"
 EVENT_VALUE_TYPE_ROCKER_SWITCH_TIME = "VT_ROCKER_SWITCH_TIME"
 EVENT_VALUE_DOWN_BUTTON = "DOWN_BUTTON"
+
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Enet Smart Home from a config entry."""
@@ -80,7 +86,9 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 class EnetCoordinator(DataUpdateCoordinator):
     """Enet Smart Home coordinator responsible for subscribing to and handling events"""
 
-    def __init__(self, hass: HomeAssistant, hub: EnetClient, entry: ConfigEntry) -> None:
+    def __init__(
+        self, hass: HomeAssistant, hub: EnetClient, entry: ConfigEntry
+    ) -> None:
         """Initialize the coordinator."""
         self.hub = hub
         self.hass = hass
@@ -91,7 +99,7 @@ class EnetCoordinator(DataUpdateCoordinator):
             name=DOMAIN,
             update_interval=None,
         )
-        self.function_uid_map: Dict[str, Any] = {}
+        self.function_uid_map: dict[str, Any] = {}
         _LOGGER.debug("EnetCoordinator initialized")
 
     async def setup_event_listeners(self) -> None:
@@ -104,7 +112,8 @@ class EnetCoordinator(DataUpdateCoordinator):
             await device.register_events()
 
     async def _async_update_data(self) -> NoReturn:
-        """Fetch events from Enet server
+        """
+        Fetch events from Enet server
 
         This endpoint blocks for 30s if no events are available
         or returns immediatly when events are there. Loop forever
@@ -123,8 +132,9 @@ class EnetCoordinator(DataUpdateCoordinator):
                 except Exception as e:
                     _LOGGER.exception("Failed to handle event: %s (%s)", event, e)
 
-    def handle_event(self, event_data: Dict[str, Any]) -> None:
-        """Handle events from Enet Server. Either update value of actuator or
+    def handle_event(self, event_data: dict[str, Any]) -> None:
+        """
+        Handle events from Enet Server. Either update value of actuator or
         forward event from sensor
         """
         for event in event_data["events"]:
@@ -138,9 +148,18 @@ class EnetCoordinator(DataUpdateCoordinator):
                     continue
 
                 values = data["values"]
-                channel_type = device.get_channel_type_function_name_from_output_function_uid(function_uid)
+                channel_type = (
+                    device.get_channel_type_function_name_from_output_function_uid(
+                        function_uid
+                    )
+                )
 
-                if channel_type not in [ChannelTypeFunctionName.BUTTON_ROCKER, ChannelTypeFunctionName.MASTER_DIMMING, ChannelTypeFunctionName.SCENE_CONTROL, ChannelTypeFunctionName.TRIGGER_START]:
+                if channel_type not in [
+                    ChannelTypeFunctionName.BUTTON_ROCKER,
+                    ChannelTypeFunctionName.MASTER_DIMMING,
+                    ChannelTypeFunctionName.SCENE_CONTROL,
+                    ChannelTypeFunctionName.TRIGGER_START,
+                ]:
                     device.update_values(function_uid, values)
                     self.async_update_listeners()
                 else:
@@ -175,7 +194,9 @@ class EnetCoordinator(DataUpdateCoordinator):
                 data = event["eventData"]
                 device_uid = data.get("deviceUID", None)
                 battery_state = data.get("batteryState", None)
-                device = next((d for d in self.hub.devices if d.uid == device_uid), None)
+                device = next(
+                    (d for d in self.hub.devices if d.uid == device_uid), None
+                )
                 if device:
                     device.update_battery_state(battery_state)
                     self.async_update_listeners()

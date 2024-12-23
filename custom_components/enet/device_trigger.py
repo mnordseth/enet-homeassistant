@@ -1,22 +1,27 @@
 """Provides device triggers for enet."""
+
 from __future__ import annotations
 
-from typing import Any
 import logging
-import voluptuous as vol
+from typing import Any
 
+import voluptuous as vol
 from homeassistant.components.device_automation import DEVICE_TRIGGER_BASE_SCHEMA
 from homeassistant.components.homeassistant.triggers import event as event_trigger
 from homeassistant.const import CONF_DEVICE_ID, CONF_DOMAIN, CONF_PLATFORM, CONF_TYPE
-
-
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant
+from homeassistant.helpers import device_registry
 from homeassistant.helpers.trigger import TriggerActionType, TriggerInfo
 from homeassistant.helpers.typing import ConfigType
-from homeassistant.helpers import device_registry
 
-from .const import DOMAIN, ATTR_ENET_EVENT, EVENT_TYPE_INITIAL_PRESS, EVENT_TYPE_SHORT_RELEASE, CONF_UNIQUE_ID, CONF_SUBTYPE
 from .aioenet import SensorChannel
+from .const import (
+    ATTR_ENET_EVENT,
+    CONF_SUBTYPE,
+    CONF_UNIQUE_ID,
+    DOMAIN,
+    EVENT_TYPE_INITIAL_PRESS,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -33,6 +38,7 @@ TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
     }
 )
 
+
 async def async_get_triggers(
     hass: HomeAssistant, device_id: str
 ) -> list[dict[str, Any]]:
@@ -48,7 +54,7 @@ async def async_get_triggers(
 
     # if not isinstance(enet_device, Sensor):
     if not any([isinstance(c, SensorChannel) for c in enet_device.channels]):
-        return
+        return None
 
     channel_numbers = []
 

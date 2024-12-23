@@ -1,10 +1,10 @@
-"Representation of a Enet device in Home Assistant"
+"""Representation of a Enet device in Home Assistant"""
 
 import logging
 
 from homeassistant.core import callback
 from homeassistant.helpers import device_registry
-from .aioenet import ActuatorChannel
+
 from .utils import get_device_info
 
 _LOGGER = logging.getLogger(__name__)
