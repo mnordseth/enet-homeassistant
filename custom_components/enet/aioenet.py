@@ -60,7 +60,7 @@ class EnetClient:
         self.passwd = passwd
         if url.endswith("/"):
             url = url[:-1]
-        self.baseurl = url
+        self.baseurl = url.strip()
         jar = aiohttp.CookieJar(unsafe=True)
         self._session = aiohttp.ClientSession(cookie_jar=jar)
         self._debug_requests = False
@@ -210,6 +210,10 @@ class EnetClient:
         """Logout of the Enet Server"""
         await self.request(URL_MANAGEMENT, "userLogout", None)
         await self._session.close()
+
+    async def ping(self):
+        """Ping server to keep connection alive"""
+        return await self.request(URL_MANAGEMENT, "ping", None)
 
     async def get_project(self):
         """Get the project which included the projectUID and the projectName"""

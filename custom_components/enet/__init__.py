@@ -3,9 +3,9 @@ from __future__ import annotations
 
 from datetime import timedelta
 import logging
-from typing import Any, Dict, NoReturn
+import asyncio
 
-import async_timeout
+from typing import Any, Dict, NoReturn
 
 from .enet_data.enums import ChannelTypeFunctionName
 from homeassistant.config_entries import ConfigEntry
@@ -92,6 +92,8 @@ class EnetCoordinator(DataUpdateCoordinator):
             update_interval=None,
         )
         self.function_uid_map: Dict[str, Any] = {}
+        if self.hub.baseurl.startswith("https://"):
+            asyncio.create_task(self.ping_forever())
         _LOGGER.debug("EnetCoordinator initialized")
 
     async def setup_event_listeners(self) -> None:
@@ -102,6 +104,12 @@ class EnetCoordinator(DataUpdateCoordinator):
             func_uids = device.get_function_uids_for_event()
             self.function_uid_map.update(func_uids)
             await device.register_events()
+
+    async def ping_forever(self):
+        """Ping server to keep conncetion alive"""
+        while True:
+            await self.hub.ping()
+            await asyncio.sleep(15)
 
     async def _async_update_data(self) -> NoReturn:
         """Fetch events from Enet server
