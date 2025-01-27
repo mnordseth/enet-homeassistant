@@ -62,7 +62,8 @@ class EnetClient:
             url = url[:-1]
         self.baseurl = url.strip()
         jar = aiohttp.CookieJar(unsafe=True)
-        self._session = aiohttp.ClientSession(cookie_jar=jar)
+        connector = aiohttp.TCPConnector(keepalive_timeout=30)
+        self._session = aiohttp.ClientSession(cookie_jar=jar, connector=connector)
         self._debug_requests = False
         self._api_counter = 1
         self._cookie = ""

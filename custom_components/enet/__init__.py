@@ -109,7 +109,7 @@ class EnetCoordinator(DataUpdateCoordinator):
         """Ping server to keep conncetion alive"""
         while True:
             await self.hub.ping()
-            await asyncio.sleep(15)
+            await asyncio.sleep(28)
 
     async def _async_update_data(self) -> NoReturn:
         """Fetch events from Enet server
