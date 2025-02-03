@@ -162,7 +162,7 @@ class EnetClient:
         "Request data from the Enet Server"
         return await self._do_request(url, method, params, get_raw)
 
-    async def _do_request(self, url, method, params, get_raw=False):
+    async def _do_request(self, url, method, params, raise_on_error=False, get_raw=False):
         req = {
             "jsonrpc": "2.0",
             "method": method,
@@ -180,7 +180,10 @@ class EnetClient:
                 response.request_info.url,
                 response.status,
             )
-            return response
+            if raise_on_error:
+                raise Exception("Request to %s failed with status %s" % (response.request_info.url, response.status))
+            else:
+                return response
 
         json = await response.json()
         if "error" in json:
@@ -202,10 +205,11 @@ class EnetClient:
     async def simple_login(self):
         """Login to the Enet Server"""
         params = dict(userName=self.user, userPassword=self.passwd)
-        await self._do_request(URL_MANAGEMENT, "userLogin", params)
-        await self._do_request(
+        response = await self._do_request(URL_MANAGEMENT, "userLogin", params, raise_on_error=True)
+        response = await self._do_request(
             URL_MANAGEMENT, "setClientRole", dict(clientRole="CR_VISU")
         )
+        return response
 
     async def simple_logout(self):
         """Logout of the Enet Server"""
