@@ -28,7 +28,7 @@ BUTTON_EVENT_TYPES = {
 TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
     {
         vol.Required(CONF_TYPE): vol.In(BUTTON_EVENT_TYPES),
-        vol.Required(CONF_SUBTYPE): vol.Union(int, str),
+        vol.Required(CONF_SUBTYPE): str,
         vol.Required(CONF_UNIQUE_ID): vol.Union(int, str),
     }
 )

@@ -175,7 +175,7 @@ class EnetCoordinator(DataUpdateCoordinator):
                         "device_id": device.device.hass_device_entry.id,
                         "unique_id": device.device.uid,
                         "type": event_type,
-                        "subtype": subtype,
+                        "subtype": str(subtype),
                     }
                     self.hass.bus.async_fire(ATTR_ENET_EVENT, bus_data)
             elif event["event"] == EVENT_DEVICE_BATTERY_STATE_CHANGED:
