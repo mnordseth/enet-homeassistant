@@ -10,6 +10,7 @@ from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
+from homeassistant.components import zeroconf
 
 from . import aioenet
 from .const import DOMAIN
@@ -40,7 +41,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     # )
     hub = aioenet.EnetClient(data["url"], data["username"], data["password"])
     try:
-        await hub.simple_login()
+        response = await hub.simple_login()
     except aioenet.AuthError:
         raise InvalidAuth
     except:
@@ -82,6 +83,37 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors
         )
 
+    async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None):
+        if user_input is not None:
+            # TODO: process user input
+            self.async_set_unique_id(user_id)
+            self._abort_if_unique_id_mismatch()
+            return self.async_update_reload_and_abort(
+                self._get_reconfigure_entry(),
+                data_updates=data,
+            )
+
+        return self.async_show_form(
+            step_id="reconfigure",
+            data_schema=STEP_USER_DATA_SCHEMA,
+        )
+
+    async def async_step_zeroconf(self, discovery_info: zeroconf.ZeroconfServiceInfo ) -> FlowResult:
+        """Handle a discovered Enet Server.
+
+        This flow is triggered by the Zeroconf component. It will check if the
+        host is already configured and delegate to the import step if not.
+        """
+        _LOGGER.info("Enet Zeroconf discovery: %s", discovery_info)
+        return
+    async def async_step_ssdp(self, discovery_info: config_entries.SsdpServiceInfo) -> config_entries.ConfigFlowResult:
+        """Handle a discovered Enet Server
+
+        This flow is triggered by the SSDP component. It will check if the
+        host is already configured and delegate to the import step if not.
+        """
+        _LOGGER.info("Enet SSDP discovery: %s", discovery_info)
+        return
 
 class CannotConnect(HomeAssistantError):
     """Error to indicate we cannot connect."""
