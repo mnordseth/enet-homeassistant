@@ -21,8 +21,8 @@ from .aioenet import SensorChannel
 _LOGGER = logging.getLogger(__name__)
 
 BUTTON_EVENT_TYPES = {
-    EVENT_TYPE_INITIAL_PRESS,  # ButtonEvent.INITIAL_PRESS,
-    #    EVENT_TYPE_SHORT_RELEASE,  # ButtonEvent.SHORT_RELEASE,
+    EVENT_TYPE_INITIAL_PRESS,
+    EVENT_TYPE_SHORT_RELEASE,
 }
 
 TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
@@ -32,6 +32,7 @@ TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
         vol.Required(CONF_UNIQUE_ID): vol.Union(int, str),
     }
 )
+
 
 async def async_get_triggers(
     hass: HomeAssistant, device_id: str
@@ -43,7 +44,8 @@ async def async_get_triggers(
     triggers = []
 
     enet_device_id = get_enet_device_id(device_entry)
-    enet_device = next((d for d in hub.devices if d.uid == enet_device_id), None)
+    enet_device = next(
+        (d for d in hub.devices if d.uid == enet_device_id), None)
     _LOGGER.debug("Enet Trigger device: %s", enet_device)
 
     # if not isinstance(enet_device, Sensor):
