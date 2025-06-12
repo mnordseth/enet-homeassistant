@@ -15,7 +15,7 @@ from homeassistant.helpers.trigger import TriggerActionType, TriggerInfo
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers import device_registry
 
-from .const import DOMAIN, ATTR_ENET_EVENT, EVENT_TYPE_INITIAL_PRESS, EVENT_TYPE_SHORT_RELEASE, CONF_UNIQUE_ID, CONF_SUBTYPE
+from .const import DOMAIN, ATTR_ENET_EVENT, EVENT_TYPE_INITIAL_PRESS, EVENT_TYPE_SHORT_RELEASE, EVENT_TYPE_LONG_RELEASE, CONF_UNIQUE_ID, CONF_SUBTYPE
 from .aioenet import SensorChannel
 
 _LOGGER = logging.getLogger(__name__)
@@ -23,6 +23,7 @@ _LOGGER = logging.getLogger(__name__)
 BUTTON_EVENT_TYPES = {
     EVENT_TYPE_INITIAL_PRESS,
     EVENT_TYPE_SHORT_RELEASE,
+    EVENT_TYPE_LONG_RELEASE
 }
 
 TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(

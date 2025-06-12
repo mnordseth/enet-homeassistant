@@ -14,7 +14,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .aioenet import EnetClient, ActuatorChannel, SensorChannel
-from .const import DOMAIN, ATTR_ENET_EVENT, EVENT_TYPE_INITIAL_PRESS, EVENT_TYPE_SHORT_RELEASE
+from .const import DOMAIN, ATTR_ENET_EVENT, EVENT_TYPE_INITIAL_PRESS, EVENT_TYPE_SHORT_RELEASE, EVENT_TYPE_LONG_RELEASE
 from .device import async_setup_devices
 
 _LOGGER = logging.getLogger(__name__)
@@ -38,12 +38,14 @@ EVENT_VALUE_TYPE_ROCKER_STATE = "VT_ROCKER_STATE"
 EVENT_VALUE_TYPE_ROCKER_SWITCH_TIME = "VT_ROCKER_SWITCH_TIME"
 EVENT_VALUE_DOWN_BUTTON = "DOWN_BUTTON"
 
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Enet Smart Home from a config entry."""
     _LOGGER.debug("Setting up Enet Smart Home entry")
 
     hass.data.setdefault(DOMAIN, {})
-    hub = EnetClient(entry.data["url"], entry.data["username"], entry.data["password"])
+    hub = EnetClient(entry.data["url"],
+                     entry.data["username"], entry.data["password"])
     hub.coordinator = EnetCoordinator(hass, hub, entry)
 
     try:
@@ -129,24 +131,28 @@ class EnetCoordinator(DataUpdateCoordinator):
                 try:
                     self.handle_event(event)
                 except Exception as e:
-                    _LOGGER.exception("Failed to handle event: %s (%s)", event, e)
+                    _LOGGER.exception(
+                        "Failed to handle event: %s (%s)", event, e)
 
     def handle_event(self, event_data: Dict[str, Any]) -> None:
         """Handle events from Enet Server. Either update value of actuator or
         forward event from sensor
         """
         for event in event_data["events"]:
-            # _LOGGER.debug("Handling event: %s", event)
+
+            _LOGGER.debug("Handling event: %s", event)
             if event["event"] == EVENT_OUTPUT_DEVICE_FUNCTION_CALLED:
                 data = event["eventData"]
                 function_uid = data["deviceFunctionUID"]
                 device = self.function_uid_map.get(function_uid)
                 if not device:
-                    _LOGGER.warning("Function %s does not map to device", function_uid)
+                    _LOGGER.warning(
+                        "Function %s does not map to device", function_uid)
                     continue
 
                 values = data["values"]
-                channel_type = device.get_channel_type_function_name_from_output_function_uid(function_uid)
+                channel_type = device.get_channel_type_function_name_from_output_function_uid(
+                    function_uid)
 
                 if channel_type not in [ChannelTypeFunctionName.BUTTON_ROCKER, ChannelTypeFunctionName.MASTER_DIMMING, ChannelTypeFunctionName.SCENE_CONTROL, ChannelTypeFunctionName.TRIGGER_START]:
                     device.update_values(function_uid, values)
@@ -168,8 +174,11 @@ class EnetCoordinator(DataUpdateCoordinator):
                         # Switch time is 0 on press and a number for release.
                         # We don't distinguish between long and short press for the
                         # moment.
-                        if values[1]["value"] > 0:
+                        switch_time = values[1]["value"]
+                        if switch_time > 0:
                             event_type = EVENT_TYPE_SHORT_RELEASE
+                        if switch_time > 60:
+                            event_type = EVENT_TYPE_LONG_RELEASE
 
                     bus_data = {
                         "device_id": device.device.hass_device_entry.id,
@@ -183,7 +192,8 @@ class EnetCoordinator(DataUpdateCoordinator):
                 data = event["eventData"]
                 device_uid = data.get("deviceUID", None)
                 battery_state = data.get("batteryState", None)
-                device = next((d for d in self.hub.devices if d.uid == device_uid), None)
+                device = next(
+                    (d for d in self.hub.devices if d.uid == device_uid), None)
                 if device:
                     device.update_battery_state(battery_state)
                     self.async_update_listeners()
