@@ -14,7 +14,7 @@
     "_enet._tcp.local."
   ],
   "dependencies": [],
-  "version": "2025.6.1",
+  "version": "2025.6.2",
   "codeowners": [
     "@mnordseth"
   ],
