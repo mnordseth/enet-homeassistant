@@ -168,7 +168,6 @@ class EnetData:
             "valueTypeID": value_type.get("id"),
         }
 
-
     async def import_channel_types(self) -> None:
         """Imports channel types from a JSON file and updates the internal dictionary."""
         json_data = await self.import_json_file('channelTypes.json')

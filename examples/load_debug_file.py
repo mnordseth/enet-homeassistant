@@ -22,26 +22,19 @@ async def main():
             level=logging.DEBUG,
             format="%(asctime)-15s %(levelname)-5s %(name)s -- %(message)s",
         )
-    with open(args.filename) as fp:
-        config = json.load(fp)
-    enet_devices_raw = config["data"]["enet_data"]
-    enet = aioenet.EnetClient("http://localhost", "", "")
-    print(f"Found {len(enet_devices_raw)} raw devices")
-    devices = []
-    for e in enet_devices_raw:
-        device = aioenet.create_device(enet, e)
-        devices.append(device)
 
-    for d in devices:
-        print(d)
-        for c in d.channels:
-            print("  " + str(c))
+    enet = aioenet.EnetClient("http://localhost", "", "", True, args.filename)
+
+    async with aioenet.EnetClient("http://localhost", "", "", True, args.filename) as enet:
+        for device in enet.devices:
+            print(device)
+            print("\n".join(["  " + str(c) for c in device.channels]))
 
 
 
 
 try:
-    asyncio.run(main())
+    e = asyncio.run(main())
 except KeyboardInterrupt:
     pass
 

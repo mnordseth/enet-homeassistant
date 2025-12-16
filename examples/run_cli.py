@@ -35,8 +35,9 @@ async def main():
         enet.subscribe(print_event)
         print("\n\nWaiting for events...")
         await asyncio.sleep(600)
+        return enet
 
 try:
-    asyncio.run(main())
+    e = asyncio.run(main())
 except KeyboardInterrupt:
     pass

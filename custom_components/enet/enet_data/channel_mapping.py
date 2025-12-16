@@ -19,7 +19,7 @@ CHANNEL_TYPE_CONFIGURATION = {
         "inputDeviceFunctions": {},
         "outputDeviceFunctions": {
             "sceneControl": "FT_INScS.SC",
-            "masterDimming": "FT_INScS.MD"
+            # "masterDimming": "FT_INScS.MD"
         },
         "deviceParameters": {
             "applicationMode": "PT_INScS.APPLICATION_MODE_DUMMY"

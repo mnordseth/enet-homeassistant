@@ -8,7 +8,7 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 
-from homeassistant.const import LIGHT_LUX, EntityCategory
+from homeassistant.const import LIGHT_LUX, EntityCategory, UnitOfEnergy, UnitOfElectricCurrent, UnitOfElectricPotential, UnitOfPower  # , UnitOfReactivePower
 
 from custom_components.enet.enet_data.enums import ChannelApplicationMode, ChannelTypeFunctionName, DeviceBatteryState
 
@@ -37,37 +37,86 @@ async def async_setup_entry(hass, entry, async_add_entities):
                 isinstance(channel, SensorChannel)
                 and channel.application_mode in supported_app_modes
             ):
-                channel_type_brightness = channel.get_channel_configuration_entry("outputDeviceFunctions", ChannelTypeFunctionName.BRIGHTNESS)
+                for output_function in channel.output_functions.values():
+                    match output_function["function"]:
+                        case ChannelTypeFunctionName.BRIGHTNESS:
+                            async_add_entities(
+                                [EnetLightLevelSensor(channel, hub.coordinator)])
+                        case ChannelTypeFunctionName.ENERGY_ACTIVE:
+                            async_add_entities(
+                                [EnetEnergySensor(channel, hub.coordinator)])
+                        case ChannelTypeFunctionName.VOLTAGE:
+                            async_add_entities(
+                                [EnetVoltageSensor(channel, hub.coordinator)])
+                        case ChannelTypeFunctionName.CURRENT:
+                            async_add_entities(
+                                [EnetCurrentSensor(channel, hub.coordinator)])
+                        case ChannelTypeFunctionName.POWER_ACTIVE:
+                            async_add_entities(
+                                [EnetPowerSensor(channel, hub.coordinator)])
+                        case ChannelTypeFunctionName.SCENE_CONTROL:
+                            # Handled as device action
+                            pass
+                        case _:
+                            _LOGGER.warning(
+                                "Unsupported output function: %s", output_function["function"])
+
+                # channel_type_brightness = channel.get_channel_configuration_entry(
+                #    "outputDeviceFunctions", ChannelTypeFunctionName.BRIGHTNESS)
                 # Check if brightness is supported by channel, since light sensor provides one off spec channel without brightness
-                if (
-                    channel_type_brightness is not None
-                    and channel_type_brightness in channel.current_values
-                ):
-                    async_add_entities([EnetLightLevelSensor(channel, hub.coordinator)])
+                # if (
+                #    channel_type_brightness is not None
+                #    and channel_type_brightness in channel.current_values
+                # ):
+                #    async_add_entities(
+                #        [EnetLightLevelSensor(channel, hub.coordinator)])
+
     _LOGGER.info("Finished async setup(sensor)")
 
 
+class EnetPowerSensor(EnetBaseChannelEntity, SensorEntity):
+    """Representation of a Enet Power Active sensor."""
+
+    _attr_native_unit_of_measurement = UnitOfPower.WATT
+    _attr_device_class = SensorDeviceClass.POWER
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _enet_channel_function = ChannelTypeFunctionName.POWER_ACTIVE
+
+
+class EnetCurrentSensor(EnetBaseChannelEntity, SensorEntity):
+    """Representation of a Enet Current sensor."""
+
+    _attr_native_unit_of_measurement = UnitOfElectricCurrent.AMPERE
+    _attr_device_class = SensorDeviceClass.CURRENT
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _enet_channel_function = ChannelTypeFunctionName.CURRENT
+
+
+class EnetVoltageSensor(EnetBaseChannelEntity, SensorEntity):
+    """Representation of a Enet Voltage sensor."""
+
+    _attr_native_unit_of_measurement = UnitOfElectricPotential.VOLT
+    _attr_device_class = SensorDeviceClass.VOLTAGE
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _enet_channel_function = ChannelTypeFunctionName.VOLTAGE
+
+
+class EnetEnergySensor(EnetBaseChannelEntity, SensorEntity):
+    """Representation of a Enet Energy sensor."""
+
+    _attr_native_unit_of_measurement = UnitOfEnergy.KILO_WATT_HOUR
+    _attr_device_class = SensorDeviceClass.ENERGY
+    _attr_state_class = SensorStateClass.TOTAL_INCREASING
+    _enet_channel_function = ChannelTypeFunctionName.ENERGY_ACTIVE
+
+
 class EnetLightLevelSensor(EnetBaseChannelEntity, SensorEntity):
-    """Representation of a Hue LightLevel (illuminance) sensor."""
+    """Representation of a Enet LightLevel sensor."""
 
     _attr_native_unit_of_measurement = LIGHT_LUX
     _attr_device_class = SensorDeviceClass.ILLUMINANCE
     _attr_state_class = SensorStateClass.MEASUREMENT
-
-    @property
-    def native_value(self) -> int:
-        """Return the last value reported by the sensor."""
-        return self.channel.get_current_value(ChannelTypeFunctionName.BRIGHTNESS)
-
-    def update_value(self, value: int) -> None:
-        """Update the value of the sensor."""
-        self.channel.set_current_value(ChannelTypeFunctionName.BRIGHTNESS, value)
-
-    async def async_added_to_hass(self):
-        """Subscribe entity to updates when added to hass."""
-        self.async_on_remove(
-            self.coordinator.async_add_listener(self.async_write_ha_state)
-        )
+    _enet_channel_function = ChannelTypeFunctionName.BRIGHTNESS
 
 
 class EnetBatterySensor(EnetBaseDeviceEntity, SensorEntity):
@@ -105,4 +154,3 @@ class EnetBatterySensor(EnetBaseDeviceEntity, SensorEntity):
         self.async_on_remove(
             self.coordinator.async_add_listener(self.async_write_ha_state)
         )
-

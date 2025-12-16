@@ -45,7 +45,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     hass.data.setdefault(DOMAIN, {})
     hub = EnetClient(entry.data["url"],
-                     entry.data["username"], entry.data["password"])
+                     entry.data["username"], entry.data["password"],
+                     noconnect=True, load_file="/workspaces/enet-homeassistant/examples/config_entry-enet-97f179557e3785d3430b8007471e68ff.json"
+                     # noconnect=True, load_file="/workspaces/enet-homeassistant/examples/config_entry-enet-01JRNS5MR3V9DX73M7BQ79KC40.json"
+                     )
     hub.coordinator = EnetCoordinator(hass, hub, entry)
 
     try:
@@ -125,6 +128,8 @@ class EnetCoordinator(DataUpdateCoordinator):
 
         """
         # _LOGGER.debug("_async_update_data()")
+        if self.hub._offline:
+            return
         while True:
             event = await self.hub.get_events()
             if event:
