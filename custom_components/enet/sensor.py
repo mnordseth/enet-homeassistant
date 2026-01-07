@@ -1,4 +1,5 @@
 """Support for Enet sensors."""
+
 from __future__ import annotations
 import logging
 
@@ -8,9 +9,20 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 
-from homeassistant.const import LIGHT_LUX, EntityCategory, UnitOfEnergy, UnitOfElectricCurrent, UnitOfElectricPotential, UnitOfPower  # , UnitOfReactivePower
+from homeassistant.const import (
+    LIGHT_LUX,
+    EntityCategory,
+    UnitOfEnergy,
+    UnitOfElectricCurrent,
+    UnitOfElectricPotential,
+    UnitOfPower,
+)  # , UnitOfReactivePower
 
-from custom_components.enet.enet_data.enums import ChannelApplicationMode, ChannelTypeFunctionName, DeviceBatteryState
+from custom_components.enet.enet_data.enums import (
+    ChannelApplicationMode,
+    ChannelTypeFunctionName,
+    DeviceBatteryState,
+)
 
 from .entity import EnetBaseChannelEntity, EnetBaseDeviceEntity
 from .aioenet import SensorChannel
@@ -41,25 +53,32 @@ async def async_setup_entry(hass, entry, async_add_entities):
                     match output_function["function"]:
                         case ChannelTypeFunctionName.BRIGHTNESS:
                             async_add_entities(
-                                [EnetLightLevelSensor(channel, hub.coordinator)])
+                                [EnetLightLevelSensor(channel, hub.coordinator)]
+                            )
                         case ChannelTypeFunctionName.ENERGY_ACTIVE:
                             async_add_entities(
-                                [EnetEnergySensor(channel, hub.coordinator)])
+                                [EnetEnergySensor(channel, hub.coordinator)]
+                            )
                         case ChannelTypeFunctionName.VOLTAGE:
                             async_add_entities(
-                                [EnetVoltageSensor(channel, hub.coordinator)])
+                                [EnetVoltageSensor(channel, hub.coordinator)]
+                            )
                         case ChannelTypeFunctionName.CURRENT:
                             async_add_entities(
-                                [EnetCurrentSensor(channel, hub.coordinator)])
+                                [EnetCurrentSensor(channel, hub.coordinator)]
+                            )
                         case ChannelTypeFunctionName.POWER_ACTIVE:
                             async_add_entities(
-                                [EnetPowerSensor(channel, hub.coordinator)])
+                                [EnetPowerSensor(channel, hub.coordinator)]
+                            )
                         case ChannelTypeFunctionName.SCENE_CONTROL:
                             # Handled as device action
                             pass
                         case _:
                             _LOGGER.warning(
-                                "Unsupported output function: %s", output_function["function"])
+                                "Unsupported output function: %s",
+                                output_function["function"],
+                            )
 
                 # channel_type_brightness = channel.get_channel_configuration_entry(
                 #    "outputDeviceFunctions", ChannelTypeFunctionName.BRIGHTNESS)
@@ -86,7 +105,7 @@ class EnetPowerSensor(EnetBaseChannelEntity, SensorEntity):
 class EnetCurrentSensor(EnetBaseChannelEntity, SensorEntity):
     """Representation of a Enet Current sensor."""
 
-    _attr_native_unit_of_measurement = UnitOfElectricCurrent.AMPERE
+    _attr_native_unit_of_measurement = UnitOfElectricCurrent.MILLIAMPERE
     _attr_device_class = SensorDeviceClass.CURRENT
     _attr_state_class = SensorStateClass.MEASUREMENT
     _enet_channel_function = ChannelTypeFunctionName.CURRENT
@@ -104,7 +123,8 @@ class EnetVoltageSensor(EnetBaseChannelEntity, SensorEntity):
 class EnetEnergySensor(EnetBaseChannelEntity, SensorEntity):
     """Representation of a Enet Energy sensor."""
 
-    _attr_native_unit_of_measurement = UnitOfEnergy.KILO_WATT_HOUR
+    _attr_native_unit_of_measurement = UnitOfEnergy.WATT_HOUR
+    _attr_suggested_unit_of_measurement = UnitOfEnergy.KILO_WATT_HOUR
     _attr_device_class = SensorDeviceClass.ENERGY
     _attr_state_class = SensorStateClass.TOTAL_INCREASING
     _enet_channel_function = ChannelTypeFunctionName.ENERGY_ACTIVE
@@ -128,10 +148,7 @@ class EnetBatterySensor(EnetBaseDeviceEntity, SensorEntity):
     _attr_has_entity_name = True
 
     def __init__(self, device, coordinator):
-        super().__init__(
-            device,
-            coordinator
-        )
+        super().__init__(device, coordinator)
         self._uid = f"{self.device.uid}_battery_state"
 
     @property
