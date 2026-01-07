@@ -75,7 +75,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
                             # Handled as device action
                             pass
                         case _:
-                            _LOGGER.warning(
+                            _LOGGER.debug(
                                 "Unsupported output function: %s",
                                 output_function["function"],
                             )
@@ -100,6 +100,7 @@ class EnetPowerSensor(EnetBaseChannelEntity, SensorEntity):
     _attr_device_class = SensorDeviceClass.POWER
     _attr_state_class = SensorStateClass.MEASUREMENT
     _enet_channel_function = ChannelTypeFunctionName.POWER_ACTIVE
+    _attr_name = "Power"
 
 
 class EnetCurrentSensor(EnetBaseChannelEntity, SensorEntity):
@@ -109,15 +110,18 @@ class EnetCurrentSensor(EnetBaseChannelEntity, SensorEntity):
     _attr_device_class = SensorDeviceClass.CURRENT
     _attr_state_class = SensorStateClass.MEASUREMENT
     _enet_channel_function = ChannelTypeFunctionName.CURRENT
+    _attr_name = "Current"
 
 
 class EnetVoltageSensor(EnetBaseChannelEntity, SensorEntity):
     """Representation of a Enet Voltage sensor."""
 
-    _attr_native_unit_of_measurement = UnitOfElectricPotential.VOLT
+    _attr_native_unit_of_measurement = UnitOfElectricPotential.MILLIVOLT
+    _attr_suggested_unit_of_measurement = UnitOfElectricPotential.VOLT
     _attr_device_class = SensorDeviceClass.VOLTAGE
     _attr_state_class = SensorStateClass.MEASUREMENT
     _enet_channel_function = ChannelTypeFunctionName.VOLTAGE
+    _attr_name = "Voltage"
 
 
 class EnetEnergySensor(EnetBaseChannelEntity, SensorEntity):
@@ -128,6 +132,7 @@ class EnetEnergySensor(EnetBaseChannelEntity, SensorEntity):
     _attr_device_class = SensorDeviceClass.ENERGY
     _attr_state_class = SensorStateClass.TOTAL_INCREASING
     _enet_channel_function = ChannelTypeFunctionName.ENERGY_ACTIVE
+    _attr_name = "Total energy consumed"
 
 
 class EnetLightLevelSensor(EnetBaseChannelEntity, SensorEntity):
@@ -137,6 +142,7 @@ class EnetLightLevelSensor(EnetBaseChannelEntity, SensorEntity):
     _attr_device_class = SensorDeviceClass.ILLUMINANCE
     _attr_state_class = SensorStateClass.MEASUREMENT
     _enet_channel_function = ChannelTypeFunctionName.BRIGHTNESS
+    _attr_name = "Light level"
 
 
 class EnetBatterySensor(EnetBaseDeviceEntity, SensorEntity):

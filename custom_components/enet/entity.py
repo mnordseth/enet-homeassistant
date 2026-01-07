@@ -1,4 +1,5 @@
 """Generic Enet Smart Home Entity Model"""
+
 import logging
 from homeassistant.helpers.entity import Entity
 from .utils import get_device_info
@@ -8,6 +9,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class EnetBaseEntity(Entity):
     """Generic Entity Class for Enet Smart Home entities"""
+
     @property
     def available(self):
         """Return True if entity is available."""
@@ -21,6 +23,7 @@ class EnetBaseEntity(Entity):
 
 class EnetBaseChannelEntity(EnetBaseEntity, Entity):
     """Generic Entity Class for Enet Smart Home channel"""
+
     _enet_channel_function = None
 
     def __init__(self, channel, coordinator):
@@ -37,7 +40,10 @@ class EnetBaseChannelEntity(EnetBaseEntity, Entity):
     @property
     def name(self):
         """Return the name of the device."""
-        return f"{self._name}"
+        sensor_name = getattr(self, "_attr_name", None)
+        if sensor_name:
+            return f"{self._name} {sensor_name}"
+        return self._name
 
     @property
     def device_info(self):
