@@ -35,7 +35,9 @@ class EnetBaseChannelEntity(EnetBaseEntity, Entity):
     @property
     def unique_id(self):
         """Return a unique ID."""
-        return f"{self.channel.uid}-{self._enet_channel_function}"
+        if self._enet_channel_function:
+            return f"{self.channel.uid}-{self._enet_channel_function}"
+        return self.channel.uid
 
     @property
     def name(self):
