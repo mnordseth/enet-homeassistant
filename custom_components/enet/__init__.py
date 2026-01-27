@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from datetime import timedelta
 import logging
 import asyncio
 import time
+import random
 
 from typing import Any, Dict, NoReturn
 
@@ -32,6 +32,7 @@ PLATFORMS: list[Platform] = [
     Platform.COVER,
     Platform.SENSOR,
     Platform.SWITCH,
+    Platform.BINARY_SENSOR,
 ]
 
 EVENT_TYPE_CHANNELS = [
@@ -149,11 +150,11 @@ class EnetCoordinator(DataUpdateCoordinator):
             event = await self.hub.get_events()
             if event:
                 try:
-                    self.handle_event(event)
+                    await self.handle_event(event)
                 except Exception as e:
                     _LOGGER.exception("Failed to handle event: %s (%s)", event, e)
 
-    def handle_event(self, event_data: Dict[str, Any]) -> None:
+    async def handle_event(self, event_data: Dict[str, Any]) -> None:
         """Handle events from Enet Server. Either update value of actuator or
         forward event from sensor
         """
@@ -219,11 +220,8 @@ class EnetCoordinator(DataUpdateCoordinator):
                         "subtype": str(subtype),
                     }
                     self.hass.bus.async_fire(ATTR_ENET_EVENT, bus_data)
-                elif channel_type == ChannelTypeFunctionName.TRIGGER_START:
-                    pass
                 else:
-                    device.update_values(function_uid, values)
-                    self.async_update_listeners()
+                    await device.update_values(function_uid, values)
 
             elif event["event"] == EVENT_DEVICE_BATTERY_STATE_CHANGED:
                 # _LOGGER.debug("Battery state changed: %s", event["eventData"])

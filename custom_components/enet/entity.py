@@ -30,7 +30,7 @@ class EnetBaseChannelEntity(EnetBaseEntity, Entity):
         self._name = channel.name
         self.channel = channel
         self.coordinator = coordinator
-        _LOGGER.info("Enet entity %s", self._name)
+        self.channel.on_update_callbacks.append(self.on_value_updated)
 
     @property
     def unique_id(self):
@@ -61,11 +61,9 @@ class EnetBaseChannelEntity(EnetBaseEntity, Entity):
         """Update the value of the sensor."""
         self.channel.set_current_value(self._enet_channel_function, value)
 
-    async def async_added_to_hass(self):
-        """Subscribe entity to updates when added to hass."""
-        self.async_on_remove(
-            self.coordinator.async_add_listener(self.async_write_ha_state)
-        )
+    async def on_value_updated(self) -> None:
+        """Callback function when the value is updated."""
+        self.async_write_ha_state()
 
 
 class EnetBaseDeviceEntity(EnetBaseEntity, Entity):
