@@ -77,7 +77,7 @@ class EnetMotionBinarySensor(EnetBaseChannelEntity, BinarySensorEntity):
         self.async_write_ha_state()
 
         if self.is_on:
-            wait = self.native_value * 10
+            wait = self.native_value
             _LOGGER.debug(
                 "%s: Motion detected, clearing in %s seconds",
                 self.name,
