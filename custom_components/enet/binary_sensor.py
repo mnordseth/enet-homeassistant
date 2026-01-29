@@ -71,6 +71,8 @@ class EnetMotionBinarySensor(EnetBaseChannelEntity, BinarySensorEntity):
 
     def __init__(self, channel, coordinator):
         super().__init__(channel, coordinator)
+        # Do not use value supplied by enet server on startup, only react to events
+        self.update_value(0)
         self._clear_motion_task = None
 
     async def on_value_updated(self):
