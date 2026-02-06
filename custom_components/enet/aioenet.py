@@ -330,28 +330,6 @@ class EnetClient:
         result = await self.request(URL.VISUALIZATION, "getLocations", params)
         return result["locations"]
 
-    async def get_all_location_uids(self):
-        """Return a dict of all locations to location uid"""
-        locations = await self.get_locations()
-        all_location_uids = {}
-
-        def recurse_locations(locations, parent, level=0):
-            for location in locations:
-                name = location["name"]
-                hier_name = ":".join(parent) + ":" + name
-                if level > 0:
-                    all_location_uids[location["uid"]] = hier_name
-                for device in location["deviceUIDs"]:
-                    all_location_uids[device["deviceUID"]] = hier_name
-                if location["childLocations"]:
-                    parent.append(name)
-                    recurse_locations(location["childLocations"], parent, level + 1)
-            if parent:
-                parent.pop()
-
-        recurse_locations(locations, [])
-        return all_location_uids
-
     async def get_device_locations(self):
         """Return a dict of locations to device"""
         locations = await self.get_locations()
@@ -623,7 +601,6 @@ class DeviceChannel:
         for output_function in self.output_functions.values():
             if output_function["uid"] == uid:
                 return output_function
-        return None
 
     def get_function_uids_for_event(self) -> dict:
         """Return a list of function uids we should setup event listeners for"""
@@ -679,8 +656,6 @@ class DeviceChannel:
         )
         if device_param_id is not None:
             return self.device_parameters.get(device_param_id, None)
-        else:
-            return None
 
     def _get_parameter_value(self, channel_param_name: ChannelTypeFunctionName) -> Any:
         device_param_id = self.get_channel_configuration_entry(
@@ -690,8 +665,6 @@ class DeviceChannel:
             param_value = self.parameter_values.get(device_param_id, None)
             if param_value is not None:
                 return param_value.get("value")
-
-        return None
 
     def _get_current_value_from_dict(self, function_object) -> Union[dict, list]:
         current_values = getitem_from_dict(function_object, ["currentValues"])
