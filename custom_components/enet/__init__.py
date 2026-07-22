@@ -147,7 +147,12 @@ class EnetCoordinator(DataUpdateCoordinator):
         if self.hub._offline:
             return
         while True:
-            event = await self.hub.get_events()
+            try:
+                event = await self.hub.get_events()
+            except Exception as e:
+                _LOGGER.warning("Failed to fetch events, retrying: %s", e)
+                asyncio.sleep(10)
+                continue
             if event:
                 try:
                     await self.handle_event(event)
