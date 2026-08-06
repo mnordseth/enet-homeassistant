@@ -78,9 +78,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER.error("Failed to get devices from Enet Smart Home: %s", e)
         return False
 
+    await async_setup_devices(hub.coordinator)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     await hub.coordinator.setup_event_listeners()
-    await async_setup_devices(hub.coordinator)
 
     hass.loop.create_task(hub.coordinator.async_refresh())
     return True
@@ -129,9 +129,16 @@ class EnetCoordinator(DataUpdateCoordinator):
 
     async def ping_forever(self):
         """Ping server to keep conncetion alive"""
+        delay = 28
         while True:
-            await self.hub.ping()
-            await asyncio.sleep(28)
+            try:
+                await self.hub.ping()
+            except Exception as e:
+                _LOGGER.warning(
+                    "Failed to ping server: (%s), retrying in: %s", e, delay
+                )
+
+            await asyncio.sleep(delay)
 
     async def _async_update_data_offline(self) -> NoReturn:
         """Simulate events when offline by randomly generating events - only for debugging"""
