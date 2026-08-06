@@ -44,6 +44,10 @@ class AuthError(Exception):
     "Authentication error"
 
 
+class EnetServerError(Exception):
+    "Enet server error"
+
+
 def auth_if_needed(func):
     "Decorator used to reauthenticate if we get a AuthError"
 
@@ -228,12 +232,7 @@ class EnetClient:
                 response.status,
             )
             if raise_on_error:
-                raise Exception(
-                    "Request to %s failed with status %s"
-                    % (response.request_info.url, response.status)
-                )
-            else:
-                return response
+                response.raise_for_status()
 
         json = await response.json()
         if "error" in json:
@@ -246,7 +245,7 @@ class EnetClient:
                 raise aiohttp.ServerTimeoutError
             else:
                 log.warning(error_msg)
-                raise Exception(error_msg)
+                raise EnetServerError(error_msg)
         else:
             if self._debug_requests:
                 log.debug("-> %s %s returned: %s", url, method, json["result"])

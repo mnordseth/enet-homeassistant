@@ -4,13 +4,14 @@ from __future__ import annotations
 
 import logging
 import asyncio
+import aiohttp
 import time
 import random
 
 from typing import Any, Dict, NoReturn
 
 from .enet_data.enums import ChannelTypeFunctionName
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigEntry, ConfigEntryNotReady
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
@@ -65,9 +66,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     try:
         await hub.simple_login()
-    except Exception as e:
+    except (asyncio.TimeoutError, aiohttp.ClientError) as e:
         _LOGGER.error("Failed to login to Enet Smart Home: %s", e)
-        return False
+        raise ConfigEntryNotReady("Failed to login to Enet Smart Home") from e
 
     hass.data[DOMAIN][entry.entry_id] = hub
 
@@ -132,6 +133,28 @@ class EnetCoordinator(DataUpdateCoordinator):
             await self.hub.ping()
             await asyncio.sleep(28)
 
+    async def _async_update_data_offline(self) -> NoReturn:
+        """Simulate events when offline by randomly generating events - only for debugging"""
+        while True:
+            await asyncio.sleep(10)
+            if random.random() < 0.3:
+                event = {
+                    "sequenceNumber": 42,
+                    "event": "outputDeviceFunctionCalled",
+                    "eventData": {
+                        "deviceUID": "1fb68d33-bc85-43aa-b459-34510bb08648",
+                        "channelNumber": 1,
+                        "deviceFunctionUID": "1fb68d33-bc85-43aa-b459-34510bb0866c",
+                        "values": [
+                            {
+                                "value": 6.79,
+                                "valueTypeID": "VT_VALUE_TIME1_RANGE_0.0_86400.0_DEF_0.0",
+                            }
+                        ],
+                    },
+                }
+                await self.handle_event({"events": [event]})
+
     async def _async_update_data(self) -> NoReturn:
         """Fetch events from Enet server
 
@@ -143,15 +166,24 @@ class EnetCoordinator(DataUpdateCoordinator):
         at some point.
 
         """
-        # _LOGGER.debug("_async_update_data()")
         if self.hub._offline:
+            await self._async_update_data_offline()
             return
+
+        failcount = 0
         while True:
+            base_delay = 2
             try:
                 event = await self.hub.get_events()
+                failcount = 0
             except Exception as e:
-                _LOGGER.warning("Failed to fetch events, retrying: %s", e)
-                asyncio.sleep(10)
+                failcount += 1
+                _LOGGER.warning(
+                    "Failed to fetch events: (%s), retrying in: %s",
+                    e,
+                    base_delay * failcount,
+                )
+                await asyncio.sleep(base_delay * failcount)
                 continue
             if event:
                 try:
