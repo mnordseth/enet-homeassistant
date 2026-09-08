@@ -20,7 +20,7 @@ async def async_setup_devices(coordinator):
     def add_device(enet_device):
         """Register a Enet device in device registry."""
         _LOGGER.debug("add_device() %s", enet_device)
-        params = get_device_info(enet_device)
+        params = get_device_info(enet_device, coordinator)
         return dev_reg.async_get_or_create(config_entry_id=entry.entry_id, **params)
 
     # create/update all current devices found in controller ensuring devices that only generate events also gets registered

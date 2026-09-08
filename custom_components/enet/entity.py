@@ -50,7 +50,7 @@ class EnetBaseChannelEntity(EnetBaseEntity, Entity):
     @property
     def device_info(self):
         """Return the device information."""
-        return get_device_info(self.channel.device)
+        return get_device_info(self.channel.device, self.coordinator)
 
     @property
     def native_value(self) -> int:
@@ -76,4 +76,4 @@ class EnetBaseDeviceEntity(EnetBaseEntity, Entity):
     @property
     def device_info(self):
         """Return the device information."""
-        return get_device_info(self.device)
+        return get_device_info(self.device, self.coordinator)

@@ -67,7 +67,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     try:
         await hub.simple_login()
     except (asyncio.TimeoutError, aiohttp.ClientError) as e:
-        _LOGGER.error("Failed to login to Enet Smart Home: %s", e)
         raise ConfigEntryNotReady("Failed to login to Enet Smart Home") from e
 
     hass.data[DOMAIN][entry.entry_id] = hub
