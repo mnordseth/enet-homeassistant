@@ -9,6 +9,15 @@ from .enet_data.data import enet_data
 
 def get_device_info(enet_device, coordinator):
     """Return device info"""
+    try:
+        via_device_id = async_get_device_id_by_identifier(
+            coordinator.hass,
+            (DOMAIN, NAME_ENET_CONTROLLER),
+            config_entry_id=coordinator.config_entry.entry_id,
+        )
+    except ValueError:
+        via_device_id = None
+
     return DeviceInfo(
         identifiers={(DOMAIN, enet_device.uid)},
         name=enet_device.name,
@@ -18,10 +27,5 @@ def get_device_info(enet_device, coordinator):
         model=f"{enet_device.device_type} ({enet_data.get_device_name_from_device_type_id(enet_device.device_type)})",
         serial_number=enet_device.serial_number,
         suggested_area=enet_device.location.partition(":")[2],
-        # ATTR_VIA_DEVICE: (DOMAIN, NAME_ENET_CONTROLLER),
-        via_device_id=async_get_device_id_by_identifier(
-            coordinator.hass,
-            (DOMAIN, NAME_ENET_CONTROLLER),
-            config_entry_id=coordinator.config_entry.entry_id,
-        ),
+        via_device_id=via_device_id,
     )
