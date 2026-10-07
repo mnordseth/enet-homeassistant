@@ -14,6 +14,7 @@ from .enet_data.enums import ChannelTypeFunctionName
 from homeassistant.config_entries import ConfigEntry, ConfigEntryNotReady
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .aioenet import EnetClient, ActuatorChannel, SensorChannel
@@ -23,6 +24,7 @@ from .const import (
     EVENT_TYPE_INITIAL_PRESS,
     EVENT_TYPE_SHORT_RELEASE,
     EVENT_TYPE_LONG_RELEASE,
+    NAME_ENET_CONTROLLER,
 )
 from .device import async_setup_devices
 
@@ -92,6 +94,27 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data[DOMAIN].pop(entry.entry_id)
 
     return unload_ok
+
+
+async def async_remove_config_entry_device(
+    hass: HomeAssistant, config_entry: ConfigEntry, device_entry: DeviceEntry
+) -> bool:
+    """Allow manual removal of devices the Enet server no longer reports.
+
+    Devices that still exist on the Enet server (and the controller itself)
+    cannot be removed, as they would be recreated on the next reload anyway.
+    """
+    hub = hass.data.get(DOMAIN, {}).get(config_entry.entry_id)
+    if hub is None:
+        return False
+
+    known_uids = {device.uid for device in hub.devices}
+    known_uids.add(NAME_ENET_CONTROLLER)
+
+    return not any(
+        identifier[0] == DOMAIN and identifier[1] in known_uids
+        for identifier in device_entry.identifiers
+    )
 
 
 class EnetCoordinator(DataUpdateCoordinator):
