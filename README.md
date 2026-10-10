@@ -17,3 +17,12 @@ Supported features:
 2. Search for enet in the Overview page and install the component.
 3. Provide the URL, username and password of your Enet Smart Home server
 
+## Session recovery tests
+
+These tests exercise the eNet client without a Home Assistant installation or a
+live eNet server. Run them with uv and a managed Python 3.14 interpreter:
+
+```sh
+uv run --managed-python --python 3.14 --no-project tests/test_session_recovery.py
+```
+
