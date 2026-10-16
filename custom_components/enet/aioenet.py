@@ -52,15 +52,21 @@ def auth_if_needed(func):
     "Decorator used to reauthenticate if we get a AuthError"
 
     @functools.wraps(func)
-    def auth_wrapper(self, *args, **kwargs):
+    async def auth_wrapper(self, *args, **kwargs):
         "Perform re-authentication"
+        auth_generation = self._auth_generation
         try:
-            return func(self, *args, **kwargs)
+            return await func(self, *args, **kwargs)
         except AuthError:
-            log.warning("Trying to re-authenticate...")
-            self.simple_login()
+            async with self._auth_lock:
+                # Another request may already have refreshed the same session.
+                if auth_generation == self._auth_generation:
+                    log.warning("Trying to re-authenticate...")
+                    await self.simple_login()
+                    await self._restore_event_subscriptions()
 
-        return func(self, *args, **kwargs)
+        # Retry only once: bad credentials or another auth failure must propagate.
+        return await func(self, *args, **kwargs)
 
     return auth_wrapper
 
@@ -90,6 +96,10 @@ class EnetClient:
         self._subscribers = []
         self.function_uid_map = {}
         self.devices = []
+        self._auth_lock = asyncio.Lock()
+        self._auth_generation = 0
+        self._event_subscriptions = set()
+        self._battery_events_subscribed = False
 
         if load_file:
             with open(load_file) as fp:
@@ -253,14 +263,32 @@ class EnetClient:
 
     async def simple_login(self):
         """Login to the Enet Server"""
+        if self._offline:
+            return None
         params = dict(userName=self.user, userPassword=self.passwd)
-        response = await self.request(
+        # Login must bypass the auth decorator to avoid recursive login retries.
+        response = await self._do_request(
             URL.MANAGEMENT, "userLogin", params, raise_on_error=True
         )
-        response = await self.request(
+        response = await self._do_request(
             URL.MANAGEMENT, "setClientRole", dict(clientRole="CR_VISU")
         )
+        self._auth_generation += 1
         return response
+
+    async def _restore_event_subscriptions(self):
+        """Restore subscriptions belonging to the expired server session."""
+        # Use raw requests while holding the auth lock; a failure must propagate.
+        if self._battery_events_subscribed:
+            await self._do_request(
+                URL.VISUALIZATION, "registerEventDeviceBatteryStateChanged", None
+            )
+        for func_uid in sorted(self._event_subscriptions):
+            await self._do_request(
+                URL.VISUALIZATION,
+                "registerEventOutputDeviceFunctionCalled",
+                {"deviceFunctionUID": func_uid},
+            )
 
     async def simple_logout(self):
         """Logout of the Enet Server"""
@@ -377,6 +405,7 @@ class EnetClient:
             "registerEventOutputDeviceFunctionCalled",
             {"deviceFunctionUID": func_uid},
         )
+        self._event_subscriptions.add(func_uid)
         return result
 
     async def setup_event_subscription_battery_state(self):
@@ -386,6 +415,7 @@ class EnetClient:
             "registerEventDeviceBatteryStateChanged",
             None,
         )
+        self._battery_events_subscribed = True
         return result
 
     async def get_events(self):
