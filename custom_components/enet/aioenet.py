@@ -297,6 +297,21 @@ class EnetClient:
         finally:
             await self._session.close()
 
+    async def close(self, logout=True):
+        """Log out of the Enet Server and close the HTTP session"""
+        if self._session is None or self._session.closed:
+            return
+        try:
+            if logout:
+                # Bypass the auth decorator: no point in logging in to log out,
+                # and an unreachable server must not block unloading.
+                async with asyncio.timeout(5):
+                    await self._do_request(URL.MANAGEMENT, "userLogout", None)
+        except Exception as e:
+            log.debug("Logout failed: %s", e)
+        finally:
+            await self._session.close()
+
     async def ping(self):
         """Ping server to keep connection alive"""
         return await self.request(URL.MANAGEMENT, "ping", None)

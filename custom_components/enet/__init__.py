@@ -69,6 +69,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     try:
         await hub.simple_login()
     except (asyncio.TimeoutError, aiohttp.ClientError) as e:
+        await hub.close(logout=False)
         raise ConfigEntryNotReady("Failed to login to Enet Smart Home") from e
 
     hass.data[DOMAIN][entry.entry_id] = hub
@@ -77,13 +78,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hub.devices = await hub.get_devices()
     except Exception as e:
         _LOGGER.error("Failed to get devices from Enet Smart Home: %s", e)
+        hass.data[DOMAIN].pop(entry.entry_id)
+        await hub.close()
         return False
 
     await async_setup_devices(hub.coordinator)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     await hub.coordinator.setup_event_listeners()
 
-    hass.loop.create_task(hub.coordinator.async_refresh())
+    hub.coordinator.async_start()
     return True
 
 
@@ -91,7 +94,11 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     _LOGGER.debug("Unloading Enet Smart Home entry")
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
-        hass.data[DOMAIN].pop(entry.entry_id)
+        hub = hass.data[DOMAIN].pop(entry.entry_id)
+        # Stop the event loop before logging out, otherwise a pending
+        # requestEvents call fails with an auth error and logs in again.
+        await hub.coordinator.async_stop()
+        await hub.close()
 
     return unload_ok
 
@@ -136,9 +143,33 @@ class EnetCoordinator(DataUpdateCoordinator):
         self._last_event: Dict[str, Any] = {}
 
         self.function_uid_map: Dict[str, Any] = {}
-        if self.hub.baseurl.startswith("https://"):
-            asyncio.create_task(self.ping_forever())
+        self._tasks: list[asyncio.Task] = []
         _LOGGER.debug("EnetCoordinator initialized")
+
+    def async_start(self) -> None:
+        """Start the event loop, and the keepalive ping when using https.
+
+        Both run until cancelled, so they are created as background tasks of
+        the config entry and stopped explicitly in async_stop() on unload.
+        """
+        self._tasks.append(
+            self.config_entry.async_create_background_task(
+                self.hass, self.async_refresh(), "enet event listener"
+            )
+        )
+        if self.hub.baseurl.startswith("https://"):
+            self._tasks.append(
+                self.config_entry.async_create_background_task(
+                    self.hass, self.ping_forever(), "enet keepalive ping"
+                )
+            )
+
+    async def async_stop(self) -> None:
+        """Cancel the event loop and keepalive ping and wait for them to finish"""
+        for task in self._tasks:
+            task.cancel()
+        await asyncio.gather(*self._tasks, return_exceptions=True)
+        self._tasks.clear()
 
     async def setup_event_listeners(self) -> None:
         """Setup event listener for all output functions"""
