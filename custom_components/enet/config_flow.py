@@ -110,7 +110,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         host is already configured and delegate to the import step if not.
         """
         _LOGGER.info("Enet Zeroconf discovery: %s", discovery_info)
-        return
+        return self._async_abort_discovery()
 
     async def async_step_ssdp(
         self, discovery_info: config_entries.SsdpServiceInfo
@@ -121,7 +121,17 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         host is already configured and delegate to the import step if not.
         """
         _LOGGER.info("Enet SSDP discovery: %s", discovery_info)
-        return
+        return self._async_abort_discovery()
+
+    def _async_abort_discovery(self) -> config_entries.ConfigFlowResult:
+        """Abort a discovery flow, as setting up from discovery is not supported yet.
+
+        A discovery step must return a flow result; returning None makes Home
+        Assistant log an AttributeError for each discovered server at startup.
+        """
+        if self._async_current_entries():
+            return self.async_abort(reason="already_configured")
+        return self.async_abort(reason="discovery_not_supported")
 
 
 class CannotConnect(HomeAssistantError):

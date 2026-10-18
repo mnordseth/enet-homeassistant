@@ -1,7 +1,8 @@
 {
     "config": {
         "abort": {
-            "already_configured": "Das Gerät ist bereits konfiguriert."
+            "already_configured": "Das Gerät ist bereits konfiguriert.",
+            "discovery_not_supported": "Ein Enet Smart Home Server wurde gefunden, die Einrichtung über die automatische Erkennung wird aber noch nicht unterstützt. Bitte die Integration manuell hinzufügen."
         },
         "error": {
             "cannot_connect": "Verbindungsfehler",

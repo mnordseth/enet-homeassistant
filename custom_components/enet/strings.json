@@ -15,7 +15,8 @@
       "unknown": "[%key:common::config_flow::error::unknown%]"
     },
     "abort": {
-      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "discovery_not_supported": "An Enet Smart Home server was discovered, but setting it up from discovery is not supported yet. Please add the integration manually."
     }
   },
   "entity": {
