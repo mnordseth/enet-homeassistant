@@ -298,8 +298,28 @@ class EnetClient:
             # so a failed logout never triggers a re-login.
             if self._auth_generation:
                 await self._do_request(URL.MANAGEMENT, "userLogout", None)
-        except (AuthError, EnetServerError, aiohttp.ClientError, asyncio.TimeoutError) as err:
+        except (
+            AuthError,
+            EnetServerError,
+            aiohttp.ClientError,
+            asyncio.TimeoutError,
+        ) as err:
             log.debug("Logout failed: %s", err)
+        finally:
+            await self._session.close()
+
+    async def close(self, logout=True):
+        """Log out of the Enet Server and close the HTTP session"""
+        if self._session is None or self._session.closed:
+            return
+        try:
+            if logout:
+                # Bypass the auth decorator: no point in logging in to log out,
+                # and an unreachable server must not block unloading.
+                async with asyncio.timeout(5):
+                    await self._do_request(URL.MANAGEMENT, "userLogout", None)
+        except Exception as e:
+            log.debug("Logout failed: %s", e)
         finally:
             await self._session.close()
 

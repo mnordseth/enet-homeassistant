@@ -26,3 +26,10 @@ live eNet server. Run them with uv and a managed Python 3.14 interpreter:
 uv run --managed-python --python 3.14 --no-project tests/test_session_recovery.py
 ```
 
+The config entry lifecycle tests (setup, unload, reload) stub Home Assistant
+and run the same way:
+
+```sh
+uv run --managed-python --python 3.14 --no-project tests/test_entry_lifecycle.py
+```
+
