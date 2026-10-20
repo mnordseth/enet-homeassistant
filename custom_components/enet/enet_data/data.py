@@ -11,45 +11,6 @@ _LOGGER = logging.getLogger(__name__)
 
 class EnetData:
     """Class to access static information about the Enet Smart Home."""
-    @property
-    def channel_types(self) -> Dict[str, Dict]:
-        """Returns the channel types dictionary."""
-        return self._channel_types
-
-    @property
-    def input_device_function_types(self) -> Dict[str, Dict]:
-        """Returns the input device function types dictionary."""
-        return self._input_device_function_types
-
-    @property
-    def output_device_function_types(self) -> Dict[str, Dict]:
-        """Returns the output device function types dictionary."""
-        return self._output_device_function_types
-
-    @property
-    def device_parameter_types(self) -> Dict[str, Dict]:
-        """Returns the device parameter types dictionary."""
-        return self._device_parameter_types
-
-    @property
-    def device_types(self) -> Dict[str, Dict]:
-        """Returns the device types dictionary."""
-        return self._device_types
-
-    @property
-    def manufacturers(self) -> Dict[str, Dict]:
-        """Returns the manufacturers dictionary."""
-        return self._manufacturers
-
-    @property
-    def value_type_container_types(self) -> Dict[str, Dict]:
-        """Returns the value type container types dictionary."""
-        return self._value_type_container_types
-
-    @property
-    def value_types(self) -> Dict[str, Dict]:
-        """Returns the value types dictionary."""
-        return self._value_types
 
     def __init__(self) -> None:
         """Initializes the EnetData instance with empty dictionaries."""
@@ -111,11 +72,6 @@ class EnetData:
     def get_device_parameter_name(self, type_id: str) -> str:
         """Returns the device parameter name for the given ID."""
         return self.get_device_parameter_type_by_id(type_id).get("name", "Unknown")
-
-    def get_value_template_from_device_parameter(self, type_id: str) -> list:
-        """Returns the value template list for the given ID."""
-        function_type = self.get_device_parameter_type_by_id(type_id)
-        return self.get_value_template_from_value_container(function_type.get("valueTypeContainerTypeID"))
 
     def get_device_type_by_id(self, type_id: str) -> Dict:
         """Returns the device type dictionary for the given ID."""
