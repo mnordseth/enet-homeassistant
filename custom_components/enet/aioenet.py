@@ -92,7 +92,6 @@ class EnetClient:
         self._cookie = ""
         self._last_event = {}
         self._raw_json = {}
-        self._projectuid = None
         self._subscribers = []
         self.function_uid_map = {}
         self.devices = []
@@ -291,9 +290,16 @@ class EnetClient:
             )
 
     async def simple_logout(self):
-        """Logout of the Enet Server"""
+        """Logout of the Enet Server and close the session"""
+        if self._offline:
+            return
         try:
-            await self.request(URL.MANAGEMENT, "userLogout", None)
+            # Only logout if a login succeeded, and bypass the auth decorator
+            # so a failed logout never triggers a re-login.
+            if self._auth_generation:
+                await self._do_request(URL.MANAGEMENT, "userLogout", None)
+        except (AuthError, EnetServerError, aiohttp.ClientError, asyncio.TimeoutError) as err:
+            log.debug("Logout failed: %s", err)
         finally:
             await self._session.close()
 
@@ -315,26 +321,6 @@ class EnetClient:
     async def ping(self):
         """Ping server to keep connection alive"""
         return await self.request(URL.MANAGEMENT, "ping", None)
-
-    async def get_project(self):
-        """Get the project which included the projectUID and the projectName"""
-        result = await self.request(URL.VISUALIZATION, "getCurrentProject", None)
-        self._projectuid = result["projectUID"]
-        return result
-
-    async def get_project_information(self):
-        """Get the project information which includes version numbers,
-        creation and modification dates and other general information
-        about the server and its configuration."""
-        if self._projectuid is None:
-            await self.get_project()
-
-        params = {"projectUID": self._projectuid}
-        return await self.request(URL.VISUALIZATION, "getProjectInformation", params)
-
-    async def get_account(self):
-        """Return the current logged in user account"""
-        return await self.request(URL.MANAGEMENT, "getAccount", {})
 
     async def get_devices(self, device_uids=None):
         """Get all the devices registered on the server"""
@@ -446,13 +432,13 @@ def create_device(client, raw):
     """Create an enet Actuator or Sensor depending on its type"""
     device_type = raw["typeID"]
     info = enet_data.get_device_type_by_id(device_type)
-    if info is None:
+    if not info:
         log.warning(
             "Unknown device: typeID=%s name=%s", raw["typeID"], raw["installationArea"]
         )
     try:
         return Device(client, raw)
-    except Exception as e:
+    except Exception:
         log.exception(
             "Failed to create device: typeID=%s name=%s",
             raw["typeID"],
@@ -674,32 +660,17 @@ class DeviceChannel:
                     type_name = enet_data.get_device_parameter_name(
                         device_parameter.get("typeID")
                     )
-                    parameter_template = (
-                        enet_data.get_value_template_from_device_parameter(
-                            device_parameter.get("typeID")
-                        )
-                    )
                     name = f"Parameter {self.name} - {type_name}"
 
                     self.device_parameters[device_parameter.get("typeID")] = {
                         "uid": device_parameter.get("uid"),
                         "typeID": device_parameter.get("typeID"),
                         "name": name,
-                        "template": parameter_template,
                     }
 
                     self.parameter_values[device_parameter.get("typeID")] = (
                         self._get_current_value_from_dict(device_parameter)
                     )
-
-    def _get_device_parameter(
-        self, channel_param_name: ChannelTypeFunctionName
-    ) -> Union[Dict, None]:
-        device_param_id = self.get_channel_configuration_entry(
-            "deviceParameters", channel_param_name
-        )
-        if device_param_id is not None:
-            return self.device_parameters.get(device_param_id, None)
 
     def _get_parameter_value(self, channel_param_name: ChannelTypeFunctionName) -> Any:
         device_param_id = self.get_channel_configuration_entry(

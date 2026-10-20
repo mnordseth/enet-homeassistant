@@ -17,7 +17,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .aioenet import EnetClient, ActuatorChannel, SensorChannel
+from .aioenet import EnetClient
 from .const import (
     DOMAIN,
     ATTR_ENET_EVENT,
@@ -38,12 +38,6 @@ PLATFORMS: list[Platform] = [
     Platform.BINARY_SENSOR,
 ]
 
-EVENT_TYPE_CHANNELS = [
-    ChannelTypeFunctionName.BUTTON_ROCKER,
-    ChannelTypeFunctionName.MASTER_DIMMING,
-    ChannelTypeFunctionName.SCENE_CONTROL,
-    ChannelTypeFunctionName.TRIGGER_START,
-]
 EVENT_DEVICE_BATTERY_STATE_CHANGED = "deviceBatteryStateChanged"
 EVENT_OUTPUT_DEVICE_FUNCTION_CALLED = "outputDeviceFunctionCalled"
 EVENT_VALUE_TYPE_ROCKER_STATE = "VT_ROCKER_STATE"
