@@ -35,11 +35,13 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     """
     hub = aioenet.EnetClient(data["url"], data["username"], data["password"])
     try:
-        response = await hub.simple_login()
+        await hub.simple_login()
     except aioenet.AuthError:
         raise InvalidAuth
     except:
         raise CannotConnect
+    finally:
+        await hub.simple_logout()
 
     # Return info that you want to store in the config entry.
     return {"title": "Enet Smart Home"}

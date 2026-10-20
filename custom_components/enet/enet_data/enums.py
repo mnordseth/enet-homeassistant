@@ -35,16 +35,6 @@ class ChannelApplicationMode(StrEnum):
     UNUSED = "UNUSED"
 
 @unique
-class DeviceTypeArticleGroup(StrEnum):
-    """The article groups of a device type."""
-    ACTUATOR = "AG_ACTUATORS"
-    COVER = "AG_COVERS"
-    MOTION_DETECTOR = "AG_MOTION_DETECTORS"
-    SENDER = "AG_SENDERS"
-    SENSOR = "AG_SENSORS"
-    SYSTEM_DEVICE = "AG_SYSTEM_DEVICES"
-
-@unique
 class ChannelTypeFunctionName(StrEnum):
     """The function names of a channel type."""
     APPLICATION_MODE = "applicationMode"
