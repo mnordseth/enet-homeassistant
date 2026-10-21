@@ -93,12 +93,6 @@ class EnetCover(EnetBaseChannelEntity, CoverEntity):
 
         return None
 
-    async def async_added_to_hass(self):
-        """Subscribe entity to updates when added to hass."""
-        self.async_on_remove(
-            self.coordinator.async_add_listener(self.async_write_ha_state)
-        )
-
     async def async_close_cover(self, **kwargs) -> None:
         """Close the cover."""
         await self.channel.set_value(ChannelTypeFunctionName.UP_DOWN, True)

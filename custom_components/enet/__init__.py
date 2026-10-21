@@ -5,27 +5,15 @@ from __future__ import annotations
 import logging
 import asyncio
 import aiohttp
-import time
-import random
 
-from typing import Any, Dict, NoReturn
-
-from .enet_data.enums import ChannelTypeFunctionName
 from homeassistant.config_entries import ConfigEntry, ConfigEntryNotReady
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .aioenet import EnetClient
-from .const import (
-    DOMAIN,
-    ATTR_ENET_EVENT,
-    EVENT_TYPE_INITIAL_PRESS,
-    EVENT_TYPE_SHORT_RELEASE,
-    EVENT_TYPE_LONG_RELEASE,
-    NAME_ENET_CONTROLLER,
-)
+from .aioenet import BatteryStateEvent, ButtonEvent, EnetClient
+from .const import DOMAIN, ATTR_ENET_EVENT, NAME_ENET_CONTROLLER
 from .device import async_setup_devices
 
 _LOGGER = logging.getLogger(__name__)
@@ -37,12 +25,6 @@ PLATFORMS: list[Platform] = [
     Platform.SWITCH,
     Platform.BINARY_SENSOR,
 ]
-
-EVENT_DEVICE_BATTERY_STATE_CHANGED = "deviceBatteryStateChanged"
-EVENT_OUTPUT_DEVICE_FUNCTION_CALLED = "outputDeviceFunctionCalled"
-EVENT_VALUE_TYPE_ROCKER_STATE = "VT_ROCKER_STATE"
-EVENT_VALUE_TYPE_ROCKER_SWITCH_TIME = "VT_ROCKER_SWITCH_TIME"
-EVENT_VALUE_DOWN_BUTTON = "DOWN_BUTTON"
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -58,29 +40,22 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         # load_file="/workspaces/enet-homeassistant/examples/config_entry-enet-oliver.json",
         # ,noconnect=True, load_file="/workspaces/enet-homeassistant/examples/config_entry-enet-01JRNS5MR3V9DX73M7BQ79KC40.json"
     )
-    hub.coordinator = EnetCoordinator(hass, hub, entry)
 
     try:
-        await hub.simple_login()
+        await hub.initialize()
     except (asyncio.TimeoutError, aiohttp.ClientError) as e:
-        await hub.close(logout=False)
-        raise ConfigEntryNotReady("Failed to login to Enet Smart Home") from e
-
-    hass.data[DOMAIN][entry.entry_id] = hub
-
-    try:
-        hub.devices = await hub.get_devices()
-    except Exception as e:
-        _LOGGER.error("Failed to get devices from Enet Smart Home: %s", e)
-        hass.data[DOMAIN].pop(entry.entry_id)
+        await hub.close()
+        raise ConfigEntryNotReady("Failed to connect to Enet Smart Home") from e
+    except Exception:
+        _LOGGER.exception("Failed to set up Enet Smart Home")
         await hub.close()
         return False
 
+    hass.data[DOMAIN][entry.entry_id] = hub
+    hub.coordinator = EnetCoordinator(hass, hub, entry)
     await async_setup_devices(hub.coordinator)
+    entry.async_on_unload(hub.subscribe(hub.coordinator.handle_enet_event))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-    await hub.coordinator.setup_event_listeners()
-
-    hub.coordinator.async_start()
     return True
 
 
@@ -89,9 +64,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     _LOGGER.debug("Unloading Enet Smart Home entry")
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         hub = hass.data[DOMAIN].pop(entry.entry_id)
-        # Stop the event loop before logging out, otherwise a pending
-        # requestEvents call fails with an auth error and logs in again.
-        await hub.coordinator.async_stop()
         await hub.close()
 
     return unload_ok
@@ -119,7 +91,12 @@ async def async_remove_config_entry_device(
 
 
 class EnetCoordinator(DataUpdateCoordinator):
-    """Enet Smart Home coordinator responsible for subscribing to and handling events"""
+    """Enet Smart Home coordinator notifying entities of battery state changes
+    and forwarding button events to the hass bus.
+
+    Events are read by the EnetClient's own background task, so the
+    coordinator never fetches data itself.
+    """
 
     def __init__(
         self, hass: HomeAssistant, hub: EnetClient, entry: ConfigEntry
@@ -134,194 +111,20 @@ class EnetCoordinator(DataUpdateCoordinator):
             name=DOMAIN,
             update_interval=None,
         )
-        self._last_event: Dict[str, Any] = {}
-
-        self.function_uid_map: Dict[str, Any] = {}
-        self._tasks: list[asyncio.Task] = []
         _LOGGER.debug("EnetCoordinator initialized")
 
-    def async_start(self) -> None:
-        """Start the event loop, and the keepalive ping when using https.
-
-        Both run until cancelled, so they are created as background tasks of
-        the config entry and stopped explicitly in async_stop() on unload.
+    def handle_enet_event(self, event) -> None:
+        """Forward button events to the hass bus and update entities on
+        battery state changes. Value updates reach the entities through the
+        channel's on_update_callbacks.
         """
-        self._tasks.append(
-            self.config_entry.async_create_background_task(
-                self.hass, self.async_refresh(), "enet event listener"
-            )
-        )
-        if self.hub.baseurl.startswith("https://"):
-            self._tasks.append(
-                self.config_entry.async_create_background_task(
-                    self.hass, self.ping_forever(), "enet keepalive ping"
-                )
-            )
-
-    async def async_stop(self) -> None:
-        """Cancel the event loop and keepalive ping and wait for them to finish"""
-        for task in self._tasks:
-            task.cancel()
-        await asyncio.gather(*self._tasks, return_exceptions=True)
-        self._tasks.clear()
-
-    async def setup_event_listeners(self) -> None:
-        """Setup event listener for all output functions"""
-        _LOGGER.debug("Setting up event listeners")
-        await self.hub.setup_event_subscription_battery_state()
-        for device in self.hub.devices:
-            func_uids = device.get_function_uids_for_event()
-            self.function_uid_map.update(func_uids)
-            await device.register_events()
-
-    async def ping_forever(self):
-        """Ping server to keep conncetion alive"""
-        delay = 28
-        while True:
-            try:
-                await self.hub.ping()
-            except Exception as e:
-                _LOGGER.warning(
-                    "Failed to ping server: (%s), retrying in: %s", e, delay
-                )
-
-            await asyncio.sleep(delay)
-
-    async def _async_update_data_offline(self) -> NoReturn:
-        """Simulate events when offline by randomly generating events - only for debugging"""
-        while True:
-            await asyncio.sleep(10)
-            if random.random() < 0.3:
-                event = {
-                    "sequenceNumber": 42,
-                    "event": "outputDeviceFunctionCalled",
-                    "eventData": {
-                        "deviceUID": "1fb68d33-bc85-43aa-b459-34510bb08648",
-                        "channelNumber": 1,
-                        "deviceFunctionUID": "1fb68d33-bc85-43aa-b459-34510bb0866c",
-                        "values": [
-                            {
-                                "value": 6.79,
-                                "valueTypeID": "VT_VALUE_TIME1_RANGE_0.0_86400.0_DEF_0.0",
-                            }
-                        ],
-                    },
-                }
-                await self.handle_event({"events": [event]})
-
-    async def _async_update_data(self) -> NoReturn:
-        """Fetch events from Enet server
-
-        This endpoint blocks for 30s if no events are available
-        or returns immediatly when events are there. Loop forever
-        to get next events.
-
-        This function and event processing should be moved to aioenet
-        at some point.
-
-        """
-        if self.hub._offline:
-            await self._async_update_data_offline()
-            return
-
-        failcount = 0
-        while True:
-            base_delay = 2
-            try:
-                event = await self.hub.get_events()
-                failcount = 0
-            except Exception as e:
-                failcount += 1
-                _LOGGER.warning(
-                    "Failed to fetch events: (%s), retrying in: %s",
-                    e,
-                    base_delay * failcount,
-                )
-                await asyncio.sleep(base_delay * failcount)
-                continue
-            if event:
-                try:
-                    await self.handle_event(event)
-                except Exception as e:
-                    _LOGGER.exception("Failed to handle event: %s (%s)", event, e)
-
-    async def handle_event(self, event_data: Dict[str, Any]) -> None:
-        """Handle events from Enet Server. Either update value of actuator or
-        forward event from sensor
-        """
-        for event in event_data["events"]:
-            _LOGGER.debug("Handling event: %s", event)
-            if (
-                time.time() - self._last_event.get("ts", 0) < 0.5
-                and event["event"] == self._last_event.get("event")
-                and event["eventData"] == self._last_event.get("eventData")
-            ):
-                # This is a duplicate of last event, happes with scene activitation
-                _LOGGER.debug("Received duplicate event")
-                continue
-
-            self._last_event = event
-            self._last_event["ts"] = time.time()
-
-            if event["event"] == EVENT_OUTPUT_DEVICE_FUNCTION_CALLED:
-                data = event["eventData"]
-                function_uid = data["deviceFunctionUID"]
-                device = self.function_uid_map.get(function_uid)
-                if not device:
-                    _LOGGER.warning("Function %s does not map to device", function_uid)
-                    continue
-
-                values = data["values"]
-                channel_type = (
-                    device.get_channel_type_function_name_from_output_function_uid(
-                        function_uid
-                    )
-                )
-
-                if channel_type in [
-                    ChannelTypeFunctionName.BUTTON_ROCKER,
-                    ChannelTypeFunctionName.SCENE_CONTROL,
-                ]:
-                    # Decode sensor / button events and forward to hass bus
-                    subtype = data["channelNumber"]
-                    if len(values) != 2:
-                        _LOGGER.warning("Expected 2 values: %s", event)
-                        continue
-
-                    event_type = EVENT_TYPE_INITIAL_PRESS
-                    if values[0]["valueTypeID"] == EVENT_VALUE_TYPE_ROCKER_STATE:
-                        # If a button is configured as a rocker, you have the UP and Down
-                        # button on the same channel.
-                        if values[0]["value"] == EVENT_VALUE_DOWN_BUTTON:
-                            subtype += 1
-                    if values[1]["valueTypeID"] == EVENT_VALUE_TYPE_ROCKER_SWITCH_TIME:
-                        # Switch time is 0 on press and a number for release.
-                        # We don't distinguish between long and short press for the
-                        # moment.
-                        switch_time = values[1]["value"]
-                        if switch_time > 0:
-                            event_type = EVENT_TYPE_SHORT_RELEASE
-                        if switch_time > 60:
-                            event_type = EVENT_TYPE_LONG_RELEASE
-
-                    bus_data = {
-                        "device_id": device.device.hass_device_entry.id,
-                        "unique_id": device.device.uid,
-                        "type": event_type,
-                        "subtype": str(subtype),
-                    }
-                    self.hass.bus.async_fire(ATTR_ENET_EVENT, bus_data)
-                else:
-                    await device.update_values(function_uid, values)
-
-            elif event["event"] == EVENT_DEVICE_BATTERY_STATE_CHANGED:
-                # _LOGGER.debug("Battery state changed: %s", event["eventData"])
-                data = event["eventData"]
-                device_uid = data.get("deviceUID", None)
-                battery_state = data.get("batteryState", None)
-                device = next(
-                    (d for d in self.hub.devices if d.uid == device_uid), None
-                )
-                if device:
-                    device.update_battery_state(battery_state)
-                    self.async_update_listeners()
+        if isinstance(event, ButtonEvent):
+            bus_data = {
+                "device_id": event.channel.device.hass_device_entry.id,
+                "unique_id": event.channel.device.uid,
+                "type": str(event.type),
+                "subtype": str(event.subtype),
+            }
+            self.hass.bus.async_fire(ATTR_ENET_EVENT, bus_data)
+        elif isinstance(event, BatteryStateEvent):
+            self.async_update_listeners()

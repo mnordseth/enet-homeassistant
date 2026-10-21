@@ -94,12 +94,20 @@ class FakeConfigEntry:
         self.entry_id = "entry"
         self.data = {"url": url, "username": "user", "password": "secret"}
         self._background_tasks = set()
+        self._on_unload = []
+
+    def async_on_unload(self, func):
+        self._on_unload.append(func)
 
     def async_create_background_task(self, hass, target, name, eager_start=True):
         task = asyncio.create_task(target, name=name)
         self._background_tasks.add(task)
         task.add_done_callback(self._background_tasks.discard)
         return task
+
+    async def process_on_unload(self):
+        while self._on_unload:
+            self._on_unload.pop()()
 
     async def cancel_background_tasks(self):
         tasks = list(self._background_tasks)
@@ -172,6 +180,7 @@ class EntryLifecycleTests(unittest.IsolatedAsyncioTestCase):
 
     async def unload(self, entry):
         self.assertTrue(await enet.async_unload_entry(self.hass, entry))
+        await entry.process_on_unload()
         await entry.cancel_background_tasks()
 
     def count(self, client, method):

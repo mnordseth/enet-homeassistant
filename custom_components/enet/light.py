@@ -61,12 +61,6 @@ class EnetLight(EnetBaseChannelEntity, LightEntity):
             return ColorMode.BRIGHTNESS
         return ColorMode.ONOFF
 
-    async def async_added_to_hass(self):
-        """Subscribe entity to updates when added to hass."""
-        self.async_on_remove(
-            self.coordinator.async_add_listener(self.async_write_ha_state)
-        )
-
     async def async_turn_on(self, **kwargs):
         """Turn the light on. Either to a specific brightness level, or fully on."""
         _LOGGER.info("async_turn_on: (%s) %s", self.name, kwargs)

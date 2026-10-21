@@ -89,6 +89,13 @@ class EnetMotionBinarySensor(EnetBaseChannelEntity, BinarySensorEntity):
                 self._clear_motion_task.cancel()
             self._clear_motion_task = asyncio.create_task(self.clear_motion(wait))
 
+    async def async_will_remove_from_hass(self) -> None:
+        """Cancel a pending clear motion task, it must not write state after removal."""
+        await super().async_will_remove_from_hass()
+        if self._clear_motion_task is not None:
+            self._clear_motion_task.cancel()
+            self._clear_motion_task = None
+
     async def clear_motion(self, wait=10):
         await asyncio.sleep(wait)
         _LOGGER.debug("%s: Clearing motion", self.name)

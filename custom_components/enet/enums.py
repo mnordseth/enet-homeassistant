@@ -9,3 +9,11 @@ class ChannelUseType(StrEnum):
     SENSOR = "SENSOR"
     IGNORED = "IGNORED"
     UNSUPPORTED = "UNSUPPORTED"
+
+
+@unique
+class ButtonEventType(StrEnum):
+    """Enum for the type of a button event."""
+    INITIAL_PRESS = "initial_press"
+    SHORT_RELEASE = "short_release"
+    LONG_RELEASE = "long_release"

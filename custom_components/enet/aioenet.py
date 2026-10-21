@@ -4,13 +4,15 @@ import logging
 import functools
 import time
 import json
+import random
 
+from dataclasses import dataclass
 from typing import Any, Dict, Union
 
 import asyncio
 import aiohttp
 
-from .enums import ChannelUseType
+from .enums import ButtonEventType, ChannelUseType
 from .enet_data.data import enet_data
 from .enet_data.constants import CHANNEL_TYPES_IGNORED
 from .enet_data.enums import (
@@ -38,6 +40,40 @@ class URL(StrEnum):
 
 
 ID_FILTER_ALL = "*"
+
+EVENT_DEVICE_BATTERY_STATE_CHANGED = "deviceBatteryStateChanged"
+EVENT_OUTPUT_DEVICE_FUNCTION_CALLED = "outputDeviceFunctionCalled"
+VALUE_TYPE_ROCKER_STATE = "VT_ROCKER_STATE"
+VALUE_TYPE_ROCKER_SWITCH_TIME = "VT_ROCKER_SWITCH_TIME"
+VALUE_DOWN_BUTTON = "DOWN_BUTTON"
+EVENT_RETRY_BASE_DELAY = 2
+PING_INTERVAL = 28
+
+
+@dataclass
+class ButtonEvent:
+    "A button / rocker / scene control on a sensor channel was pressed or released"
+
+    channel: "DeviceChannel"
+    subtype: int
+    type: ButtonEventType
+
+
+@dataclass
+class BatteryStateEvent:
+    "The battery state of a device changed"
+
+    device: "Device"
+    battery_state: str
+
+
+@dataclass
+class ValueUpdateEvent:
+    "The current values of a channel were updated"
+
+    channel: "DeviceChannel"
+    function_uid: str
+    values: list
 
 
 class AuthError(Exception):
@@ -91,6 +127,8 @@ class EnetClient:
         self._api_counter = 1
         self._cookie = ""
         self._last_event = {}
+        self._last_event_ts = 0.0
+        self._bg_tasks = []
         self._raw_json = {}
         self._subscribers = []
         self.function_uid_map = {}
@@ -106,18 +144,30 @@ class EnetClient:
                 self._raw_json = config["data"]["enet_data"]
 
     async def initialize(self):
-        """Initialize the client"""
+        """Login, fetch devices, subscribe to events and start the background
+        tasks reading events (and pinging the server when using https).
+        The background tasks run until close() is called.
+        """
         await self.simple_login()
         self.devices = await self.get_devices()
         await self.initialize_events()
-        asyncio.create_task(self.__read_events())
+        self._bg_tasks.append(asyncio.create_task(self.read_events()))
+        if self.baseurl.startswith("https://"):
+            self._bg_tasks.append(asyncio.create_task(self.ping_forever()))
+
+    async def stop(self):
+        """Cancel the background tasks and wait for them to finish"""
+        for task in self._bg_tasks:
+            task.cancel()
+        await asyncio.gather(*self._bg_tasks, return_exceptions=True)
+        self._bg_tasks.clear()
 
     async def __aenter__(self):
         await self.initialize()
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self._session.close()
+        await self.close()
         if exc_val:
             raise exc_val
         return exc_type
@@ -133,7 +183,8 @@ class EnetClient:
 
     def subscribe(self, callback, id_filter=ID_FILTER_ALL):
         """
-        Subscribe to status changes
+        Subscribe to events. The callback is called with a ButtonEvent,
+        BatteryStateEvent or ValueUpdateEvent.
         """
         self._subscribers.append(callback)
 
@@ -143,16 +194,61 @@ class EnetClient:
 
         return unsubscribe
 
-    async def __read_events(self):
-        """
-        Process events from Enet server
-        """
-        while True:
-            event = await self.get_events()
-            if event:
-                await self.__handle_event(event)
+    def _notify_subscribers(self, event):
+        for callback in self._subscribers:
+            callback(event)
 
-    async def __handle_event(self, events):
+    async def read_events(self):
+        """Fetch and handle events from the Enet server, forever
+
+        requestEvents blocks for 30s if no events are available or returns
+        immediately when there are events. Failed requests are retried with
+        an increasing delay.
+        """
+        if self._offline:
+            await self._simulate_events()
+            return
+
+        failcount = 0
+        while True:
+            try:
+                events = await self.get_events()
+                failcount = 0
+            except Exception as e:
+                failcount += 1
+                delay = EVENT_RETRY_BASE_DELAY * failcount
+                log.warning("Failed to fetch events: (%s), retrying in: %s", e, delay)
+                await asyncio.sleep(delay)
+                continue
+            if events:
+                try:
+                    await self.handle_events(events)
+                except Exception as e:
+                    log.exception("Failed to handle events: %s (%s)", events, e)
+
+    async def _simulate_events(self):
+        """Simulate events when offline by randomly generating events - only for debugging"""
+        while True:
+            await asyncio.sleep(10)
+            if random.random() < 0.3:
+                event = {
+                    "sequenceNumber": 42,
+                    "event": EVENT_OUTPUT_DEVICE_FUNCTION_CALLED,
+                    "eventData": {
+                        "deviceUID": "1fb68d33-bc85-43aa-b459-34510bb08648",
+                        "channelNumber": 1,
+                        "deviceFunctionUID": "1fb68d33-bc85-43aa-b459-34510bb0866c",
+                        "values": [
+                            {
+                                "value": 6.79,
+                                "valueTypeID": "VT_VALUE_TIME1_RANGE_0.0_86400.0_DEF_0.0",
+                            }
+                        ],
+                    },
+                }
+                await self.handle_events({"events": [event]})
+
+    async def handle_events(self, events):
         """Handle events from Enet Server. Either update value of actuator or
         forward event from sensor
 
@@ -168,11 +264,10 @@ class EnetClient:
                       }
         }
         """
-
         for event in events["events"]:
             log.debug("Handling event: %s", event)
             if (
-                time.time() - self._last_event.get("ts", 0) < 2
+                time.time() - self._last_event_ts < 0.5
                 and event["event"] == self._last_event.get("event")
                 and event["eventData"] == self._last_event.get("eventData")
             ):
@@ -181,33 +276,64 @@ class EnetClient:
                 continue
 
             self._last_event = event
-            self._last_event["ts"] = time.time()
+            self._last_event_ts = time.time()
 
-            if event["event"] == "outputDeviceFunctionCalled":
-                data = event["eventData"]
-                function_uid = data["deviceFunctionUID"]
-                device = self.function_uid_map.get(function_uid)
-                if not device:
-                    log.warning(
-                        "Function %s does not map to device",
-                        function_uid,
-                    )
-                    continue
-                values = data["values"]
-                if isinstance(device, ActuatorChannel):
-                    if len(values) != 1:
-                        log.warning(
-                            "Event for device '%s' has multiple values: %s, expected 1.",
-                            device,
-                            values,
-                        )
-                    for value_spec in values:
-                        value = value_spec["value"]
-                        log.debug("Updating value of %s to %s", device, value)
-                        device.state = value
+            if event["event"] == EVENT_OUTPUT_DEVICE_FUNCTION_CALLED:
+                await self._handle_output_device_function_called(event)
+            elif event["event"] == EVENT_DEVICE_BATTERY_STATE_CHANGED:
+                self._handle_battery_state_changed(event)
 
-                for callback in self._subscribers:
-                    callback(data, device)
+    async def _handle_output_device_function_called(self, event):
+        data = event["eventData"]
+        function_uid = data["deviceFunctionUID"]
+        channel = self.function_uid_map.get(function_uid)
+        if not channel:
+            log.warning("Function %s does not map to device", function_uid)
+            return
+
+        values = data["values"]
+        channel_type = channel.get_channel_type_function_name_from_output_function_uid(
+            function_uid
+        )
+
+        if channel_type not in [
+            ChannelTypeFunctionName.BUTTON_ROCKER,
+            ChannelTypeFunctionName.SCENE_CONTROL,
+        ]:
+            await channel.update_values(function_uid, values)
+            self._notify_subscribers(ValueUpdateEvent(channel, function_uid, values))
+            return
+
+        # Decode sensor / button events
+        subtype = data["channelNumber"]
+        if len(values) != 2:
+            log.warning("Expected 2 values: %s", event)
+            return
+
+        event_type = ButtonEventType.INITIAL_PRESS
+        if values[0]["valueTypeID"] == VALUE_TYPE_ROCKER_STATE:
+            # If a button is configured as a rocker, you have the UP and Down
+            # button on the same channel.
+            if values[0]["value"] == VALUE_DOWN_BUTTON:
+                subtype += 1
+        if values[1]["valueTypeID"] == VALUE_TYPE_ROCKER_SWITCH_TIME:
+            # Switch time is 0 on press and a number for release.
+            switch_time = values[1]["value"]
+            if switch_time > 0:
+                event_type = ButtonEventType.SHORT_RELEASE
+            if switch_time > 60:
+                event_type = ButtonEventType.LONG_RELEASE
+
+        self._notify_subscribers(ButtonEvent(channel, subtype, event_type))
+
+    def _handle_battery_state_changed(self, event):
+        data = event["eventData"]
+        device_uid = data.get("deviceUID", None)
+        battery_state = data.get("batteryState", None)
+        device = next((d for d in self.devices if d.uid == device_uid), None)
+        if device:
+            device.update_battery_state(battery_state)
+            self._notify_subscribers(BatteryStateEvent(device, battery_state))
 
     @auth_if_needed
     async def request(self, url, method, params, raise_on_error=False, get_raw=False):
@@ -309,11 +435,15 @@ class EnetClient:
             await self._session.close()
 
     async def close(self, logout=True):
-        """Log out of the Enet Server and close the HTTP session"""
+        """Stop the background tasks, log out of the Enet Server and close
+        the HTTP session"""
+        # Stop reading events before logging out, otherwise a pending
+        # requestEvents call fails with an auth error and logs in again.
+        await self.stop()
         if self._session is None or self._session.closed:
             return
         try:
-            if logout:
+            if logout and self._auth_generation:
                 # Bypass the auth decorator: no point in logging in to log out,
                 # and an unreachable server must not block unloading.
                 async with asyncio.timeout(5):
@@ -326,6 +456,18 @@ class EnetClient:
     async def ping(self):
         """Ping server to keep connection alive"""
         return await self.request(URL.MANAGEMENT, "ping", None)
+
+    async def ping_forever(self):
+        """Ping server to keep connection alive, forever"""
+        while True:
+            try:
+                await self.ping()
+            except Exception as e:
+                log.warning(
+                    "Failed to ping server: (%s), retrying in: %s", e, PING_INTERVAL
+                )
+
+            await asyncio.sleep(PING_INTERVAL)
 
     async def get_devices(self, device_uids=None):
         """Get all the devices registered on the server"""
@@ -594,6 +736,18 @@ class DeviceChannel:
         self._set_application_mode()
         self._set_active()
 
+    def subscribe(self, callback):
+        """Subscribe to value updates. The callback is awaited without
+        arguments after current_values has been updated from an event.
+        Returns a function that unsubscribes the callback.
+        """
+        self.on_update_callbacks.append(callback)
+
+        def unsubscribe():
+            self.on_update_callbacks.remove(callback)
+
+        return unsubscribe
+
     def _find_output_functions(self):
         device_output_function_list = self._get_mapped_type_ids("outputDeviceFunctions")
         for output_function in self.channel["outputDeviceFunctions"]:
@@ -738,7 +892,7 @@ class DeviceChannel:
                     new_value = self._parse_value(value_container)
                     self.current_values[output_function.get("typeID")] = new_value
                     log.debug("Updating value of %s to %s", self.name, new_value)
-                for callback in self.on_update_callbacks:
+                for callback in list(self.on_update_callbacks):
                     await callback()
 
     def get_current_value(self, channel_function_name: ChannelTypeFunctionName) -> Any:

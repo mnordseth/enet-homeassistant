@@ -39,12 +39,6 @@ class EnetSwitch(EnetBaseChannelEntity, SwitchEntity):
         """Return true if switch is on."""
         return self.channel.get_current_value(ChannelTypeFunctionName.ON_OFF)
 
-    async def async_added_to_hass(self):
-        """Subscribe entity to updates when added to hass."""
-        self.async_on_remove(
-            self.coordinator.async_add_listener(self.async_write_ha_state)
-        )
-
     async def async_turn_on(self, **kwargs) -> None:
         """Turn the switch on."""
         _LOGGER.info("async_turn_on: (%s) %s", self.name, kwargs)
