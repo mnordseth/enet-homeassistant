@@ -1,8 +1,8 @@
 """Generic Enet Smart Home Entity Model"""
 
 import logging
-from homeassistant.helpers.entity import Entity
-from .utils import get_device_info
+from homeassistant.helpers.entity import DeviceInfo, Entity
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -26,10 +26,9 @@ class EnetBaseChannelEntity(EnetBaseEntity, Entity):
 
     _enet_channel_function = None
 
-    def __init__(self, channel, coordinator):
+    def __init__(self, channel):
         self._name = channel.name
         self.channel = channel
-        self.coordinator = coordinator
 
     @property
     def unique_id(self):
@@ -48,8 +47,8 @@ class EnetBaseChannelEntity(EnetBaseEntity, Entity):
 
     @property
     def device_info(self):
-        """Return the device information."""
-        return get_device_info(self.channel.device, self.coordinator)
+        """Link the entity to its device, registered by async_setup_devices"""
+        return DeviceInfo(identifiers={(DOMAIN, self.channel.device.uid)})
 
     @property
     def native_value(self) -> int:
@@ -72,11 +71,10 @@ class EnetBaseChannelEntity(EnetBaseEntity, Entity):
 class EnetBaseDeviceEntity(EnetBaseEntity, Entity):
     """Generic Entity Class for Enet Smart Home devices"""
 
-    def __init__(self, device, coordinator):
+    def __init__(self, device):
         self.device = device
-        self.coordinator = coordinator
 
     @property
     def device_info(self):
-        """Return the device information."""
-        return get_device_info(self.device, self.coordinator)
+        """Link the entity to its device, registered by async_setup_devices"""
+        return DeviceInfo(identifiers={(DOMAIN, self.device.uid)})

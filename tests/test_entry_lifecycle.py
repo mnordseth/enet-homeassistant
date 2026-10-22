@@ -42,23 +42,6 @@ class ConfigEntryNotReady(Exception):
     pass
 
 
-class DataUpdateCoordinator:
-    def __init__(self, hass, logger, *, name, update_interval=None):
-        self.hass = hass
-        self.logger = logger
-        self.name = name
-
-    async def async_refresh(self):
-        # Like Home Assistant: exceptions are logged, cancellation propagates.
-        try:
-            self.data = await self._async_update_data()
-        except Exception:
-            self.logger.exception("Unexpected error fetching %s data", self.name)
-
-    def async_update_listeners(self):
-        pass
-
-
 class DeviceRegistry:
     def async_get_or_create(self, **kwargs):
         return types.SimpleNamespace(id="device-id")
@@ -72,10 +55,7 @@ _stub("homeassistant.const", Platform=Platform)
 _stub("homeassistant.core", HomeAssistant=object, callback=lambda func: func)
 _stub("homeassistant.helpers.entity", DeviceInfo=dict)
 _stub("homeassistant.helpers.device_registry", DeviceEntry=object,
-      async_get=lambda hass: DeviceRegistry(),
-      async_get_device_id_by_identifier=lambda *args: None)
-_stub("homeassistant.helpers.update_coordinator",
-      DataUpdateCoordinator=DataUpdateCoordinator)
+      async_get=lambda hass: DeviceRegistry())
 
 source = Path(__file__).resolve().parents[1] / "custom_components" / "enet"
 spec = importlib.util.spec_from_file_location(

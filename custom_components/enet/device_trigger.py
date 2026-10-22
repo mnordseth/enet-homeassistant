@@ -41,7 +41,7 @@ async def async_get_triggers(
     """List device triggers for enet devices."""
     device_entry = device_registry.async_get(hass).async_get(device_id)
     entry_id = [i for i in device_entry.config_entries][0]
-    hub = hass.data[DOMAIN][entry_id]
+    hub = hass.config_entries.async_get_entry(entry_id).runtime_data
     triggers = []
 
     enet_device_id = get_enet_device_id(device_entry)

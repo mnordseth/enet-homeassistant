@@ -26,14 +26,13 @@ from custom_components.enet.enet_data.enums import (
 
 from .entity import EnetBaseChannelEntity, EnetBaseDeviceEntity
 from .aioenet import SensorChannel
-from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Add Enet sensor devices from a config entry"""
-    hub = hass.data[DOMAIN][entry.entry_id]
+    hub = entry.runtime_data
 
     supported_app_modes = [
         ChannelApplicationMode.SCENE,
@@ -43,7 +42,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     for device in hub.devices:
         if device.get_battery_state() is not None:
-            async_add_entities([EnetBatterySensor(device, hub.coordinator)])
+            async_add_entities([EnetBatterySensor(device)])
         for channel in device.channels:
             if (
                 isinstance(channel, SensorChannel)
@@ -53,23 +52,23 @@ async def async_setup_entry(hass, entry, async_add_entities):
                     match output_function["function"]:
                         case ChannelTypeFunctionName.BRIGHTNESS:
                             async_add_entities(
-                                [EnetLightLevelSensor(channel, hub.coordinator)]
+                                [EnetLightLevelSensor(channel)]
                             )
                         case ChannelTypeFunctionName.ENERGY_ACTIVE:
                             async_add_entities(
-                                [EnetEnergySensor(channel, hub.coordinator)]
+                                [EnetEnergySensor(channel)]
                             )
                         case ChannelTypeFunctionName.VOLTAGE:
                             async_add_entities(
-                                [EnetVoltageSensor(channel, hub.coordinator)]
+                                [EnetVoltageSensor(channel)]
                             )
                         case ChannelTypeFunctionName.CURRENT:
                             async_add_entities(
-                                [EnetCurrentSensor(channel, hub.coordinator)]
+                                [EnetCurrentSensor(channel)]
                             )
                         case ChannelTypeFunctionName.POWER_ACTIVE:
                             async_add_entities(
-                                [EnetPowerSensor(channel, hub.coordinator)]
+                                [EnetPowerSensor(channel)]
                             )
                         case ChannelTypeFunctionName.SCENE_CONTROL:
                             # Handled as device action
@@ -88,7 +87,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
                 #    and channel_type_brightness in channel.current_values
                 # ):
                 #    async_add_entities(
-                #        [EnetLightLevelSensor(channel, hub.coordinator)])
+                #        [EnetLightLevelSensor(channel)])
 
     _LOGGER.info("Finished async setup(sensor)")
 
@@ -153,8 +152,8 @@ class EnetBatterySensor(EnetBaseDeviceEntity, SensorEntity):
     _attr_options = [state.value for state in DeviceBatteryState]
     _attr_has_entity_name = True
 
-    def __init__(self, device, coordinator):
-        super().__init__(device, coordinator)
+    def __init__(self, device):
+        super().__init__(device)
         self._uid = f"{self.device.uid}_battery_state"
 
     @property
@@ -175,5 +174,5 @@ class EnetBatterySensor(EnetBaseDeviceEntity, SensorEntity):
     async def async_added_to_hass(self):
         """Subscribe entity to updates when added to hass."""
         self.async_on_remove(
-            self.coordinator.async_add_listener(self.async_write_ha_state)
+            self.device.subscribe(self.async_write_ha_state)
         )

@@ -12,14 +12,13 @@ from homeassistant.components.cover import (
 from custom_components.enet.enet_data.enums import ChannelApplicationMode, ChannelTypeFunctionName
 from .entity import EnetBaseChannelEntity
 from .aioenet import ActuatorChannel
-from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Add Enet cover devices from a config entry"""
-    hub = hass.data[DOMAIN][entry.entry_id]
+    hub = entry.runtime_data
 
     supported_app_modes = [
         ChannelApplicationMode.BLINDS
@@ -28,15 +27,15 @@ async def async_setup_entry(hass, entry, async_add_entities):
     for device in hub.devices:
         for channel in device.channels:
             if isinstance(channel, ActuatorChannel) and channel.application_mode in supported_app_modes:
-                async_add_entities([EnetCover(channel, hub.coordinator)])
+                async_add_entities([EnetCover(channel)])
     _LOGGER.info("Finished async setup()")
 
 
 class EnetCover(EnetBaseChannelEntity, CoverEntity):
     """A representation of an Enet Smart Home cover / blinds channel"""
 
-    def __init__(self, channel, coordinator):
-        super().__init__(channel, coordinator)
+    def __init__(self, channel):
+        super().__init__(channel)
 
         self._operation_mode = channel.get_operation_mode()
 

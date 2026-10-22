@@ -16,7 +16,6 @@ from custom_components.enet.enet_data.enums import (
 )
 
 from .aioenet import SensorChannel
-from .const import DOMAIN
 from .entity import EnetBaseChannelEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -24,7 +23,7 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Add Enet binary sensor devices from a config entry."""
-    hub = hass.data[DOMAIN][entry.entry_id]
+    hub = entry.runtime_data
 
     entities: list[BinarySensorEntity] = []
 
@@ -42,7 +41,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
                         == ChannelTypeFunctionName.TRIGGER_START
                     ):
                         entities.append(
-                            EnetMotionBinarySensor(channel, hub.coordinator)
+                            EnetMotionBinarySensor(channel)
                         )
 
     if entities:
@@ -69,8 +68,8 @@ class EnetMotionBinarySensor(EnetBaseChannelEntity, BinarySensorEntity):
         except (TypeError, ValueError):
             return bool(value)
 
-    def __init__(self, channel, coordinator):
-        super().__init__(channel, coordinator)
+    def __init__(self, channel):
+        super().__init__(channel)
         # Do not use value supplied by enet server on startup, only react to events
         self.update_value(0)
         self._clear_motion_task = None

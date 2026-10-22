@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Add Enet scenes"""
-    hub = hass.data[DOMAIN][entry.entry_id]
+    hub = entry.runtime_data
 
     scenes = await hub.get_scenes()
     for scene_name in scenes:

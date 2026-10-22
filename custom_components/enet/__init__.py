@@ -10,11 +10,11 @@ from homeassistant.config_entries import ConfigEntry, ConfigEntryNotReady
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceEntry
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .aioenet import BatteryStateEvent, ButtonEvent, EnetClient
-from .const import DOMAIN, ATTR_ENET_EVENT, NAME_ENET_CONTROLLER
+from .aioenet import EnetClient
+from .const import DOMAIN, NAME_ENET_CONTROLLER
 from .device import async_setup_devices
+from .events import async_setup_enet_events
 
 _LOGGER = logging.getLogger(__name__)
 PLATFORMS: list[Platform] = [
@@ -26,12 +26,13 @@ PLATFORMS: list[Platform] = [
     Platform.BINARY_SENSOR,
 ]
 
+type EnetConfigEntry = ConfigEntry[EnetClient]
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+
+async def async_setup_entry(hass: HomeAssistant, entry: EnetConfigEntry) -> bool:
     """Set up Enet Smart Home from a config entry."""
     _LOGGER.debug("Setting up Enet Smart Home entry")
 
-    hass.data.setdefault(DOMAIN, {})
     hub = EnetClient(
         entry.data["url"],
         entry.data["username"],
@@ -51,33 +52,31 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         await hub.close()
         return False
 
-    hass.data[DOMAIN][entry.entry_id] = hub
-    hub.coordinator = EnetCoordinator(hass, hub, entry)
-    await async_setup_devices(hub.coordinator)
-    entry.async_on_unload(hub.subscribe(hub.coordinator.handle_enet_event))
+    entry.runtime_data = hub
+    await async_setup_devices(hass, entry, hub)
+    async_setup_enet_events(hass, entry, hub)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: EnetConfigEntry) -> bool:
     """Unload a config entry."""
     _LOGGER.debug("Unloading Enet Smart Home entry")
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
-        hub = hass.data[DOMAIN].pop(entry.entry_id)
-        await hub.close()
+        await entry.runtime_data.close()
 
     return unload_ok
 
 
 async def async_remove_config_entry_device(
-    hass: HomeAssistant, config_entry: ConfigEntry, device_entry: DeviceEntry
+    hass: HomeAssistant, config_entry: EnetConfigEntry, device_entry: DeviceEntry
 ) -> bool:
     """Allow manual removal of devices the Enet server no longer reports.
 
     Devices that still exist on the Enet server (and the controller itself)
     cannot be removed, as they would be recreated on the next reload anyway.
     """
-    hub = hass.data.get(DOMAIN, {}).get(config_entry.entry_id)
+    hub = getattr(config_entry, "runtime_data", None)
     if hub is None:
         return False
 
@@ -89,42 +88,3 @@ async def async_remove_config_entry_device(
         for identifier in device_entry.identifiers
     )
 
-
-class EnetCoordinator(DataUpdateCoordinator):
-    """Enet Smart Home coordinator notifying entities of battery state changes
-    and forwarding button events to the hass bus.
-
-    Events are read by the EnetClient's own background task, so the
-    coordinator never fetches data itself.
-    """
-
-    def __init__(
-        self, hass: HomeAssistant, hub: EnetClient, entry: ConfigEntry
-    ) -> None:
-        """Initialize the coordinator."""
-        self.hub = hub
-        self.hass = hass
-        self.config_entry = entry
-        super().__init__(
-            hass,
-            _LOGGER,
-            name=DOMAIN,
-            update_interval=None,
-        )
-        _LOGGER.debug("EnetCoordinator initialized")
-
-    def handle_enet_event(self, event) -> None:
-        """Forward button events to the hass bus and update entities on
-        battery state changes. Value updates reach the entities through the
-        channel's on_update_callbacks.
-        """
-        if isinstance(event, ButtonEvent):
-            bus_data = {
-                "device_id": event.channel.device.hass_device_entry.id,
-                "unique_id": event.channel.device.uid,
-                "type": str(event.type),
-                "subtype": str(event.subtype),
-            }
-            self.hass.bus.async_fire(ATTR_ENET_EVENT, bus_data)
-        elif isinstance(event, BatteryStateEvent):
-            self.async_update_listeners()

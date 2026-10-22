@@ -9,14 +9,13 @@ from custom_components.enet.enet_data.enums import ChannelApplicationMode, Chann
 
 from .entity import EnetBaseChannelEntity
 from .aioenet import ActuatorChannel
-from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Add Enet light devices from a config entry"""
-    hub = hass.data[DOMAIN][entry.entry_id]
+    hub = entry.runtime_data
 
     supported_app_modes = [
         ChannelApplicationMode.LIGHT_SWITCHING,
@@ -26,7 +25,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     for device in hub.devices:
         for channel in device.channels:
             if isinstance(channel, ActuatorChannel) and channel.application_mode in supported_app_modes:
-                async_add_entities([EnetLight(channel, hub.coordinator)])
+                async_add_entities([EnetLight(channel)])
     _LOGGER.info("Finished async setup()")
 
 

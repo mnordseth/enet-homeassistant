@@ -151,9 +151,17 @@ class EnetClient:
         await self.simple_login()
         self.devices = await self.get_devices()
         await self.initialize_events()
-        self._bg_tasks.append(asyncio.create_task(self.read_events()))
+        self._bg_tasks.append(
+            asyncio.create_task(
+                self.read_events(), name=f"enet event reader {self.baseurl}"
+            )
+        )
         if self.baseurl.startswith("https://"):
-            self._bg_tasks.append(asyncio.create_task(self.ping_forever()))
+            self._bg_tasks.append(
+                asyncio.create_task(
+                    self.ping_forever(), name=f"enet keepalive ping {self.baseurl}"
+                )
+            )
 
     async def stop(self):
         """Cancel the background tasks and wait for them to finish"""
@@ -607,6 +615,7 @@ class Device:
         self.battery_state = self._raw["batteryState"]
         self.serial_number = self._raw["metaData"]["serialNumber"]
         self.software_update_available = self._raw["isSoftwareUpdateAvailable"]
+        self._subscribers = []
         self.create_channels()
 
     def __repr__(self):
@@ -679,6 +688,18 @@ class Device:
 
         return ChannelUseType.UNSUPPORTED
 
+    def subscribe(self, callback):
+        """Subscribe to device updates, currently battery state changes.
+        The callback is called without arguments after the device is updated.
+        Returns a function that unsubscribes the callback.
+        """
+        self._subscribers.append(callback)
+
+        def unsubscribe():
+            self._subscribers.remove(callback)
+
+        return unsubscribe
+
     def get_battery_state(self):
         return self.battery_state
 
@@ -691,6 +712,8 @@ class Device:
                 battery_state,
             )
             self.battery_state = battery_state
+            for callback in list(self._subscribers):
+                callback()
         else:
             log.warning("Unknown battery state: %s", battery_state)
 
