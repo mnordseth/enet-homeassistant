@@ -36,6 +36,7 @@ class Platform(enum.StrEnum):
     SENSOR = "sensor"
     SWITCH = "switch"
     BINARY_SENSOR = "binary_sensor"
+    EVENT = "event"
 
 
 class ConfigEntryNotReady(Exception):
