@@ -28,6 +28,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
 class EnetSceneEntity(SceneEntity):
     """Representation of a Scene entity."""
 
+    _attr_has_entity_name = True
+
     def __init__(self, hub, name, uid):
         self._name = name
         self.uid = uid

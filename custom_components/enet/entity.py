@@ -10,6 +10,8 @@ _LOGGER = logging.getLogger(__name__)
 class EnetBaseEntity(Entity):
     """Generic Entity Class for Enet Smart Home entities"""
 
+    _attr_has_entity_name = True
+
     @property
     def available(self):
         """Return True if entity is available."""
@@ -39,11 +41,18 @@ class EnetBaseChannelEntity(EnetBaseEntity, Entity):
 
     @property
     def name(self):
-        """Return the name of the device."""
+        """Return the channel name, Home Assistant puts the device name in front.
+
+        A channel named like its device returns None (or only the sensor name),
+        so the device name is not shown twice.
+        """
+        channel_name = self._name
+        if channel_name == self.channel.device.name:
+            channel_name = None
         sensor_name = getattr(self, "_attr_name", None)
-        if sensor_name:
-            return f"{self._name} {sensor_name}"
-        return self._name
+        if channel_name and sensor_name:
+            return f"{channel_name} {sensor_name}"
+        return channel_name or sensor_name
 
     @property
     def device_info(self):
