@@ -28,7 +28,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         for channel in device.channels:
             if isinstance(channel, ActuatorChannel) and channel.application_mode in supported_app_modes:
                 async_add_entities([EnetCover(channel)])
-    _LOGGER.info("Finished async setup()")
+    _LOGGER.debug("Finished async setup()")
 
 
 class EnetCover(EnetBaseChannelEntity, CoverEntity):
@@ -60,24 +60,28 @@ class EnetCover(EnetBaseChannelEntity, CoverEntity):
                 self._attr_device_class = CoverDeviceClass.AWNING
 
     @property
-    def is_closed(self) -> bool:
+    def is_closed(self) -> bool | None:
         """
         Determine if the cover is fully closed.
 
         Returns:
-            bool: True if the cover is fully closed, False otherwise.
+            bool: True if the cover is fully closed, False otherwise, None if unknown.
         """
         current_value = self.channel.get_current_value(ChannelTypeFunctionName.COVER_POSITION)
+        if current_value is None:
+            return None
         return current_value == 100
 
     @property
-    def current_cover_position(self) -> int:
-        """Return current position of cover tilt.
+    def current_cover_position(self) -> int | None:
+        """Return current position of cover.
 
         None is unknown, 0 is fully closed, 100 is fully open.
         """
 
         current_value = self.channel.get_current_value(ChannelTypeFunctionName.COVER_POSITION)
+        if current_value is None:
+            return None
         return 100 - current_value
 
     @property
@@ -88,7 +92,8 @@ class EnetCover(EnetBaseChannelEntity, CoverEntity):
         """
         if self._operation_mode == "BLINDS":
             current_value = self.channel.get_current_value(ChannelTypeFunctionName.TILT_POSITION)
-            return 100 - current_value
+            if current_value is not None:
+                return 100 - current_value
 
         return None
 
@@ -130,5 +135,5 @@ class EnetCover(EnetBaseChannelEntity, CoverEntity):
         self.async_write_ha_state()
 
     async def async_stop_cover_tilt(self, **kwargs) -> None:
-        """Stop the cover."""
-        self.async_stop_cover(**kwargs)
+        """Stop the cover tilt."""
+        await self.async_stop_cover(**kwargs)

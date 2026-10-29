@@ -89,7 +89,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
                 #    async_add_entities(
                 #        [EnetLightLevelSensor(channel)])
 
-    _LOGGER.info("Finished async setup(sensor)")
+    _LOGGER.debug("Finished async setup(sensor)")
 
 
 class EnetPowerSensor(EnetBaseChannelEntity, SensorEntity):

@@ -22,7 +22,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         scene_entity = EnetSceneEntity(hub, scene_name, scenes[scene_name])
         async_add_entities([scene_entity])
 
-    _LOGGER.info("Finished async setup()")
+    _LOGGER.debug("Finished async setup()")
 
 
 class EnetSceneEntity(SceneEntity):
@@ -32,7 +32,7 @@ class EnetSceneEntity(SceneEntity):
         self._name = name
         self.uid = uid
         self.hub = hub
-        _LOGGER.info("EnetSceneEntity.init()  done %s", self.name)
+        _LOGGER.debug("EnetSceneEntity.init()  done %s", self.name)
 
     @property
     def name(self):

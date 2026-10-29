@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+import aiohttp
 import voluptuous as vol
 
 from homeassistant import config_entries
@@ -36,10 +37,10 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     hub = aioenet.EnetClient(data["url"], data["username"], data["password"])
     try:
         await hub.simple_login()
-    except aioenet.AuthError:
-        raise InvalidAuth
-    except:
-        raise CannotConnect
+    except aioenet.AuthError as err:
+        raise InvalidAuth from err
+    except (aiohttp.ClientError, TimeoutError, aioenet.EnetServerError) as err:
+        raise CannotConnect from err
     finally:
         await hub.simple_logout()
 

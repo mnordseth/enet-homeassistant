@@ -919,20 +919,12 @@ class DeviceChannel:
                     await callback()
 
     def get_current_value(self, channel_function_name: ChannelTypeFunctionName) -> Any:
-        """Set channel to new value"""
+        """Return the last known value of the channel function, None if unknown"""
         channel_config_id = self.get_channel_configuration_entry(
             "outputDeviceFunctions", channel_function_name
         )
         value_container = self.current_values.get(channel_config_id, {})
-        value = value_container.get("value", None)
-
-        if value is not None:
-            return value
-        else:
-            raise Exception(
-                "No value found for channel %s and function %s"
-                % (self.name, channel_config_id)
-            )
+        return value_container.get("value", None)
 
     def set_current_value(
         self, channel_function_name: ChannelTypeFunctionName, value=None
@@ -942,7 +934,7 @@ class DeviceChannel:
             "outputDeviceFunctions", channel_function_name
         )
         if value is not None:
-            self.current_values[channel_config_id]["value"] = value
+            self.current_values.setdefault(channel_config_id, {})["value"] = value
 
 
 class SensorChannel(DeviceChannel):

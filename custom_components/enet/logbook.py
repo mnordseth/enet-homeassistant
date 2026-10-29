@@ -4,11 +4,11 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from homeassistant.components.logbook import LOGBOOK_ENTRY_MESSAGE, LOGBOOK_ENTRY_NAME
-from homeassistant.const import CONF_DEVICE_ID, CONF_ID, CONF_TYPE
+from homeassistant.const import CONF_DEVICE_ID, CONF_TYPE
 from homeassistant.core import Event, HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
 
-from .const import ATTR_ENET_EVENT, CONF_SUBTYPE, DOMAIN
+from .const import ATTR_ENET_EVENT, CONF_SUBTYPE, CONF_UNIQUE_ID, DOMAIN
 
 TRIGGER_SUBTYPE = {
     "1": "Button 1",
@@ -28,6 +28,7 @@ TRIGGER_TYPE = {
 
 UNKNOWN_TYPE = "unknown type"
 UNKNOWN_SUB_TYPE = "unknown sub type"
+UNKNOWN_DEVICE = "unknown device"
 
 
 @callback
@@ -42,15 +43,14 @@ def async_describe_events(
         """Describe enet logbook event."""
         data = event.data
         name: str | None = None
-        if dev_ent := dr.async_get(hass).async_get(data[CONF_DEVICE_ID]):
+        if dev_ent := dr.async_get(hass).async_get(data.get(CONF_DEVICE_ID)):
             name = dev_ent.name
         if name is None:
-            name = data[CONF_ID]
-        if CONF_TYPE in data:  # v2
-            subtype = TRIGGER_SUBTYPE.get(str(data[CONF_SUBTYPE]), UNKNOWN_SUB_TYPE)
-            message = TRIGGER_TYPE.get(data[CONF_TYPE], UNKNOWN_TYPE).format(
-                subtype=subtype
-            )
+            name = data.get(CONF_UNIQUE_ID, UNKNOWN_DEVICE)
+        subtype = TRIGGER_SUBTYPE.get(str(data.get(CONF_SUBTYPE)), UNKNOWN_SUB_TYPE)
+        message = TRIGGER_TYPE.get(data.get(CONF_TYPE), UNKNOWN_TYPE).format(
+            subtype=subtype
+        )
         return {
             LOGBOOK_ENTRY_NAME: name,
             LOGBOOK_ENTRY_MESSAGE: message,

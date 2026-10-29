@@ -26,7 +26,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         for channel in device.channels:
             if isinstance(channel, ActuatorChannel) and channel.application_mode in supported_app_modes:
                 async_add_entities([EnetLight(channel)])
-    _LOGGER.info("Finished async setup()")
+    _LOGGER.debug("Finished async setup()")
 
 
 class EnetLight(EnetBaseChannelEntity, LightEntity):
@@ -39,12 +39,13 @@ class EnetLight(EnetBaseChannelEntity, LightEntity):
 
     @property
     def brightness(self) -> Optional[int]:
-        """Return the current brightness."""
-        return scale_ranged_value_to_int_range(
-            (1, 100),
-            (1, 255),
-            self.channel.get_current_value(ChannelTypeFunctionName.BRIGHTNESS),
-        )
+        """Return the current brightness, None for switching lights or when unknown."""
+        if self.channel.application_mode != ChannelApplicationMode.LIGHT_DIMMING:
+            return None
+        value = self.channel.get_current_value(ChannelTypeFunctionName.BRIGHTNESS)
+        if value is None:
+            return None
+        return scale_ranged_value_to_int_range((1, 100), (1, 255), value)
 
     @property
     def supported_color_modes(self):
@@ -62,7 +63,7 @@ class EnetLight(EnetBaseChannelEntity, LightEntity):
 
     async def async_turn_on(self, **kwargs):
         """Turn the light on. Either to a specific brightness level, or fully on."""
-        _LOGGER.info("async_turn_on: (%s) %s", self.name, kwargs)
+        _LOGGER.debug("async_turn_on: (%s) %s", self.name, kwargs)
 
         if brightness := kwargs.get("brightness"):
             value = scale_ranged_value_to_int_range(
@@ -77,6 +78,6 @@ class EnetLight(EnetBaseChannelEntity, LightEntity):
 
     async def async_turn_off(self, **kwargs):
         """Turn the light off."""
-        _LOGGER.info("async_turn_off: (%s) %s", self.name, kwargs)
+        _LOGGER.debug("async_turn_off: (%s) %s", self.name, kwargs)
         await self.channel.turn_off()
         self.async_write_ha_state()

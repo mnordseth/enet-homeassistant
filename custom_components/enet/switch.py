@@ -23,7 +23,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         for channel in device.channels:
             if isinstance(channel, ActuatorChannel) and channel.application_mode in supported_app_modes:
                 async_add_entities([EnetSwitch(channel)])
-    _LOGGER.info("Finished async setup()")
+    _LOGGER.debug("Finished async setup()")
 
 
 class EnetSwitch(EnetBaseChannelEntity, SwitchEntity):
@@ -40,13 +40,13 @@ class EnetSwitch(EnetBaseChannelEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs) -> None:
         """Turn the switch on."""
-        _LOGGER.info("async_turn_on: (%s) %s", self.name, kwargs)
+        _LOGGER.debug("async_turn_on: (%s) %s", self.name, kwargs)
 
         await self.channel.turn_on()
         self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs) -> None:
         """Turn the switch off."""
-        _LOGGER.info("async_turn_off: (%s) %s", self.name, kwargs)
+        _LOGGER.debug("async_turn_off: (%s) %s", self.name, kwargs)
         await self.channel.turn_off()
         self.async_write_ha_state()

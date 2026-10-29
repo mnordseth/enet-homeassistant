@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import logging
-import asyncio
 
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
 )
+from homeassistant.core import CALLBACK_TYPE, callback
+from homeassistant.helpers.event import async_call_later
 
 from custom_components.enet.enet_data.enums import (
     ChannelApplicationMode,
@@ -47,7 +48,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     if entities:
         async_add_entities(entities)
 
-    _LOGGER.info("Finished async setup(binary_sensor)")
+    _LOGGER.debug("Finished async setup(binary_sensor)")
 
 
 class EnetMotionBinarySensor(EnetBaseChannelEntity, BinarySensorEntity):
@@ -72,7 +73,7 @@ class EnetMotionBinarySensor(EnetBaseChannelEntity, BinarySensorEntity):
         super().__init__(channel)
         # Do not use value supplied by enet server on startup, only react to events
         self.update_value(0)
-        self._clear_motion_task = None
+        self._cancel_clear_motion: CALLBACK_TYPE | None = None
 
     async def on_value_updated(self):
         self.async_write_ha_state()
@@ -84,19 +85,25 @@ class EnetMotionBinarySensor(EnetBaseChannelEntity, BinarySensorEntity):
                 self.name,
                 wait,
             )
-            if self._clear_motion_task is not None:
-                self._clear_motion_task.cancel()
-            self._clear_motion_task = asyncio.create_task(self.clear_motion(wait))
+            self._cancel_pending_clear()
+            self._cancel_clear_motion = async_call_later(
+                self.hass, int(wait), self._clear_motion
+            )
 
     async def async_will_remove_from_hass(self) -> None:
-        """Cancel a pending clear motion task, it must not write state after removal."""
+        """Cancel a pending clear motion, it must not write state after removal."""
         await super().async_will_remove_from_hass()
-        if self._clear_motion_task is not None:
-            self._clear_motion_task.cancel()
-            self._clear_motion_task = None
+        self._cancel_pending_clear()
 
-    async def clear_motion(self, wait=10):
-        await asyncio.sleep(wait)
+    @callback
+    def _cancel_pending_clear(self) -> None:
+        if self._cancel_clear_motion is not None:
+            self._cancel_clear_motion()
+            self._cancel_clear_motion = None
+
+    @callback
+    def _clear_motion(self, _now) -> None:
+        self._cancel_clear_motion = None
         _LOGGER.debug("%s: Clearing motion", self.name)
         self.update_value(0)
         self.async_write_ha_state()
