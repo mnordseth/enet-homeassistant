@@ -3,7 +3,8 @@
         "abort": {
             "already_configured": "Device is already configured",
             "discovery_not_supported": "An Enet Smart Home server was discovered, but setting it up from discovery is not supported yet. Please add the integration manually.",
-            "reconfigure_successful": "Re-configuration was successful"
+            "reconfigure_successful": "Re-configuration was successful",
+            "reauth_successful": "Re-authentication was successful"
         },
         "error": {
             "cannot_connect": "Failed to connect",
@@ -36,6 +37,18 @@
                 },
                 "data_description": {
                     "url": "Address of the Enet Smart Home server, for example http://192.168.1.10. Use https:// if the server is set up for it.",
+                    "username": "User name used to log in to the Enet Smart Home server.",
+                    "password": "Password of the user."
+                }
+            },
+            "reauth_confirm": {
+                "title": "Authenticate again",
+                "description": "The Enet Smart Home server at {url} rejected the login. Enter the username and password again.",
+                "data": {
+                    "username": "Username",
+                    "password": "Password"
+                },
+                "data_description": {
                     "username": "User name used to log in to the Enet Smart Home server.",
                     "password": "Password of the user."
                 }

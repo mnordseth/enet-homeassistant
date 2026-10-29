@@ -42,6 +42,10 @@ class ConfigEntryNotReady(Exception):
     pass
 
 
+class ConfigEntryAuthFailed(Exception):
+    pass
+
+
 class DeviceRegistry:
     def async_get_or_create(self, **kwargs):
         return types.SimpleNamespace(id="device-id")
@@ -49,8 +53,9 @@ class DeviceRegistry:
 
 _stub("homeassistant")
 _stub("homeassistant.helpers")
-_stub("homeassistant.config_entries", ConfigEntry=object,
-      ConfigEntryNotReady=ConfigEntryNotReady)
+_stub("homeassistant.config_entries", ConfigEntry=object)
+_stub("homeassistant.exceptions", ConfigEntryNotReady=ConfigEntryNotReady,
+      ConfigEntryAuthFailed=ConfigEntryAuthFailed)
 _stub("homeassistant.const", Platform=Platform)
 _stub("homeassistant.core", HomeAssistant=object, callback=lambda func: func)
 _stub("homeassistant.helpers.entity", DeviceInfo=dict)
@@ -194,7 +199,7 @@ class EntryLifecycleTests(unittest.IsolatedAsyncioTestCase):
     async def test_reload_keeps_one_event_loop(self):
         for _ in range(3):
             await self.unload(await self.setup())
-        await self.setup()
+        entry = await self.setup()
         await asyncio.sleep(0.05)
 
         polling = [c for c in self.clients if self.count(c, "requestEvents")]
@@ -204,6 +209,7 @@ class EntryLifecycleTests(unittest.IsolatedAsyncioTestCase):
             c for c in polling if self.count(c, "requestEvents") > before[c]
         ]
         self.assertEqual(still_polling, [self.clients[-1]])
+        await self.unload(entry)
 
     async def test_unload_logs_out_and_closes_session(self):
         entry = await self.setup()
@@ -214,16 +220,36 @@ class EntryLifecycleTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("userLogin", self.calls[client][1:])
         self.assertTrue(client._session.closed)
 
-    async def test_failed_login_starts_nothing_and_closes_session(self):
-        self.login_error = aiohttp.ClientError("connection refused")
+    async def assert_failed_setup(self, login_error, expected):
+        """Assert that a failed login raises expected, starts nothing and closes the session."""
+        self.login_error = login_error
         entry = FakeConfigEntry("https://enet.invalid")
-        with self.assertRaises(ConfigEntryNotReady):
+        with self.assertRaises(expected):
             await enet.async_setup_entry(self.hass, entry)
         client = self.clients[0]
 
         await self.assert_silent(client)
         self.assertEqual(self.calls[client], ["userLogin"])
         self.assertTrue(client._session.closed)
+
+    async def test_failed_login_starts_nothing_and_closes_session(self):
+        await self.assert_failed_setup(
+            aiohttp.ClientError("connection refused"), ConfigEntryNotReady
+        )
+
+    async def test_login_timeout_is_not_ready(self):
+        await self.assert_failed_setup(TimeoutError(), ConfigEntryNotReady)
+
+    async def test_server_error_is_not_ready(self):
+        await self.assert_failed_setup(
+            aioenet.EnetServerError("busy"), ConfigEntryNotReady
+        )
+
+    async def test_rejected_login_is_auth_failed(self):
+        await self.assert_failed_setup(aioenet.AuthError(), ConfigEntryAuthFailed)
+
+    async def test_unexpected_error_is_raised_and_closes_session(self):
+        await self.assert_failed_setup(RuntimeError("bug"), RuntimeError)
 
 
 if __name__ == "__main__":

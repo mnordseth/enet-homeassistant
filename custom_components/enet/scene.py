@@ -39,7 +39,7 @@ class EnetSceneEntity(SceneEntity):
         """Return the name of the scene."""
         name = self._name
         if name.startswith("[libenet") and "]" in name:
-            name = name.split("]", 1)[-1]
+            name = name.split("]", 1)[-1].strip()
         return name
 
     @property

@@ -3,15 +3,16 @@
 from __future__ import annotations
 
 import logging
-import asyncio
+
 import aiohttp
 
-from homeassistant.config_entries import ConfigEntry, ConfigEntryNotReady
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers.device_registry import DeviceEntry
 
-from .aioenet import EnetClient
+from .aioenet import AuthError, EnetClient, EnetServerError
 from .const import DOMAIN, NAME_ENET_CONTROLLER
 from .device import async_setup_devices
 from .events import async_setup_enet_events
@@ -44,13 +45,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: EnetConfigEntry) -> bool
 
     try:
         await hub.initialize()
-    except (asyncio.TimeoutError, aiohttp.ClientError) as e:
+    except AuthError as e:
+        await hub.close()
+        raise ConfigEntryAuthFailed(
+            "Invalid username or password for Enet Smart Home"
+        ) from e
+    except (TimeoutError, aiohttp.ClientError, EnetServerError) as e:
         await hub.close()
         raise ConfigEntryNotReady("Failed to connect to Enet Smart Home") from e
     except Exception:
-        _LOGGER.exception("Failed to set up Enet Smart Home")
+        # Unexpected errors are logged by Home Assistant, just release the session
         await hub.close()
-        return False
+        raise
 
     entry.runtime_data = hub
     await async_setup_devices(hass, entry, hub)
