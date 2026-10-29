@@ -2,21 +2,44 @@
   "config": {
     "step": {
       "user": {
+        "title": "Connect to the Enet Smart Home server",
+        "description": "Enter the address and the login of your Enet Smart Home server.",
         "data": {
           "url": "[%key:common::config_flow::data::url%]",
           "username": "[%key:common::config_flow::data::username%]",
           "password": "[%key:common::config_flow::data::password%]"
+        },
+        "data_description": {
+          "url": "Address of the Enet Smart Home server, for example http://192.168.1.10. Use https:// if the server is set up for it.",
+          "username": "User name used to log in to the Enet Smart Home server.",
+          "password": "Password of the user."
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure the Enet Smart Home server",
+        "description": "Change the address or the login of your Enet Smart Home server.",
+        "data": {
+          "url": "[%key:common::config_flow::data::url%]",
+          "username": "[%key:common::config_flow::data::username%]",
+          "password": "[%key:common::config_flow::data::password%]"
+        },
+        "data_description": {
+          "url": "Address of the Enet Smart Home server, for example http://192.168.1.10. Use https:// if the server is set up for it.",
+          "username": "User name used to log in to the Enet Smart Home server.",
+          "password": "Password of the user."
         }
       }
     },
     "error": {
       "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
       "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
-      "unknown": "[%key:common::config_flow::error::unknown%]"
+      "unknown": "[%key:common::config_flow::error::unknown%]",
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
     },
     "abort": {
       "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
-      "discovery_not_supported": "An Enet Smart Home server was discovered, but setting it up from discovery is not supported yet. Please add the integration manually."
+      "discovery_not_supported": "An Enet Smart Home server was discovered, but setting it up from discovery is not supported yet. Please add the integration manually.",
+      "reconfigure_successful": "[%key:common::config_flow::abort::reconfigure_successful%]"
     }
   },
   "entity": {

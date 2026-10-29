@@ -41,8 +41,13 @@ _stub("homeassistant")
 _stub("homeassistant.components")
 _stub("homeassistant.components.zeroconf")
 _stub("homeassistant.config_entries", ConfigFlow=ConfigFlow)
+_stub(
+    "homeassistant.const",
+    CONF_PASSWORD="password",
+    CONF_URL="url",
+    CONF_USERNAME="username",
+)
 _stub("homeassistant.core", HomeAssistant=object)
-_stub("homeassistant.data_entry_flow", FlowResult=dict)
 _stub("homeassistant.exceptions", HomeAssistantError=Exception)
 sys.modules["homeassistant"].config_entries = sys.modules["homeassistant.config_entries"]
 sys.modules["homeassistant.components"].zeroconf = sys.modules[
