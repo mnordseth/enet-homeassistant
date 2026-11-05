@@ -60,9 +60,9 @@
             "battery_state": {
                 "name": "Batterie-Status",
                 "state": {
-                    "NO_STATE": "Unbekannt",
-                    "BATTERY_OK": "Ok",
-                    "BATTERY_WEAK": "Schwach"
+                    "no_state": "Unbekannt",
+                    "battery_ok": "Ok",
+                    "battery_weak": "Schwach"
                 }
             }
         }

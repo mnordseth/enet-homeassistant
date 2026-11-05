@@ -1,26 +1,26 @@
 {
   "domain": "enet",
   "name": "Enet Smart Home",
+  "codeowners": [
+    "@mnordseth"
+  ],
   "config_flow": true,
+  "dependencies": [],
   "documentation": "https://github.com/mnordseth/enet-homeassistant",
+  "integration_type": "hub",
+  "iot_class": "local_push",
   "issue_tracker": "https://github.com/mnordseth/enet-homeassistant/issues",
+  "loggers": [
+    "enet"
+  ],
   "requirements": [],
   "ssdp": [
     {
       "modelName": "eNet Server"
     }
   ],
+  "version": "2026.11.0",
   "zeroconf": [
     "_enet._tcp.local."
-  ],
-  "dependencies": [],
-  "version": "2026.11.0",
-  "codeowners": [
-    "@mnordseth"
-  ],
-  "loggers": [
-    "enet"
-  ],
-  "integration_type": "hub",
-  "iot_class": "local_push"
+  ]
 }

@@ -149,7 +149,8 @@ class EnetBatterySensor(EnetBaseDeviceEntity, SensorEntity):
 
     _attr_device_class = SensorDeviceClass.ENUM
     _attr_entity_category = EntityCategory.DIAGNOSTIC
-    _attr_options = [state.value for state in DeviceBatteryState]
+    # Translation keys must be lower case
+    _attr_options = [state.value.lower() for state in DeviceBatteryState]
     _attr_has_entity_name = True
 
     def __init__(self, device):
@@ -167,9 +168,10 @@ class EnetBatterySensor(EnetBaseDeviceEntity, SensorEntity):
         return "battery_state"
 
     @property
-    def native_value(self) -> int:
+    def native_value(self) -> str | None:
         """Return the value reported by the sensor."""
-        return self.device.get_battery_state()
+        state = self.device.get_battery_state()
+        return state.lower() if state else None
 
     async def async_added_to_hass(self):
         """Subscribe entity to updates when added to hass."""

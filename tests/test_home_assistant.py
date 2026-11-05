@@ -235,6 +235,23 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.hass.states.get(switch).state, "off")
         self.assert_no_warnings()
 
+    async def test_battery_state(self):
+        """Battery states are lower case, the translation keys Home Assistant requires."""
+        entry = next(e for e in self.entities("sensor") if e.unique_id.endswith("_battery_state"))
+        state = self.hass.states.get(entry.entity_id)
+        self.assertEqual(state.attributes["options"], ["no_state", "battery_ok", "battery_weak"])
+        self.assertIn(state.state, state.attributes["options"])
+
+        await self.hub.handle_events({"events": [{
+            "sequenceNumber": 0,
+            "event": "deviceBatteryStateChanged",
+            "eventData": {"deviceUID": entry.unique_id.removesuffix("_battery_state"),
+                          "batteryState": "BATTERY_WEAK"},
+        }]})
+        await self.hass.async_block_till_done()
+        self.assertEqual(self.hass.states.get(entry.entity_id).state, "battery_weak")
+        self.assert_no_warnings()
+
     async def test_cover_actions(self):
         covers = [e.entity_id for e in self.entities("cover")]
         tilt = [
