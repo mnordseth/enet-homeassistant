@@ -1,0 +1,334 @@
+{
+  "1fb68d33-bc85-43aa-b459-3451000024aa-1-brightness": {
+    "entity_id": "sensor.name_43_name_44_light_level",
+    "name": "Name 43 Name 44 Light level"
+  },
+  "1fb68d33-bc85-43aa-b459-3451000024aa-1-button-1": {
+    "entity_id": "event.name_43_button_1",
+    "name": "Name 43 Button 1"
+  },
+  "1fb68d33-bc85-43aa-b459-3451000024aa-2-button-2": {
+    "entity_id": "event.name_43_button_2",
+    "name": "Name 43 Button 2"
+  },
+  "1fb68d33-bc85-43aa-b459-3451000024aa_battery_state": {
+    "entity_id": "sensor.name_43_battery_state",
+    "name": "Name 43 Battery state"
+  },
+  "1fb68d33-bc85-43aa-b459-345100004cf0-1": {
+    "entity_id": "light.name_33_name_34",
+    "name": "Name 33 Name 34"
+  },
+  "1fb68d33-bc85-43aa-b459-34510000bb6d-1": {
+    "entity_id": "cover.name_25",
+    "name": "Name 25"
+  },
+  "1fb68d33-bc85-43aa-b459-345100011a18-1-brightness": {
+    "entity_id": "sensor.name_35_name_36_light_level",
+    "name": "Name 35 Name 36 Light level"
+  },
+  "1fb68d33-bc85-43aa-b459-345100011a18-1-triggerStart": {
+    "entity_id": "binary_sensor.name_35_name_36_motion",
+    "name": "Name 35 Name 36 Motion"
+  },
+  "1fb68d33-bc85-43aa-b459-34510090caf8-1": {
+    "entity_id": "cover.name_15",
+    "name": "Name 15"
+  },
+  "1fb68d33-bc85-43aa-b459-34510110013a-1": {
+    "entity_id": "light.name_16_name_17",
+    "name": "Name 16 Name 17"
+  },
+  "1fb68d33-bc85-43aa-b459-34510110013a-2": {
+    "entity_id": "light.name_16_name_19",
+    "name": "Name 16 Name 19"
+  },
+  "1fb68d33-bc85-43aa-b459-34510110013a-3": {
+    "entity_id": "light.name_16_name_21",
+    "name": "Name 16 Name 21"
+  },
+  "1fb68d33-bc85-43aa-b459-34510110013a-4": {
+    "entity_id": "switch.name_16_name_23",
+    "name": "Name 16 Name 23"
+  },
+  "1fb68d33-bc85-43aa-b459-34510110013a-5": {
+    "entity_id": "light.name_16_name_18",
+    "name": "Name 16 Name 18"
+  },
+  "1fb68d33-bc85-43aa-b459-34510110013a-6": {
+    "entity_id": "light.name_16_name_20",
+    "name": "Name 16 Name 20"
+  },
+  "1fb68d33-bc85-43aa-b459-34510110013a-7": {
+    "entity_id": "light.name_16_name_22",
+    "name": "Name 16 Name 22"
+  },
+  "1fb68d33-bc85-43aa-b459-34510110013a-8": {
+    "entity_id": "light.name_16_name_24",
+    "name": "Name 16 Name 24"
+  },
+  "1fb68d33-bc85-43aa-b459-345104305726-1": {
+    "entity_id": "light.name_26",
+    "name": "Name 26"
+  },
+  "1fb68d33-bc85-43aa-b459-345104408127-1": {
+    "entity_id": "light.name_14",
+    "name": "Name 14"
+  },
+  "1fb68d33-bc85-43aa-b459-3451045004ce-1": {
+    "entity_id": "light.name_46_name_47",
+    "name": "Name 46 Name 47"
+  },
+  "1fb68d33-bc85-43aa-b459-3451045004ce-2": {
+    "entity_id": "light.name_46_name_49",
+    "name": "Name 46 Name 49"
+  },
+  "1fb68d33-bc85-43aa-b459-3451045004ce-3": {
+    "entity_id": "cover.name_46_name_51",
+    "name": "Name 46 Name 51"
+  },
+  "1fb68d33-bc85-43aa-b459-3451045004ce-4": {
+    "entity_id": "cover.name_46_name_52",
+    "name": "Name 46 Name 52"
+  },
+  "1fb68d33-bc85-43aa-b459-3451045004ce-5": {
+    "entity_id": "light.name_46_name_48",
+    "name": "Name 46 Name 48"
+  },
+  "1fb68d33-bc85-43aa-b459-3451045004ce-6": {
+    "entity_id": "light.name_46_name_50",
+    "name": "Name 46 Name 50"
+  },
+  "1fb68d33-bc85-43aa-b459-345104609a38-1-current": {
+    "entity_id": "sensor.name_7_name_8_current",
+    "name": "Name 7 Name 8 Current"
+  },
+  "1fb68d33-bc85-43aa-b459-345104609a38-1-energyActive": {
+    "entity_id": "sensor.name_7_name_8_total_energy_consumed",
+    "name": "Name 7 Name 8 Total energy consumed"
+  },
+  "1fb68d33-bc85-43aa-b459-345104609a38-1-powerActive": {
+    "entity_id": "sensor.name_7_name_8_power",
+    "name": "Name 7 Name 8 Power"
+  },
+  "1fb68d33-bc85-43aa-b459-345104609a38-1-voltage": {
+    "entity_id": "sensor.name_7_name_8_voltage",
+    "name": "Name 7 Name 8 Voltage"
+  },
+  "1fb68d33-bc85-43aa-b459-345104609a38-2-current": {
+    "entity_id": "sensor.name_7_name_9_current",
+    "name": "Name 7 Name 9 Current"
+  },
+  "1fb68d33-bc85-43aa-b459-345104609a38-2-energyActive": {
+    "entity_id": "sensor.name_7_name_9_total_energy_consumed",
+    "name": "Name 7 Name 9 Total energy consumed"
+  },
+  "1fb68d33-bc85-43aa-b459-345104609a38-2-powerActive": {
+    "entity_id": "sensor.name_7_name_9_power",
+    "name": "Name 7 Name 9 Power"
+  },
+  "1fb68d33-bc85-43aa-b459-345104609a38-2-voltage": {
+    "entity_id": "sensor.name_7_name_9_voltage",
+    "name": "Name 7 Name 9 Voltage"
+  },
+  "1fb68d33-bc85-43aa-b459-34510b722d3f-1-button-1": {
+    "entity_id": "event.name_27_button_1",
+    "name": "Name 27 Button 1"
+  },
+  "1fb68d33-bc85-43aa-b459-34510b722d3f-2-button-2": {
+    "entity_id": "event.name_27_button_2",
+    "name": "Name 27 Button 2"
+  },
+  "1fb68d33-bc85-43aa-b459-34510bb08648-1-brightness": {
+    "entity_id": "sensor.name_30_name_31_light_level",
+    "name": "Name 30 Name 31 Light level"
+  },
+  "1fb68d33-bc85-43aa-b459-34510bb08648-1-triggerStart": {
+    "entity_id": "binary_sensor.name_30_name_31_motion",
+    "name": "Name 30 Name 31 Motion"
+  },
+  "1fb68d33-bc85-43aa-b459-34510bc00e38-1": {
+    "entity_id": "light.name_53_name_54",
+    "name": "Name 53 Name 54"
+  },
+  "1fb68d33-bc85-43aa-b459-34510bc00e38-2": {
+    "entity_id": "light.name_53_name_55",
+    "name": "Name 53 Name 55"
+  },
+  "1fb68d33-bc85-43aa-b459-34510bd299be-1-button-1": {
+    "entity_id": "event.name_10_button_1",
+    "name": "Name 10 Button 1"
+  },
+  "1fb68d33-bc85-43aa-b459-34510bd299be-1-button-2": {
+    "entity_id": "event.name_10_button_2",
+    "name": "Name 10 Button 2"
+  },
+  "1fb68d33-bc85-43aa-b459-34510bd299be-3-button-3": {
+    "entity_id": "event.name_10_button_3",
+    "name": "Name 10 Button 3"
+  },
+  "1fb68d33-bc85-43aa-b459-34510bd299be-3-button-4": {
+    "entity_id": "event.name_10_button_4",
+    "name": "Name 10 Button 4"
+  },
+  "1fb68d33-bc85-43aa-b459-34510bd299be-5-button-5": {
+    "entity_id": "event.name_10_button_5",
+    "name": "Name 10 Button 5"
+  },
+  "1fb68d33-bc85-43aa-b459-34510bd299be-6-button-6": {
+    "entity_id": "event.name_10_button_6",
+    "name": "Name 10 Button 6"
+  },
+  "1fb68d33-bc85-43aa-b459-34510bd299be_battery_state": {
+    "entity_id": "sensor.name_10_battery_state",
+    "name": "Name 10 Battery state"
+  },
+  "1fb68d33-bc85-43aa-b459-34510e022c09-1-button-1": {
+    "entity_id": "event.name_38_button_1",
+    "name": "Name 38 Button 1"
+  },
+  "1fb68d33-bc85-43aa-b459-34510e022c09-1-button-2": {
+    "entity_id": "event.name_38_button_2",
+    "name": "Name 38 Button 2"
+  },
+  "1fb68d33-bc85-43aa-b459-34510e022c09-2": {
+    "entity_id": "light.name_38_name_40",
+    "name": "Name 38 Name 40"
+  },
+  "1fb68d33-bc85-43aa-b459-34510f6109a3-1-button-1": {
+    "entity_id": "event.name_41_button_1",
+    "name": "Name 41 Button 1"
+  },
+  "1fb68d33-bc85-43aa-b459-34510f6109a3-1-button-2": {
+    "entity_id": "event.name_41_button_2",
+    "name": "Name 41 Button 2"
+  },
+  "1fb68d33-bc85-43aa-b459-34510f6109a3-2": {
+    "entity_id": "cover.name_41",
+    "name": "Name 41"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300000213-1-button-1": {
+    "entity_id": "event.name_5_button_1_2",
+    "name": "Name 5 Button 1"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300000213-2-button-2": {
+    "entity_id": "event.name_5_button_2_2",
+    "name": "Name 5 Button 2"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300000213-3-button-3": {
+    "entity_id": "event.name_5_button_3_2",
+    "name": "Name 5 Button 3"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300000213-3-button-4": {
+    "entity_id": "event.name_5_button_4_2",
+    "name": "Name 5 Button 4"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300000213-5-button-5": {
+    "entity_id": "event.name_5_button_5",
+    "name": "Name 5 Button 5"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300000213-6-button-6": {
+    "entity_id": "event.name_5_button_6",
+    "name": "Name 5 Button 6"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300000213_battery_state": {
+    "entity_id": "sensor.name_5_battery_state_2",
+    "name": "Name 5 Battery state"
+  },
+  "83ec3031-f8f0-4972-a92b-2df30000175b-1": {
+    "entity_id": "light.name_1",
+    "name": "Name 1"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001ced-1-button-1": {
+    "entity_id": "event.name_2_button_1",
+    "name": "Name 2 Button 1"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001ced-2-button-2": {
+    "entity_id": "event.name_2_button_2",
+    "name": "Name 2 Button 2"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001ced-3-button-3": {
+    "entity_id": "event.name_2_button_3",
+    "name": "Name 2 Button 3"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001ced-3-button-4": {
+    "entity_id": "event.name_2_button_4",
+    "name": "Name 2 Button 4"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001ced-5-button-5": {
+    "entity_id": "event.name_2_button_5",
+    "name": "Name 2 Button 5"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001ced-5-button-6": {
+    "entity_id": "event.name_2_button_6",
+    "name": "Name 2 Button 6"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001ced-7-button-7": {
+    "entity_id": "event.name_2_button_7",
+    "name": "Name 2 Button 7"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001ced-7-button-8": {
+    "entity_id": "event.name_2_button_8",
+    "name": "Name 2 Button 8"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001ced_battery_state": {
+    "entity_id": "sensor.name_2_battery_state",
+    "name": "Name 2 Battery state"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001f39-1-button-1": {
+    "entity_id": "event.name_5_button_1",
+    "name": "Name 5 Button 1"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001f39-1-button-2": {
+    "entity_id": "event.name_5_button_2",
+    "name": "Name 5 Button 2"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001f39-3-button-3": {
+    "entity_id": "event.name_5_button_3",
+    "name": "Name 5 Button 3"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001f39-3-button-4": {
+    "entity_id": "event.name_5_button_4",
+    "name": "Name 5 Button 4"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001f39_battery_state": {
+    "entity_id": "sensor.name_5_battery_state",
+    "name": "Name 5 Battery state"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001fd9-1-button-1": {
+    "entity_id": "event.name_5_button_1_3",
+    "name": "Name 5 Button 1"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001fd9-2-button-2": {
+    "entity_id": "event.name_5_button_2_3",
+    "name": "Name 5 Button 2"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001fd9-3-button-3": {
+    "entity_id": "event.name_5_button_3_3",
+    "name": "Name 5 Button 3"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001fd9-3-button-4": {
+    "entity_id": "event.name_5_button_4_3",
+    "name": "Name 5 Button 4"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001fd9-5-button-5": {
+    "entity_id": "event.name_5_button_5_2",
+    "name": "Name 5 Button 5"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001fd9-5-button-6": {
+    "entity_id": "event.name_5_button_6_2",
+    "name": "Name 5 Button 6"
+  },
+  "83ec3031-f8f0-4972-a92b-2df300001fd9_battery_state": {
+    "entity_id": "sensor.name_5_battery_state_3",
+    "name": "Name 5 Battery state"
+  },
+  "83ec3031-f8f0-4972-a92b-2df301102189-1": {
+    "entity_id": "light.name_6",
+    "name": "Name 6"
+  },
+  "scene-1": {
+    "entity_id": "scene.enet_smart_home_server_evening",
+    "name": "Enet Smart Home Server Evening"
+  }
+}
