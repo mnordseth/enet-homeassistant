@@ -1,0 +1,45 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  # Daily, to find breaking changes of new Home Assistant releases and betas
+  schedule:
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: Home Assistant ${{ matrix.homeassistant }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # pinned: the version in requirements.txt
+        # latest: the newest release
+        # beta: the newest beta, or the newest release if there is no beta
+        homeassistant: [pinned, latest, beta]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install Home Assistant
+        run: |
+          case "${{ matrix.homeassistant }}" in
+            pinned) pip install "$(grep '^homeassistant==' requirements.txt)" ;;
+            latest) pip install homeassistant ;;
+            beta)   pip install --pre homeassistant ;;
+          esac
+          python -c "from homeassistant.const import __version__; print('Home Assistant', __version__)"
+
+      - name: Tests with stubbed Home Assistant
+        run: |
+          python tests/test_discovery_flow.py
+          python tests/test_entry_lifecycle.py
+          python tests/test_session_recovery.py
+
+      - name: Tests in Home Assistant
+        run: python tests/test_home_assistant.py
