@@ -3,11 +3,6 @@ import logging
 from homeassistant.components.scene import Scene as SceneEntity
 from homeassistant.helpers.entity import DeviceInfo
 
-from homeassistant.const import (
-    ATTR_IDENTIFIERS,
-    ATTR_NAME,
-)
-
 from .const import DOMAIN, NAME_ENET_CONTROLLER, NAME_ENET_SERVER
 
 _LOGGER = logging.getLogger(__name__)
@@ -57,8 +52,6 @@ class EnetSceneEntity(SceneEntity):
     def device_info(self) -> DeviceInfo:
         """Return device (service) info."""
         return DeviceInfo(
-            {
-                ATTR_IDENTIFIERS: {(DOMAIN, NAME_ENET_CONTROLLER)},
-                ATTR_NAME: NAME_ENET_SERVER,
-            }
+            identifiers={(DOMAIN, NAME_ENET_CONTROLLER)},
+            name=NAME_ENET_SERVER,
         )
