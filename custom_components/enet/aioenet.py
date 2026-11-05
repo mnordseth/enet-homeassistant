@@ -107,6 +107,11 @@ def auth_if_needed(func):
     return auth_wrapper
 
 
+def normalize_url(url):
+    """Return the url of an Enet server in one form, to compare servers."""
+    return url.strip().rstrip("/")
+
+
 class EnetClient:
     """Client for communicating with a Enet Smart Home Server from Jung / Gira"""
 

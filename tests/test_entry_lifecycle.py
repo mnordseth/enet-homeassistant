@@ -79,6 +79,7 @@ class FakeConfigEntry:
     def __init__(self, url):
         self.entry_id = "entry"
         self.data = {"url": url, "username": "user", "password": "secret"}
+        self.unique_id = url
         self._background_tasks = set()
         self._on_unload = []
 

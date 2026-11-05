@@ -16,6 +16,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.components import zeroconf
 
 from . import aioenet
+from .aioenet import normalize_url
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -29,11 +30,6 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
         vol.Required(CONF_PASSWORD, default="admin"): str,
     }
 )
-
-
-def normalize_url(url: str) -> str:
-    """Return the url the way EnetClient uses it, to compare servers."""
-    return url.strip().rstrip("/")
 
 
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> None:
@@ -88,6 +84,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             user_input = {**user_input, CONF_URL: normalize_url(user_input[CONF_URL])}
+            await self.async_set_unique_id(user_input[CONF_URL])
+            self._abort_if_unique_id_configured()
+            # Entries of older versions may not have a unique id yet
             if self._url_configured(user_input[CONF_URL]):
                 return self.async_abort(reason="already_configured")
 
@@ -122,6 +121,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if not errors:
                 return self.async_update_reload_and_abort(
                     reconfigure_entry,
+                    unique_id=user_input[CONF_URL],
                     data_updates=user_input,
                 )
 

@@ -12,7 +12,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers.device_registry import DeviceEntry
 
-from .aioenet import AuthError, EnetClient, EnetServerError
+from .aioenet import AuthError, EnetClient, EnetServerError, normalize_url
 from .const import DOMAIN, NAME_ENET_CONTROLLER
 from .device import async_setup_devices
 from .events import async_setup_enet_events
@@ -58,6 +58,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: EnetConfigEntry) -> bool
         # Unexpected errors are logged by Home Assistant, just release the session
         await hub.close()
         raise
+
+    if entry.unique_id is None:
+        # Entries of older versions have no unique id, the config flow uses the url
+        hass.config_entries.async_update_entry(
+            entry, unique_id=normalize_url(entry.data["url"])
+        )
 
     entry.runtime_data = hub
     await async_setup_devices(hass, entry, hub)

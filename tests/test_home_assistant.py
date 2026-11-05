@@ -374,6 +374,20 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result["config_entry"]["data"]["username"], "**REDACTED**")
         self.assertEqual(len(result["enet_data"]), len(json.loads(DEVICES.read_text())["data"]["enet_data"]))
 
+    async def test_entry_without_unique_id_gets_the_url(self):
+        self.assertEqual(self.entry.unique_id, "http://enet.invalid")
+
+    async def test_user_flow_aborts_for_a_configured_server(self):
+        result = await self.hass.config_entries.flow.async_init(
+            "enet", context={"source": config_entries.SOURCE_USER}
+        )
+        result = await self.hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {"url": " http://enet.invalid/ ", "username": "admin", "password": "secret"},
+        )
+        self.assertEqual((result["type"], result["reason"]), ("abort", "already_configured"))
+        self.assert_no_warnings()
+
     async def test_unload_and_reload(self):
         entity_ids = {e.entity_id for e in self.entities()}
         self.assertTrue(await self.hass.config_entries.async_reload(self.entry.entry_id))
