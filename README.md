@@ -45,6 +45,14 @@ The motion sensor turns on when the detector reports motion, and turns off after
 - A Gira or Jung eNet Smart Home server reachable from Home Assistant
 - A user account on the Enet server
 
+## No eNet server?
+
+The eNet Smart Home server has been discontinued. If your server has stopped
+working, have a look at [enet-bridge](https://github.com/engiadina/enet-bridge).
+It replaces the server with an ESP32 and CC1101 USB radio and comes with its own
+Home Assistant integration. It can import the export from your eNet server to
+take over the existing installation.
+
 ## Installation using HACS
 
 1. Add this repository as a custom repository inside HACS settings. Make sure you select `Integration` as Category.
