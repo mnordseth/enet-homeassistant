@@ -1,0 +1,217 @@
+"""Scenes on the Enet server ("scene actions") and their members"""
+
+import logging
+import re
+
+from dataclasses import dataclass
+from enum import StrEnum
+from typing import Any
+
+
+from ..enet_data.enums import ChannelApplicationMode, ChannelTypeFunctionName
+
+from .errors import EnetServerError
+
+log = logging.getLogger(__name__)
+
+
+# Scene parameters of an actuator channel, ie PT_INDA.SCV1[5]
+SCENE_PARAMETER_RE = re.compile(r"\.(SCV1|SCV2|SNA)\[(\d+)\]$")
+
+
+class SceneValueKind(StrEnum):
+    """How the values of a scene member are stored"""
+
+    LEVEL = "level"  # dimmer, 0-100 %
+    SWITCH = "switch"  # on / off
+    COVER = "cover"  # position (and slats) 0-100, Enet counts from open
+
+
+@dataclass
+class SceneParameter:
+    """A scene parameter of an actuator channel, ie PT_INDA.SCV1[5]"""
+
+    uid: str
+    type_id: str
+    value_type_id: str | None = None
+    value: Any = None
+
+
+class SceneMember:
+    """An actuator channel taking part in a scene"""
+
+    def __init__(self, scene, raw):
+        self.scene = scene
+        self.device_uid = raw["deviceUID"]
+        self.channel_number = raw["channelNumber"]
+        self.channel = scene.client.get_channel(self.device_uid, self.channel_number)
+        self.level = None  # SCV1[n]
+        self.slats = None  # SCV2[n], blinds only
+        self.slot = None
+        for raw_param in raw.get("sceneParameters", []):
+            match = SCENE_PARAMETER_RE.search(raw_param.get("deviceParameterTypeID", ""))
+            if not match:
+                continue
+            param = SceneParameter(raw_param["deviceParameterUID"], match.string)
+            if match.group(1) == "SCV1":
+                self.level = param
+                self.slot = int(match.group(2))
+            elif match.group(1) == "SCV2":
+                self.slats = param
+
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__} ({self.name} level={self.level} slats={self.slats})"
+        )
+
+    @property
+    def uid(self):
+        """The uid of the channel, as used by the entities of the channel"""
+        return f"{self.device_uid}-{self.channel_number}"
+
+    @property
+    def name(self):
+        if self.channel is None:
+            return self.uid
+        return f"{self.channel.device.name} {self.channel.name}"
+
+    @property
+    def kind(self):
+        """The kind of values of the member, None until the values are loaded"""
+        if self.slats is not None or (
+            self.channel is not None
+            and self.channel.application_mode == ChannelApplicationMode.BLINDS
+        ):
+            return SceneValueKind.COVER
+        if self.level is None or self.level.value_type_id is None:
+            return None
+        if isinstance(self.level.value, str) or "SWITCH" in self.level.value_type_id:
+            return SceneValueKind.SWITCH
+        return SceneValueKind.LEVEL
+
+    async def load_values(self):
+        """Read the values configured on the server"""
+        for param in (self.level, self.slats):
+            if param is None:
+                continue
+            values = await self.scene.client.get_parameter_to_be_values(param.uid)
+            if values:
+                param.value_type_id = values[0].get("valueTypeID")
+                param.value = values[0].get("value")
+
+    def encode(self, on=None, level=None):
+        """Return the SCV1 value for the member: on/off, or a level 0-100"""
+        if self.kind == SceneValueKind.SWITCH:
+            if on is None:
+                on = bool(level)
+            return "ON" if on else "OFF"
+        if level is None:
+            level = 100 if on else 0
+        return int(level)
+
+    def current_values(self):
+        """Return (level, slats) for the current state of the channel, to
+        store it in the scene. Raises ValueError if the state is unknown."""
+        channel = self.channel
+        if channel is None:
+            raise ValueError(f"{self.name} is not a known channel")
+        if self.kind == SceneValueKind.COVER:
+            position = channel.get_current_value(ChannelTypeFunctionName.COVER_POSITION)
+            tilt = channel.get_current_value(ChannelTypeFunctionName.TILT_POSITION)
+            if position is None:
+                raise ValueError(f"The position of {self.name} is unknown")
+            return int(position), (None if tilt is None else int(tilt))
+
+        on = channel.get_current_value(ChannelTypeFunctionName.ON_OFF)
+        brightness = None
+        if channel.application_mode == ChannelApplicationMode.LIGHT_DIMMING:
+            brightness = channel.get_current_value(ChannelTypeFunctionName.BRIGHTNESS)
+        if on is None and brightness is None:
+            raise ValueError(f"The state of {self.name} is unknown")
+        if on is False:
+            return self.encode(on=False), None
+        if brightness is not None and self.kind == SceneValueKind.LEVEL:
+            return self.encode(level=brightness), None
+        return self.encode(on=True), None
+
+
+class EnetScene:
+    """A scene on the Enet server ("scene action") and its members"""
+
+    def __init__(self, client, raw):
+        self.client = client
+        self.uid = raw["uid"]
+        self.name = raw.get("name", "")
+        self.members = [SceneMember(self, member) for member in raw.get("deviceChannels", [])]
+        self.values_loaded = False
+        self._subscribers = []
+
+    def __repr__(self):
+        return f"{self.__class__.__name__} ({self.name} members={self.members})"
+
+    def subscribe(self, callback):
+        """Subscribe to changes of the scene values. The callback is called
+        without arguments. Returns a function that unsubscribes the callback."""
+        self._subscribers.append(callback)
+
+        def unsubscribe():
+            self._subscribers.remove(callback)
+
+        return unsubscribe
+
+    def _notify(self):
+        for callback in list(self._subscribers):
+            callback()
+
+    def get_member(self, channel_uid):
+        """Return the member with the channel uid (device uid-channel number)"""
+        return next((m for m in self.members if m.uid == channel_uid), None)
+
+    async def activate(self):
+        await self.client.activate_scene(self.uid)
+
+    async def load_values(self):
+        """Read the values of all members from the server"""
+        for member in self.members:
+            await member.load_values()
+        self.values_loaded = True
+        self._notify()
+
+    async def set_member_values(self, member, level=None, slats=None):
+        """Write new values of a member to the scene. level is the SCV1 value
+        (see SceneMember.encode()), slats the SCV2 value of blinds."""
+        if member.level is not None and member.level.value_type_id is None:
+            await member.load_values()
+        try:
+            for param, value in ((member.level, level), (member.slats, slats)):
+                if value is None or param is None:
+                    continue
+                if param.value_type_id is None:
+                    raise EnetServerError(f"The value type of {param.type_id} is unknown")
+                await self.client.write_device_parameter(
+                    param.uid, [{"valueTypeID": param.value_type_id, "value": value}]
+                )
+                param.value = value
+        finally:
+            self._notify()
+
+    async def store_current_values(self):
+        """Store the current state of every member in the scene. Only changed
+        values are written. Returns the number of members that changed."""
+        if not self.values_loaded:
+            await self.load_values()
+        changes = []
+        for member in self.members:
+            if member.channel is None:
+                log.warning("Scene %s: skipping unknown channel %s", self.name, member.uid)
+                continue
+            level, slats = member.current_values()
+            if member.level is not None and member.level.value == level:
+                level = None
+            if member.slats is not None and member.slats.value == slats:
+                slats = None
+            if level is not None or slats is not None:
+                changes.append((member, level, slats))
+        for member, level, slats in changes:
+            await self.set_member_values(member, level, slats)
+        return len(changes)
