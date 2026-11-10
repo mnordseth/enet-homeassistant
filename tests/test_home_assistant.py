@@ -41,6 +41,7 @@ from homeassistant import bootstrap, config_entries, core, loader  # noqa: E402
 from homeassistant.components.cover import CoverEntityFeature  # noqa: E402
 from homeassistant.const import ATTR_FRIENDLY_NAME, STATE_UNAVAILABLE  # noqa: E402
 from homeassistant.core_config import async_process_ha_core_config  # noqa: E402
+from homeassistant.exceptions import HomeAssistantError, ServiceValidationError  # noqa: E402
 from homeassistant.helpers import device_registry as dr  # noqa: E402
 from homeassistant.helpers import entity_registry as er  # noqa: E402
 
@@ -56,17 +57,88 @@ SCENES = {
 }
 
 
+SCENE_SLOT = 5
+
+
 class OfflineEnetClient(aioenet.EnetClient):
-    """Client reading the devices from the fixture and recording requests."""
+    """Client reading the devices from the fixture and recording requests.
+
+    The scene "Evening" has a dimmer, a switch and a blind with slats from the
+    fixture as members. Scene parameters are stored, and a write is reported
+    with a writeValuesToDeviceParameterCompleted event like the real server.
+    """
 
     def __init__(self, url, user, passwd):
         super().__init__(url, user, passwd, noconnect=True, load_file=str(DEVICES))
         self.requests = []
+        self.parameters = {}  # uid -> {"toBe": value dict, "current": value dict}
+        self.write_success = True
+
+    def scene_channels(self):
+        """The dimmer, switch and blind of the scene"""
+        mode = aioenet.ChannelApplicationMode
+        channels = [c for d in self.devices for c in d.channels]
+        dimmer = next(c for c in channels if c.application_mode == mode.LIGHT_DIMMING)
+        switch = next(c for c in channels if c.application_mode == mode.SWITCHING)
+        blind = next(
+            c for c in channels
+            if c.application_mode == mode.BLINDS and c.get_operation_mode() == "BLINDS"
+        )
+        return dimmer, switch, blind
+
+    def scene_actions(self):
+        dimmer, switch, blind = self.scene_channels()
+        members = [
+            (dimmer, [("PT_INDA.SCV1", "VT_SCALING_RANGE_0_100_DEF_100", 60)]),
+            (switch, [("PT_INSA.SCV1", "VT_SCV_SWITCH_DEF_ON", "ON")]),
+            (blind, [("PT_INBA.SCV1", "VT_SCALING_RANGE_0_100_DEF_0", 30),
+                     ("PT_INBA.SCV2", "VT_SCALING_RANGE_0_100_DEF_0", 10)]),
+        ]
+        device_channels = []
+        for channel, params in members:
+            scene_parameters = []
+            for type_id, value_type, value in params:
+                uid = f"{channel.uid}-{type_id}"
+                value = {"valueTypeID": value_type, "value": value}
+                self.parameters.setdefault(uid, {"toBe": value, "current": value})
+                scene_parameters.append(
+                    {"deviceParameterUID": uid, "deviceParameterTypeID": f"{type_id}[{SCENE_SLOT}]"}
+                )
+            device_channels.append({
+                "deviceUID": channel.device.uid,
+                "channelNumber": channel.channel["no"],
+                "sceneParameters": scene_parameters,
+            })
+        return {"sceneActions": [{"uid": "scene-1", "name": "[libenet] Evening",
+                                  "deviceChannels": device_channels}]}
 
     async def request(self, url, method, params, *args, **kwargs):
         self.requests.append((method, params))
-        if method == "getSceneActionUIDs":
-            return SCENES
+        uid = (params or {}).get("deviceParameterUID")
+        match method:
+            case "getSceneActionUIDs":
+                return SCENES
+            case "getSceneActions":
+                assert params == {"sceneActionUIDs": ["scene-1"]}, params
+                return self.scene_actions()
+            case "getToBeValuesFromDeviceParameter":
+                return {"toBeValues": [self.parameters[uid]["toBe"]]}
+            case "getCurrentValuesFromDeviceParameter":
+                return {"currentValues": [self.parameters[uid]["current"]]}
+            case "setToBeValuesToDeviceParameter":
+                self.parameters[uid]["toBe"] = params["toBeValues"][0]
+            case "writeToBeValuesToDeviceParameter":
+                if self.write_success:
+                    self.parameters[uid]["current"] = self.parameters[uid]["toBe"]
+                event = {"sequenceNumber": 0,
+                         "event": "writeValuesToDeviceParameterCompleted",
+                         "eventData": {"deviceParameterUID": uid,
+                                       "success": self.write_success,
+                                       "errorCode": 0 if self.write_success else 7,
+                                       "errorData": ""}}
+                asyncio.get_running_loop().call_soon(
+                    asyncio.ensure_future, self.handle_events({"events": [event]})
+                )
         return None
 
 
@@ -288,6 +360,124 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         )
         self.assertEqual(self.requests("executeAction"), [{"actionUID": "scene-1"}])
         self.assert_no_warnings()
+
+    def scene_members(self):
+        """Entity ids of the dimmer, switch and blind of the scene"""
+        ent_reg = er.async_get(self.hass)
+        dimmer, switch, blind = self.hub.scene_channels()
+        return (
+            ent_reg.async_get_entity_id("light", "enet", dimmer.uid),
+            ent_reg.async_get_entity_id("switch", "enet", switch.uid),
+            ent_reg.async_get_entity_id("cover", "enet", blind.uid),
+        )
+
+    def scene_state(self):
+        return self.hass.states.get(self.entity_id("scene", "Enet Smart Home Server Evening"))
+
+    def written(self):
+        """(parameter uid, value) of every setToBeValuesToDeviceParameter"""
+        return [
+            (p["deviceParameterUID"], p["toBeValues"][0]["value"])
+            for p in self.requests("setToBeValuesToDeviceParameter")
+        ]
+
+    async def set_scene_level(self, **data):
+        self.hub.requests.clear()
+        await self.hass.services.async_call(
+            "enet", "set_scene_level",
+            {"entity_id": self.scene_state().entity_id, **data}, blocking=True,
+        )
+
+    async def test_scene_lists_members_and_levels(self):
+        light, switch, cover = self.scene_members()
+        attributes = self.scene_state().attributes
+        self.assertEqual(attributes["entity_id"], [light, switch, cover])
+        self.assertEqual(
+            attributes["levels"],
+            {light: 60, switch: "on", cover: {"position": 70, "tilt_position": 90}},
+        )
+        self.assert_no_warnings()
+
+    async def test_set_scene_level_writes_and_programs_the_device(self):
+        light, switch, cover = self.scene_members()
+        dimmer, _, blind = self.hub.scene_channels()
+
+        await self.set_scene_level(member=light, brightness_pct=23)
+        uid = f"{dimmer.uid}-PT_INDA.SCV1"
+        self.assertEqual(self.written(), [(uid, 23)])
+        self.assertEqual(
+            self.requests("setToBeValuesToDeviceParameter")[0]["toBeValues"],
+            [{"valueTypeID": "VT_SCALING_RANGE_0_100_DEF_100", "value": 23}],
+        )
+        self.assertEqual(self.requests("writeToBeValuesToDeviceParameter"),
+                         [{"deviceParameterUID": uid}])
+        self.assertEqual(self.scene_state().attributes["levels"][light], 23)
+
+        # The same parameter again: the second completion event is not a duplicate
+        await self.set_scene_level(member=light, state="off")
+        self.assertEqual(self.written(), [(uid, 0)])
+
+        await self.set_scene_level(member=cover, position=40, tilt_position=100)
+        self.assertEqual(self.written(), [(f"{blind.uid}-PT_INBA.SCV1", 60),
+                                          (f"{blind.uid}-PT_INBA.SCV2", 0)])
+        self.assertEqual(self.scene_state().attributes["levels"][cover],
+                         {"position": 40, "tilt_position": 100})
+
+        await self.set_scene_level(member=switch, state="off")
+        self.assertEqual(self.scene_state().attributes["levels"][switch], "off")
+        self.assert_no_warnings()
+
+    async def test_set_scene_level_rejects_invalid_values(self):
+        light, switch, cover = self.scene_members()
+        other_light = next(
+            e.entity_id for e in self.entities("light") if e.entity_id != light
+        )
+        for data in (
+            {"member": cover, "brightness_pct": 50},
+            {"member": light, "position": 50},
+            {"member": light},
+            {"member": other_light, "brightness_pct": 50},
+        ):
+            with self.subTest(data=data), self.assertRaises(ServiceValidationError):
+                await self.set_scene_level(**data)
+        self.assertEqual(self.written(), [])
+
+    async def test_save_scene_stores_the_current_state(self):
+        light, switch, cover = self.scene_members()
+        dimmer, switch_channel, blind = self.hub.scene_channels()
+        functions = aioenet.ChannelTypeFunctionName
+        dimmer.set_current_value(functions.ON_OFF, True)
+        dimmer.set_current_value(functions.BRIGHTNESS, 35)
+        switch_channel.current_values[
+            switch_channel.get_channel_configuration_entry("outputDeviceFunctions", functions.ON_OFF)
+        ] = {"value": False}
+        blind.set_current_value(functions.COVER_POSITION, 30)  # as in the scene
+        blind.set_current_value(functions.TILT_POSITION, 10)
+
+        self.hub.requests.clear()
+        button = self.entity_id("button", "Enet Smart Home Server Save Evening")
+        await self.hass.services.async_call(
+            "button", "press", {"entity_id": button}, blocking=True
+        )
+        # Only the changed members are written
+        self.assertEqual(self.written(), [(f"{dimmer.uid}-PT_INDA.SCV1", 35),
+                                          (f"{switch_channel.uid}-PT_INSA.SCV1", "OFF")])
+        self.assertEqual(self.scene_state().attributes["levels"][light], 35)
+
+        # Nothing changed since, nothing is written
+        self.hub.requests.clear()
+        await self.hass.services.async_call(
+            "enet", "save_scene", {"entity_id": self.scene_state().entity_id}, blocking=True
+        )
+        self.assertEqual(self.written(), [])
+        self.assert_no_warnings()
+
+    async def test_failed_write_raises_an_error(self):
+        light, _, _ = self.scene_members()
+        self.hub.write_success = False
+        with self.assertRaisesRegex(HomeAssistantError, "error 7"):
+            await self.set_scene_level(member=light, brightness_pct=10)
+        self.assertEqual(self.scene_state().attributes["levels"][light], 60)
 
     async def test_button_events(self):
         """A press reaches the event entity, enet_event on the bus and the device trigger."""

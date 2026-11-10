@@ -19,7 +19,7 @@ The integration talks to the server on your local network. Changes are pushed by
 | Motion detectors | Motion binary sensor |
 | Buttons, rockers and scene buttons | Event entities and device triggers (see below) |
 | Battery powered devices | Battery state sensor (diagnostic) |
-| Scenes on the Enet server | Scene (see below) |
+| Scenes on the Enet server | Scene and a button to save it (see below) |
 
 ### Buttons
 
@@ -33,7 +33,28 @@ Button presses are also fired on the event bus as `enet_event`, with the data `d
 
 ### Scenes
 
-Scenes defined in the Enet app can be activated from Home Assistant.
+Scenes defined in the Enet app whose name contains `libenet` are added as scenes. Activating one runs the scene on the Enet server, the same as the scene buttons and the Enet app.
+
+Each scene shows its members and their levels in the attributes:
+
+- `entity_id`: the lights, switches and covers of the scene
+- `levels`: the level of each member in the scene. Brightness in percent for dimmers (0 is off), `on`/`off` for switches, and `position` and `tilt_position` for covers (100 is open). The levels are read from the server after startup, so they can take a moment to appear.
+
+The scenes can be changed from Home Assistant. The changes are stored on the Enet server, and are used by the scene buttons and the Enet app as well:
+
+- **Save the current state:** set the lights the way you want them, then press the scene's *Save* button (on the Enet Smart Home Server device), or use the action `enet.save_scene`. Every member is stored at its current level. Only members that changed are written.
+- **Change one member:** the action `enet.set_scene_level` sets the level of one member: `brightness_pct` or `state` for lights and switches, `position` and `tilt_position` for covers.
+
+  ```yaml
+  action: enet.set_scene_level
+  target:
+    entity_id: scene.enet_smart_home_server_evening
+  data:
+    member: light.kitchen
+    brightness_pct: 40
+  ```
+
+Each change is programmed into the devices by radio, which takes a few seconds per member. Members can't be added to or removed from a scene from Home Assistant yet. Scenes can't be edited in Home Assistant's scene editor, which only edits Home Assistant's own scenes.
 
 ### Motion detectors
 

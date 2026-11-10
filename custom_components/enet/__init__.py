@@ -21,6 +21,7 @@ _LOGGER = logging.getLogger(__name__)
 PLATFORMS: list[Platform] = [
     Platform.LIGHT,
     Platform.SCENE,
+    Platform.BUTTON,
     Platform.COVER,
     Platform.SENSOR,
     Platform.SWITCH,
@@ -65,10 +66,21 @@ async def async_setup_entry(hass: HomeAssistant, entry: EnetConfigEntry) -> bool
             entry, unique_id=normalize_url(entry.data["url"])
         )
 
+    try:
+        hub.scenes = await hub.get_scene_actions()
+    except (TimeoutError, aiohttp.ClientError, EnetServerError) as e:
+        _LOGGER.warning("Failed to read the scenes of the Enet server: %s", e)
+        hub.scenes = []
+
     entry.runtime_data = hub
     await async_setup_devices(hass, entry, hub)
     async_setup_enet_events(hass, entry, hub)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    if hub.scenes:
+        # The scene values are only shown as attributes, do not delay the setup
+        entry.async_create_background_task(
+            hass, hub.load_scene_values(), name=f"enet scene values {hub.baseurl}"
+        )
     return True
 
 

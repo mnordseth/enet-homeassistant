@@ -32,6 +32,7 @@ def _stub(name, **attrs):
 class Platform(enum.StrEnum):
     LIGHT = "light"
     SCENE = "scene"
+    BUTTON = "button"
     COVER = "cover"
     SENSOR = "sensor"
     SWITCH = "switch"

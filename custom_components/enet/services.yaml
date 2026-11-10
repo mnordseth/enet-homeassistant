@@ -1,0 +1,45 @@
+save_scene:
+  target:
+    entity:
+      integration: enet
+      domain: scene
+
+set_scene_level:
+  target:
+    entity:
+      integration: enet
+      domain: scene
+  fields:
+    member:
+      required: true
+      selector:
+        entity:
+          integration: enet
+          domain:
+            - light
+            - switch
+            - cover
+    brightness_pct:
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+    state:
+      selector:
+        select:
+          options:
+            - "on"
+            - "off"
+    position:
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+    tilt_position:
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"

@@ -65,6 +65,11 @@
                     "battery_weak": "Schwach"
                 }
             }
+        },
+        "button": {
+            "save_scene": {
+                "name": "{scene} speichern"
+            }
         }
     },
     "device_automation": {
@@ -82,6 +87,38 @@
             "initial_press": "\"{subtype}\" wurde gedrückt",
             "long_release": "\"{subtype}\" wurde nach langem Drücken losgelassen",
             "short_release": "\"{subtype}\" wurde nach kurzem Drücken losgelassen"
+        }
+    },
+    "services": {
+        "save_scene": {
+            "name": "Szene speichern",
+            "description": "Speichert den aktuellen Zustand aller Lichter, Schalter und Rollläden der Szene in der Szene auf dem Enet Server."
+        },
+        "set_scene_level": {
+            "name": "Szenenwert setzen",
+            "description": "Ändert den Wert eines Mitglieds der Szene auf dem Enet Server.",
+            "fields": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Licht, Schalter oder Rollladen der Szene, der geändert wird."
+                },
+                "brightness_pct": {
+                    "name": "Helligkeit",
+                    "description": "Helligkeit eines Dimmers in der Szene, 0 ist aus."
+                },
+                "state": {
+                    "name": "Zustand",
+                    "description": "Ein oder aus, für Schalter und Lichter."
+                },
+                "position": {
+                    "name": "Position",
+                    "description": "Position eines Rollladens in der Szene, 100 ist offen."
+                },
+                "tilt_position": {
+                    "name": "Lamellenposition",
+                    "description": "Lamellenposition einer Jalousie in der Szene, 100 ist offen."
+                }
+            }
         }
     }
 }

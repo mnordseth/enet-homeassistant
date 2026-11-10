@@ -330,5 +330,9 @@
   "scene-1": {
     "entity_id": "scene.enet_smart_home_server_evening",
     "name": "Enet Smart Home Server Evening"
+  },
+  "scene-1-save": {
+    "entity_id": "button.enet_smart_home_server_save_evening",
+    "name": "Enet Smart Home Server Save Evening"
   }
 }

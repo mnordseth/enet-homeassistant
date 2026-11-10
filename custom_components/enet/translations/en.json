@@ -65,6 +65,11 @@
                     "battery_weak": "Weak"
                 }
             }
+        },
+        "button": {
+            "save_scene": {
+                "name": "Save {scene}"
+            }
         }
     },
     "device_automation": {
@@ -82,6 +87,38 @@
             "initial_press": "\"{subtype}\" pressed initially",
             "long_release": "\"{subtype}\" released after long press",
             "short_release": "\"{subtype}\" released after short press"
+        }
+    },
+    "services": {
+        "save_scene": {
+            "name": "Save scene",
+            "description": "Stores the current state of every light, switch and cover of the scene in the scene on the Enet server."
+        },
+        "set_scene_level": {
+            "name": "Set scene level",
+            "description": "Changes the level of one member of the scene on the Enet server.",
+            "fields": {
+                "member": {
+                    "name": "Member",
+                    "description": "Light, switch or cover of the scene to change."
+                },
+                "brightness_pct": {
+                    "name": "Brightness",
+                    "description": "Brightness of a dimmer in the scene, 0 is off."
+                },
+                "state": {
+                    "name": "State",
+                    "description": "On or off, for switches and lights."
+                },
+                "position": {
+                    "name": "Position",
+                    "description": "Position of a cover in the scene, 100 is open."
+                },
+                "tilt_position": {
+                    "name": "Tilt position",
+                    "description": "Tilt position of a blind in the scene, 100 is open."
+                }
+            }
         }
     }
 }
