@@ -119,6 +119,42 @@
                     "description": "Lamellenposition einer Jalousie in der Szene, 100 ist offen."
                 }
             }
+        },
+        "add_scene_member": {
+            "name": "Szenenmitglied hinzufügen",
+            "description": "Fügt der Szene auf dem Enet Server ein Licht, einen Schalter oder einen Rollladen hinzu, mit dem angegebenen Wert oder dem aktuellen Zustand.",
+            "fields": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Licht, Schalter oder Rollladen, der der Szene hinzugefügt wird."
+                },
+                "brightness_pct": {
+                    "name": "Helligkeit",
+                    "description": "Helligkeit eines Dimmers in der Szene, 0 ist aus. Weglassen für den aktuellen Zustand."
+                },
+                "state": {
+                    "name": "Zustand",
+                    "description": "Ein oder aus, für Schalter und Lichter. Weglassen für den aktuellen Zustand."
+                },
+                "position": {
+                    "name": "Position",
+                    "description": "Position eines Rollladens in der Szene, 100 ist offen. Weglassen für den aktuellen Zustand."
+                },
+                "tilt_position": {
+                    "name": "Lamellenposition",
+                    "description": "Lamellenposition einer Jalousie in der Szene, 100 ist offen. Weglassen für den aktuellen Zustand."
+                }
+            }
+        },
+        "remove_scene_member": {
+            "name": "Szenenmitglied entfernen",
+            "description": "Entfernt ein Licht, einen Schalter oder einen Rollladen aus der Szene auf dem Enet Server.",
+            "fields": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Licht, Schalter oder Rollladen, der aus der Szene entfernt wird."
+                }
+            }
         }
     },
     "options": {

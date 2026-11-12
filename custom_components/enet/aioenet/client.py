@@ -31,8 +31,13 @@ EVENT_WRITE_VALUES_TO_DEVICE_PARAMETER_COMPLETED = "writeValuesToDeviceParameter
 # changed or not. deviceParameterChanged also comes when the value changed.
 EVENT_DEVICE_PARAMETER_VALUES_RECEIVED = "deviceParameterValuesReceived"
 EVENT_DEVICE_PARAMETER_CHANGED = "deviceParameterChanged"
+# Links written to a device, for some channels or the whole device
+EVENT_WRITE_CHANNEL_LINKS_COMPLETED = "writeChannelToBeLinksToDeviceCompleted"
+EVENT_WRITE_LINKS_COMPLETED = "writeLinksToDeviceCompleted"
 # Seconds to wait until the server has programmed a parameter into the device
 PARAMETER_WRITE_TIMEOUT = 60
+# Seconds to wait until the server has programmed the links into the device
+LINK_WRITE_TIMEOUT = 60
 # Seconds to wait until the server has read a parameter from the device
 PARAMETER_READ_TIMEOUT = 15
 VALUE_TYPE_ROCKER_STATE = "VT_ROCKER_STATE"
@@ -126,7 +131,8 @@ class EnetClient:
         self.scenes_read = False  # set when the scenes were read from the server
         self._parameter_writes = {}
         self._parameter_reads = {}
-        # Parameter reads and writes go one at a time, the devices are
+        self._link_writes = {}
+        # Parameter reads and writes and link writes go one at a time, the devices are
         # programmed and read by radio
         self._write_lock = asyncio.Lock()
         self._auth_lock = asyncio.Lock()
@@ -280,6 +286,9 @@ class EnetClient:
             ):
                 self._handle_parameter_read(event)
                 continue
+            if event["event"] in (EVENT_WRITE_CHANNEL_LINKS_COMPLETED, EVENT_WRITE_LINKS_COMPLETED):
+                self._handle_link_write_completed(event)
+                continue
             if (
                 time.time() - self._last_event_ts < 0.5
                 and event["event"] == self._last_event.get("event")
@@ -308,6 +317,12 @@ class EnetClient:
         future = self._parameter_reads.get(data.get("deviceParameterUID"))
         if future is not None and not future.done():
             future.set_result(data.get("values") or [])
+
+    def _handle_link_write_completed(self, event):
+        data = event.get("eventData") or {}
+        future = self._link_writes.get(data.get("deviceUID"))
+        if future is not None and not future.done():
+            future.set_result(data)
 
     async def _handle_output_device_function_called(self, event):
         data = event["eventData"]
@@ -730,6 +745,85 @@ class EnetClient:
                         )
                     except Exception as e:  # noqa: BLE001 - best effort cleanup
                         log.debug("Failed to unregister %s: %s", event, e)
+
+    async def write_links(self, device_uid, channel_numbers=None, timeout=LINK_WRITE_TIMEOUT):
+        """Program the links the server has configured for channels of a device,
+        or for the whole device when channel_numbers is None, into the device.
+        Adding a channel to a scene or removing it only configures its links on
+        the server.
+
+        Needs the commissioning client role, which is set for this request
+        only. Waits until the server reports that the device has been
+        programmed, and raises EnetServerError if that failed or did not finish
+        in time.
+        """
+        async with self._write_lock:
+            future = asyncio.get_running_loop().create_future()
+            self._link_writes[device_uid] = future
+            try:
+                await self.request(
+                    URL.MANAGEMENT, "setClientRole", {"clientRole": "CR_IBN"}
+                )
+                try:
+                    if channel_numbers is None:
+                        await self.request(
+                            URL.COMMISSIONING, "writeToBeLinksToDevice", {"deviceUID": device_uid}
+                        )
+                    else:
+                        await self.request(
+                            URL.COMMISSIONING,
+                            "writeChannelToBeLinksToDevice",
+                            {"deviceUID": device_uid, "channelNumbers": channel_numbers},
+                        )
+                finally:
+                    await self.request(
+                        URL.MANAGEMENT, "setClientRole", {"clientRole": "CR_VISU"}
+                    )
+                try:
+                    async with asyncio.timeout(timeout):
+                        result = await future
+                except TimeoutError:
+                    raise EnetServerError(
+                        f"The links were not programmed within {timeout} seconds"
+                    ) from None
+                if not result.get("success", False):
+                    raise EnetServerError(
+                        "Programming the links failed: "
+                        f"error {result.get('errorCode')} {result.get('errorData', '')}".strip()
+                    )
+            finally:
+                self._link_writes.pop(device_uid, None)
+
+    async def get_scene_action(self, scene_uid):
+        """Return a scene of the server with its members, None if it is gone"""
+        result = await self.request(
+            URL.SCENE, "getSceneActions", {"sceneActionUIDs": [scene_uid]}
+        )
+        actions = (result or {}).get("sceneActions") or []
+        return actions[0] if actions else None
+
+    async def add_scene_member(self, scene_uid, device_uid, channel_number):
+        """Add an actuator channel to a scene and program its links"""
+        result = await self.request(
+            URL.SCENE,
+            "addActorChannelToSceneAction",
+            {"sceneActionUID": scene_uid, "deviceUID": device_uid,
+             "channelNumber": channel_number},
+        )
+        link_result = (result or {}).get("linkResult")
+        if link_result != "OK":
+            raise EnetServerError(f"The channel could not be added: {link_result}")
+        await self.write_links(device_uid, [channel_number])
+
+    async def remove_scene_member(self, scene_uid, device_uid, channel_number):
+        """Remove an actuator channel from a scene and remove its links from the device"""
+        await self.request(
+            URL.SCENE,
+            "removeActorChannelFromSceneAction",
+            {"sceneActionUID": scene_uid, "deviceUID": device_uid,
+             "channelNumber": channel_number},
+        )
+        await self.write_links(device_uid, [channel_number])
 
     async def store_scene_values(self, scene_uid):
         """Make the members of a scene store their current state in the scene.

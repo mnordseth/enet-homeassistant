@@ -119,6 +119,42 @@
           "description": "Tilt position of a blind in the scene, 100 is open."
         }
       }
+    },
+    "add_scene_member": {
+      "name": "Add scene member",
+      "description": "Adds a light, switch or cover to the scene on the Enet server, at the given level or at its current state.",
+      "fields": {
+        "member": {
+          "name": "Member",
+          "description": "Light, switch or cover to add to the scene."
+        },
+        "brightness_pct": {
+          "name": "Brightness",
+          "description": "Brightness of a dimmer in the scene, 0 is off. Leave out to use the current state."
+        },
+        "state": {
+          "name": "State",
+          "description": "On or off, for switches and lights. Leave out to use the current state."
+        },
+        "position": {
+          "name": "Position",
+          "description": "Position of a cover in the scene, 100 is open. Leave out to use the current state."
+        },
+        "tilt_position": {
+          "name": "Tilt position",
+          "description": "Tilt position of a blind in the scene, 100 is open. Leave out to use the current state."
+        }
+      }
+    },
+    "remove_scene_member": {
+      "name": "Remove scene member",
+      "description": "Removes a light, switch or cover from the scene on the Enet server.",
+      "fields": {
+        "member": {
+          "name": "Member",
+          "description": "Light, switch or cover to remove from the scene."
+        }
+      }
     }
   },
   "options": {

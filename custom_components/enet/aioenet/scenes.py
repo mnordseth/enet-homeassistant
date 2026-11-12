@@ -1,6 +1,7 @@
 """Scenes on the Enet server ("scene actions") and their members"""
 
 import asyncio
+import contextlib
 import logging
 import re
 
@@ -22,6 +23,15 @@ LEARN_SETTLE_SECONDS = 2
 # A learned value may differ this much from the state it was learned from
 # (dimmers and blinds round between percent and the byte in the actuator)
 LEARNED_VALUE_TOLERANCE = 1
+# Programming links or parameters into an actuator restarts it, and lights
+# and switches come back off. Seconds after programming before they are
+# switched back on, so the off report of the restart has arrived.
+RESTORE_DELAY_SECONDS = 2
+RESTORED_MODES = (
+    ChannelApplicationMode.LIGHT_DIMMING,
+    ChannelApplicationMode.LIGHT_SWITCHING,
+    ChannelApplicationMode.SWITCHING,
+)
 
 
 def same_scene_value(a, b):
@@ -127,23 +137,38 @@ class SceneMember:
             level = 100 if on else 0
         return int(level)
 
-    def current_values(self):
+    STATE_FUNCTIONS = (
+        ChannelTypeFunctionName.ON_OFF,
+        ChannelTypeFunctionName.BRIGHTNESS,
+        ChannelTypeFunctionName.COVER_POSITION,
+        ChannelTypeFunctionName.TILT_POSITION,
+    )
+
+    @classmethod
+    def channel_state(cls, channel):
+        """A snapshot of the state of a channel, for current_values()"""
+        return {f: channel.get_current_value(f) for f in cls.STATE_FUNCTIONS}
+
+    def current_values(self, state=None):
         """Return (level, slats) for the current state of the channel, to
-        store it in the scene. Raises ValueError if the state is unknown."""
+        store it in the scene, or for a snapshot from channel_state(). Raises
+        ValueError if the state is unknown."""
         channel = self.channel
         if channel is None:
             raise ValueError(f"{self.name} is not a known channel")
+        if state is None:
+            state = self.channel_state(channel)
         if self.kind == SceneValueKind.COVER:
-            position = channel.get_current_value(ChannelTypeFunctionName.COVER_POSITION)
-            tilt = channel.get_current_value(ChannelTypeFunctionName.TILT_POSITION)
+            position = state.get(ChannelTypeFunctionName.COVER_POSITION)
+            tilt = state.get(ChannelTypeFunctionName.TILT_POSITION)
             if position is None:
                 raise ValueError(f"The position of {self.name} is unknown")
             return int(position), (None if tilt is None else int(tilt))
 
-        on = channel.get_current_value(ChannelTypeFunctionName.ON_OFF)
+        on = state.get(ChannelTypeFunctionName.ON_OFF)
         brightness = None
         if channel.application_mode == ChannelApplicationMode.LIGHT_DIMMING:
-            brightness = channel.get_current_value(ChannelTypeFunctionName.BRIGHTNESS)
+            brightness = state.get(ChannelTypeFunctionName.BRIGHTNESS)
         if on is None and brightness is None:
             raise ValueError(f"The state of {self.name} is unknown")
         if on is False:
@@ -167,6 +192,7 @@ class EnetScene:
         self.members = [SceneMember(self, member) for member in raw.get("deviceChannels", [])]
         self.values_loaded = False
         self._subscribers = []
+        self._kept = set()  # uids of channels in keep_light_states()
 
     def __repr__(self):
         return f"{self.__class__.__name__} ({self.name} members={self.members})"
@@ -220,21 +246,128 @@ class EnetScene:
         self.values_loaded = True
         self._notify()
 
+    @contextlib.asynccontextmanager
+    async def keep_light_states(self, channels):
+        """Switch lights and switches that are on back to their level after
+        programming them in this block: programming restarts the actuator, and
+        they come back off. Only those that are off afterwards are switched, so
+        a change made meanwhile is kept. Channels already kept by an outer
+        block are left to it."""
+        states = {}
+        for channel in channels:
+            if channel is None or channel.uid in self._kept:
+                continue
+            if channel.application_mode not in RESTORED_MODES:
+                continue
+            states[channel.uid] = (
+                channel,
+                channel.get_current_value(ChannelTypeFunctionName.ON_OFF),
+                channel.get_current_value(ChannelTypeFunctionName.BRIGHTNESS),
+            )
+        self._kept.update(states)
+        try:
+            yield
+        finally:
+            self._kept.difference_update(states)
+            was_on = [(channel, brightness) for channel, on, brightness in states.values() if on]
+            if was_on:
+                await asyncio.sleep(RESTORE_DELAY_SECONDS)
+            for channel, brightness in was_on:
+                if channel.get_current_value(ChannelTypeFunctionName.ON_OFF) is not False:
+                    continue
+                log.debug("Switching %s back on after programming it", channel.name)
+                try:
+                    if channel.application_mode == ChannelApplicationMode.LIGHT_DIMMING and brightness:
+                        await channel.set_value(ChannelTypeFunctionName.BRIGHTNESS, brightness)
+                    else:
+                        await channel.turn_on()
+                except (EnetServerError, aiohttp.ClientError, TimeoutError) as e:
+                    log.warning("Could not switch %s back on: %s", channel.name, e)
+
     async def set_member_values(self, member, level=None, slats=None):
         """Write new values of a member to the scene. level is the SCV1 value
-        (see SceneMember.encode()), slats the SCV2 value of blinds."""
+        (see SceneMember.encode()), slats the SCV2 value of blinds. A light
+        that is on is switched back on after programming."""
         if member.level is not None and member.level.value_type_id is None:
             await member.load_values()
+        writes = [
+            (param, value)
+            for param, value in ((member.level, level), (member.slats, slats))
+            if value is not None and param is not None
+        ]
         try:
-            for param, value in ((member.level, level), (member.slats, slats)):
-                if value is None or param is None:
-                    continue
-                if param.value_type_id is None:
-                    raise EnetServerError(f"The value type of {param.type_id} is unknown")
-                await self.client.write_device_parameter(
-                    param.uid, [{"valueTypeID": param.value_type_id, "value": value}]
+            if not writes:
+                return
+            async with self.keep_light_states([member.channel]):
+                for param, value in writes:
+                    if param.value_type_id is None:
+                        raise EnetServerError(f"The value type of {param.type_id} is unknown")
+                    await self.client.write_device_parameter(
+                        param.uid, [{"valueTypeID": param.value_type_id, "value": value}]
+                    )
+                    param.value = value
+        finally:
+            self._notify()
+
+    async def reload_members(self):
+        """Read the members of the scene from the server again. Members that
+        stay keep their loaded values, new members load theirs."""
+        raw = await self.client.get_scene_action(self.uid)
+        if raw is None:
+            raise EnetServerError(f"The scene {self.name} is gone from the server")
+        old = {member.uid: member for member in self.members}
+        members = []
+        for raw_member in raw.get("deviceChannels", []):
+            member = SceneMember(self, raw_member)
+            if member.uid in old:
+                member = old[member.uid]
+            elif self.values_loaded:
+                await member.load_values()
+            members.append(member)
+        self.members = members
+
+    async def add_member(self, channel):
+        """Add an actuator channel to the scene and program its links. Returns
+        the new member, with the default values of the scene slot loaded; set
+        its values with set_member_values()."""
+        if self.get_member(channel.uid) is not None:
+            raise ValueError(f"{channel.name} is already a member of the scene {self.name}")
+        try:
+            async with self.keep_light_states([channel]):
+                await self.client.add_scene_member(
+                    self.uid, channel.device.uid, channel.channel["no"]
                 )
-                param.value = value
+            await self.reload_members()
+        finally:
+            self._notify()
+        member = self.get_member(channel.uid)
+        if member is None:
+            raise EnetServerError(f"{channel.name} was not added to the scene {self.name}")
+        if not self.values_loaded:  # otherwise loaded by reload_members()
+            await member.load_values()
+        return member
+
+    async def remove_member(self, member):
+        """Remove a member from the scene and its links from the device. A
+        light that is on is switched back on after programming.
+
+        Removing a member resets its scene values on the server to the defaults
+        of the slot, but not in the device, so the server marks the device as
+        modified. The defaults are programmed as well.
+        """
+        try:
+            async with self.keep_light_states([member.channel]):
+                await self.client.remove_scene_member(
+                    self.uid, member.device_uid, member.channel_number
+                )
+                for param in (member.level, member.slats):
+                    if param is None:
+                        continue
+                    values = await self.client.get_parameter_to_be_values(param.uid)
+                    current = await self.client.get_parameter_current_values(param.uid)
+                    if values and values != current:
+                        await self.client.write_device_parameter(param.uid, values)
+            await self.reload_members()
         finally:
             self._notify()
 

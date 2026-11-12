@@ -15,7 +15,7 @@ from homeassistant.helpers import entity_platform
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo
 
-from .aioenet import EnetScene, EnetServerError, SceneValueKind
+from .aioenet import EnetScene, EnetServerError, SceneMember, SceneValueKind
 from .const import DOMAIN, NAME_ENET_CONTROLLER, NAME_ENET_SERVER
 
 _LOGGER = logging.getLogger(__name__)
@@ -29,6 +29,8 @@ ATTR_TILT_POSITION = "tilt_position"
 
 SERVICE_SAVE_SCENE = "save_scene"
 SERVICE_SET_SCENE_LEVEL = "set_scene_level"
+SERVICE_ADD_SCENE_MEMBER = "add_scene_member"
+SERVICE_REMOVE_SCENE_MEMBER = "remove_scene_member"
 
 PERCENT = vol.All(vol.Coerce(int), vol.Range(min=0, max=100))
 SET_SCENE_LEVEL_SCHEMA = {
@@ -38,6 +40,11 @@ SET_SCENE_LEVEL_SCHEMA = {
     vol.Optional(ATTR_POSITION): PERCENT,
     vol.Optional(ATTR_TILT_POSITION): PERCENT,
 }
+# The level is optional: without one, the member is added at its current state
+ADD_SCENE_MEMBER_SCHEMA = SET_SCENE_LEVEL_SCHEMA
+REMOVE_SCENE_MEMBER_SCHEMA = {vol.Required(ATTR_MEMBER): cv.entity_id}
+LIGHT_LEVEL_FIELDS = (ATTR_BRIGHTNESS_PCT, ATTR_STATE)
+COVER_LEVEL_FIELDS = (ATTR_POSITION, ATTR_TILT_POSITION)
 
 MEMBER_DOMAINS = ("light", "switch", "cover")
 
@@ -52,6 +59,12 @@ async def async_setup_entry(hass, entry, async_add_entities):
     platform.async_register_entity_service(SERVICE_SAVE_SCENE, None, "async_save_scene")
     platform.async_register_entity_service(
         SERVICE_SET_SCENE_LEVEL, SET_SCENE_LEVEL_SCHEMA, "async_set_scene_level"
+    )
+    platform.async_register_entity_service(
+        SERVICE_ADD_SCENE_MEMBER, ADD_SCENE_MEMBER_SCHEMA, "async_add_scene_member"
+    )
+    platform.async_register_entity_service(
+        SERVICE_REMOVE_SCENE_MEMBER, REMOVE_SCENE_MEMBER_SCHEMA, "async_remove_scene_member"
     )
     _LOGGER.debug("Finished async setup()")
 
@@ -178,6 +191,91 @@ class EnetSceneEntity(SceneEntity):
         except (EnetServerError, aiohttp.ClientError, TimeoutError) as e:
             raise HomeAssistantError(
                 f"Failed to change {member_entity_id} in scene {self.name}: {e}"
+            ) from e
+
+    def _check_members_changeable(self) -> None:
+        if self.scene.automatic:
+            raise ServiceValidationError(
+                f"{self.name} is made by the Enet server for a location, "
+                "its members can't be changed"
+            )
+
+    def _channel(self, entity_id):
+        """The Enet actuator channel of a light, switch or cover entity, or None"""
+        entry = er.async_get(self.hass).async_get(entity_id)
+        if entry is None or entry.platform != DOMAIN or entry.domain not in MEMBER_DOMAINS:
+            return None
+        return next(
+            (c for d in self.scene.client.devices for c in d.channels if c.uid == entry.unique_id),
+            None,
+        )
+
+    async def async_add_scene_member(self, **kwargs) -> None:
+        """Add a light, switch or cover to the scene, at the given level or at
+        its current state."""
+        self._check_members_changeable()
+        entity_id = kwargs[ATTR_MEMBER]
+        channel = self._channel(entity_id)
+        if channel is None:
+            raise ServiceValidationError(
+                f"{entity_id} is not a light, switch or cover of the Enet server"
+            )
+        if self.scene.get_member(channel.uid) is not None:
+            raise ServiceValidationError(f"{entity_id} is already part of the scene {self.name}")
+        is_cover = entity_id.split(".", 1)[0] == "cover"
+        wrong_fields = LIGHT_LEVEL_FIELDS if is_cover else COVER_LEVEL_FIELDS
+        if any(kwargs.get(field) is not None for field in wrong_fields):
+            raise ServiceValidationError(
+                f"{entity_id} is a cover, set its position or tilt_position"
+                if is_cover
+                else f"{entity_id} is not a cover, set its state or brightness_pct"
+            )
+        given = any(
+            kwargs.get(field) is not None for field in LIGHT_LEVEL_FIELDS + COVER_LEVEL_FIELDS
+        )
+
+        # Before adding: programming the links can restart the actuator, and
+        # some come back off
+        state = SceneMember.channel_state(channel)
+        try:
+            # Programmed twice (links, then the level): switched back on once
+            async with self.scene.keep_light_states([channel]):
+                member = await self.scene.add_member(channel)
+                if given:
+                    level, slats = _member_values(member, entity_id, kwargs)
+                else:
+                    try:
+                        level, slats = member.current_values(state)
+                    except ValueError as e:
+                        _LOGGER.warning(
+                            "Added %s to the scene %s with its default level: %s",
+                            entity_id, self.name, e,
+                        )
+                        return
+                    # Not programmed when the default of the scene slot is the state
+                    if member.level is not None and member.level.value == level:
+                        level = None
+                    if member.slats is not None and member.slats.value == slats:
+                        slats = None
+                await self.scene.set_member_values(member, level, slats)
+        except (EnetServerError, aiohttp.ClientError, TimeoutError) as e:
+            raise HomeAssistantError(
+                f"Failed to add {entity_id} to the scene {self.name}: {e}"
+            ) from e
+
+    async def async_remove_scene_member(self, **kwargs) -> None:
+        """Remove a light, switch or cover from the scene."""
+        self._check_members_changeable()
+        entity_id = kwargs[ATTR_MEMBER]
+        channel = self._channel(entity_id)
+        member = self.scene.get_member(channel.uid) if channel is not None else None
+        if member is None:
+            raise ServiceValidationError(f"{entity_id} is not part of the scene {self.name}")
+        try:
+            await self.scene.remove_member(member)
+        except (EnetServerError, aiohttp.ClientError, TimeoutError) as e:
+            raise HomeAssistantError(
+                f"Failed to remove {entity_id} from the scene {self.name}: {e}"
             ) from e
 
 

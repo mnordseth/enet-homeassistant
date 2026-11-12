@@ -62,7 +62,17 @@ The scenes can be changed from Home Assistant. The changes are stored on the Ene
     brightness_pct: 40
   ```
 
-A level set with `enet.set_scene_level` is programmed into the device by radio, which takes a few seconds per member. Members can't be added to or removed from a scene from Home Assistant yet. Scenes can't be edited in Home Assistant's scene editor, which only edits Home Assistant's own scenes.
+- **Add or remove a member:** the actions `enet.add_scene_member` and `enet.remove_scene_member` add a light, switch or cover to the scene or remove it. A new member is stored at its current state, or at the level given like for `enet.set_scene_level`.
+
+  ```yaml
+  action: enet.add_scene_member
+  target:
+    entity_id: scene.enet_smart_home_server_evening
+  data:
+    member: light.kitchen
+  ```
+
+Setting a level with `enet.set_scene_level` and adding or removing a member program the device by radio, which takes a few seconds per member (adding a member about 20 seconds). Programming restarts the device, and lights and switches that were on come back off: the integration switches them back on to their level afterwards. The members of the lights on/off scenes the server makes for each room can't be changed. Scenes can't be edited in Home Assistant's scene editor, which only edits Home Assistant's own scenes.
 
 ### Motion detectors
 

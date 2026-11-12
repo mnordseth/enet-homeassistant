@@ -84,6 +84,10 @@ class OfflineEnetClient(aioenet.EnetClient):
         self.write_success = True
         self.learns = {}
         self.read_fails = False
+        self.added = {}  # scene uid -> channels added to the scene
+        self.removed = set()  # (scene uid, channel uid) removed from the scene
+        self.link_result = "OK"
+        self.programming_turns_off = False  # programming restarts the actuator, it comes back off
 
     def scene_channels(self):
         """The dimmer, switch and blind of the scene"""
@@ -99,6 +103,23 @@ class OfflineEnetClient(aioenet.EnetClient):
 
     def scene_members(self, scene_uid):
         """(slot, [(channel, [(parameter type, value type, value)])]) of a scene"""
+        slot, members = self._initial_scene_members(scene_uid)
+        members = [(c, p) for c, p in members if (scene_uid, c.uid) not in self.removed]
+        for channel in self.added.get(scene_uid, []):
+            # A new member has the default values of the scene slot
+            mode = aioenet.ChannelApplicationMode
+            match channel.application_mode:
+                case mode.LIGHT_DIMMING:
+                    params = [("PT_INDA.SCV1", "VT_SCALING_RANGE_0_100_DEF_100", 100)]
+                case mode.BLINDS:
+                    params = [("PT_INBA.SCV1", "VT_SCALING_RANGE_0_100_DEF_0", 0),
+                              ("PT_INBA.SCV2", "VT_SCALING_RANGE_0_100_DEF_0", 0)]
+                case _:
+                    params = [("PT_INSA.SCV1", "VT_SCV_SWITCH_DEF_ON", "ON")]
+            members.append((channel, params))
+        return slot, members
+
+    def _initial_scene_members(self, scene_uid):
         dimmer, switch, blind = self.scene_channels()
         dimmer_level = ("PT_INDA.SCV1", "VT_SCALING_RANGE_0_100_DEF_100", 60)
         match scene_uid:
@@ -112,6 +133,9 @@ class OfflineEnetClient(aioenet.EnetClient):
             case "scene-3":  # automatic "lights on" scene of a location
                 return 16, [(dimmer, [dimmer_level])]
         return SCENE_SLOT, []  # scene-2 and scene-4 have no members
+
+    def channel(self, device_uid, channel_number):
+        return self.get_channel(device_uid, channel_number)
 
     def scene_actions(self, scene_uids):
         actions = []
@@ -153,6 +177,8 @@ class OfflineEnetClient(aioenet.EnetClient):
             case "setToBeValuesToDeviceParameter":
                 self.parameters[uid]["toBe"] = params["toBeValues"][0]
             case "writeToBeValuesToDeviceParameter":
+                if self.programming_turns_off:
+                    self._turn_off(lambda channel: uid.startswith(f"{channel.uid}-"))
                 if self.write_success:
                     self.parameters[uid]["current"] = self.parameters[uid]["toBe"]
                     self.parameters[uid]["device"] = self.parameters[uid]["toBe"]
@@ -173,7 +199,40 @@ class OfflineEnetClient(aioenet.EnetClient):
                 param["toBe"] = param["current"] = value
                 self._send_event("deviceParameterValuesReceived",
                                  {"deviceParameterUID": uid, "values": [value]})
+            case "addActorChannelToSceneAction":
+                if self.link_result == "OK":
+                    channel = self.channel(params["deviceUID"], params["channelNumber"])
+                    self.removed.discard((params["sceneActionUID"], channel.uid))
+                    self.added.setdefault(params["sceneActionUID"], []).append(channel)
+                return {"linkResult": self.link_result}
+            case "removeActorChannelFromSceneAction":
+                channel = self.channel(params["deviceUID"], params["channelNumber"])
+                self.removed.add((params["sceneActionUID"], channel.uid))
+                added = self.added.get(params["sceneActionUID"], [])
+                if channel in added:
+                    added.remove(channel)
+                # The scene values are reset to the defaults, on the server only
+                for param_uid, param in self.parameters.items():
+                    if param_uid.startswith(f"{channel.uid}-"):
+                        value_type = param["toBe"]["valueTypeID"]
+                        default = value_type.rsplit("_DEF_", 1)[1]
+                        param["toBe"] = {"valueTypeID": value_type,
+                                         "value": int(default) if default.isdigit() else default}
+            case "writeChannelToBeLinksToDevice" | "writeToBeLinksToDevice":
+                if self.programming_turns_off:
+                    self._turn_off(lambda channel: channel.device.uid == params["deviceUID"])
+                event = ("writeChannelToBeLinksToDeviceCompleted"
+                         if method == "writeChannelToBeLinksToDevice" else "writeLinksToDeviceCompleted")
+                self._send_event(event, {"deviceUID": params["deviceUID"], "success": True,
+                                         "errorCode": 0, "errorData": ""})
         return None
+
+    def _turn_off(self, matches):
+        """The channels restart and report that they are off"""
+        for channel in (c for d in self.devices for c in d.channels if matches(c)):
+            if hasattr(channel, "set_current_value"):
+                channel.set_current_value(aioenet.ChannelTypeFunctionName.ON_OFF, False)
+                channel.set_current_value(aioenet.ChannelTypeFunctionName.BRIGHTNESS, 0)
 
     def _send_event(self, name, data):
         event = {"sequenceNumber": 0, "event": name, "eventData": data}
@@ -211,6 +270,8 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         self._patch.start()
         self._settle_patch = patch.object(aioenet.scenes, "LEARN_SETTLE_SECONDS", 0)
         self._settle_patch.start()
+        self._restore_patch = patch.object(aioenet.scenes, "RESTORE_DELAY_SECONDS", 0)
+        self._restore_patch.start()
 
         hass = self.hass = core.HomeAssistant(self._config_dir.name)
         hass.config.skip_pip = True
@@ -243,6 +304,7 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         await self.hass.async_stop(force=True)
         self._patch.stop()
         self._settle_patch.stop()
+        self._restore_patch.stop()
         logging.getLogger().removeHandler(self.log)
         self._config_dir.cleanup()
 
@@ -605,6 +667,169 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         levels = self.scene_state().attributes["levels"]
         self.assertEqual((levels[light], levels[switch]), (35, "off"))
         self.assertTrue(self.log.records)
+
+    def other_dimmer(self):
+        """(entity id, channel) of a dimmer that is not in the scene"""
+        dimmer, _, _ = self.hub.scene_channels()
+        channel = next(
+            c for d in self.hub.devices for c in d.channels
+            if c.application_mode == aioenet.ChannelApplicationMode.LIGHT_DIMMING
+            and c.uid != dimmer.uid
+        )
+        ent_reg = er.async_get(self.hass)
+        return ent_reg.async_get_entity_id("light", "enet", channel.uid), channel
+
+    async def change_member(self, service, **data):
+        self.hub.requests.clear()
+        await self.hass.services.async_call(
+            "enet", service, {"entity_id": self.scene_state().entity_id, **data}, blocking=True
+        )
+
+    def link_requests(self):
+        """The requests adding/removing members and writing their links, in order"""
+        return [
+            (method, params) for method, params in self.hub.requests
+            if method in ("addActorChannelToSceneAction", "removeActorChannelFromSceneAction",
+                          "setClientRole", "writeChannelToBeLinksToDevice",
+                          "writeToBeLinksToDevice")
+        ]
+
+    async def test_add_scene_member_at_its_current_state(self):
+        entity_id, channel = self.other_dimmer()
+        functions = aioenet.ChannelTypeFunctionName
+        channel.set_current_value(functions.ON_OFF, True)
+        channel.set_current_value(functions.BRIGHTNESS, 45)
+        # The state before adding is stored, not the state after the restart
+        self.hub.programming_turns_off = True
+
+        await self.change_member("add_scene_member", member=entity_id)
+        device_uid, number = channel.device.uid, channel.channel["no"]
+        self.assertEqual(self.link_requests(), [
+            ("addActorChannelToSceneAction",
+             {"sceneActionUID": "scene-1", "deviceUID": device_uid, "channelNumber": number}),
+            ("setClientRole", {"clientRole": "CR_IBN"}),
+            ("writeChannelToBeLinksToDevice", {"deviceUID": device_uid, "channelNumbers": [number]}),
+            ("setClientRole", {"clientRole": "CR_VISU"}),
+        ])
+        self.assertEqual(self.written(), [(f"{channel.uid}-PT_INDA.SCV1", 45)])
+        attributes = self.scene_state().attributes
+        self.assertIn(entity_id, attributes["entity_id"])
+        self.assertEqual(attributes["levels"][entity_id], 45)
+        # Programmed twice, switched back on to its level once, at the end
+        self.assertEqual(self.light_commands(channel), [45])
+        self.assert_no_warnings()
+
+    def light_commands(self, channel):
+        """Values sent to switch or dim a channel"""
+        uids = {f["uid"] for f in channel.input_functions.values()}
+        return [
+            p["values"][0]["value"] for p in self.requests("callInputDeviceFunction")
+            if p["deviceFunctionUID"] in uids
+        ]
+
+    async def test_removed_member_is_switched_back_on(self):
+        light, _, _ = self.scene_members()
+        dimmer, _, _ = self.hub.scene_channels()
+        functions = aioenet.ChannelTypeFunctionName
+        dimmer.set_current_value(functions.ON_OFF, True)
+        dimmer.set_current_value(functions.BRIGHTNESS, 70)
+        self.hub.programming_turns_off = True
+
+        await self.change_member("remove_scene_member", member=light)
+        # The default the server reset its scene value to is programmed too,
+        # and the light is switched back on once
+        uid = f"{dimmer.uid}-PT_INDA.SCV1"
+        self.assertEqual(self.written(), [(uid, 100)])
+        self.assertEqual(self.hub.parameters[uid]["current"]["value"], 100)
+        self.assertEqual(self.light_commands(dimmer), [70])
+        self.assert_no_warnings()
+
+    async def test_lights_that_were_off_stay_off_after_programming(self):
+        light, _, _ = self.scene_members()
+        dimmer, _, _ = self.hub.scene_channels()
+        dimmer.set_current_value(aioenet.ChannelTypeFunctionName.ON_OFF, False)
+        self.hub.programming_turns_off = True
+
+        await self.set_scene_level(member=light, brightness_pct=23)
+        self.assertEqual(self.written(), [(f"{dimmer.uid}-PT_INDA.SCV1", 23)])
+        self.assertEqual(self.light_commands(dimmer), [])
+
+        # On before setting the level: switched back on
+        dimmer.set_current_value(aioenet.ChannelTypeFunctionName.ON_OFF, True)
+        dimmer.set_current_value(aioenet.ChannelTypeFunctionName.BRIGHTNESS, 55)
+        await self.set_scene_level(member=light, brightness_pct=30)
+        self.assertEqual(self.light_commands(dimmer), [55])
+        self.assert_no_warnings()
+
+    async def test_add_scene_member_at_a_level(self):
+        entity_id, channel = self.other_dimmer()
+        await self.change_member("add_scene_member", member=entity_id, brightness_pct=20)
+        self.assertEqual(self.written(), [(f"{channel.uid}-PT_INDA.SCV1", 20)])
+        self.assertEqual(self.scene_state().attributes["levels"][entity_id], 20)
+
+        self.assert_no_warnings()
+
+    async def test_add_scene_member_at_the_default_level_programs_nothing(self):
+        entity_id, channel = self.other_dimmer()
+        functions = aioenet.ChannelTypeFunctionName
+        channel.set_current_value(functions.ON_OFF, True)
+        channel.set_current_value(functions.BRIGHTNESS, 100)  # the default of the slot
+
+        await self.change_member("add_scene_member", member=entity_id)
+        self.assertEqual(self.requests("writeChannelToBeLinksToDevice"),
+                         [{"deviceUID": channel.device.uid, "channelNumbers": [channel.channel["no"]]}])
+        self.assertEqual(self.written(), [])
+        self.assertEqual(self.scene_state().attributes["levels"][entity_id], 100)
+        self.assert_no_warnings()
+
+    async def test_remove_scene_member(self):
+        light, switch, cover = self.scene_members()
+        _, switch_channel, _ = self.hub.scene_channels()
+
+        await self.change_member("remove_scene_member", member=switch)
+        device_uid, number = switch_channel.device.uid, switch_channel.channel["no"]
+        self.assertEqual(self.link_requests(), [
+            ("removeActorChannelFromSceneAction",
+             {"sceneActionUID": "scene-1", "deviceUID": device_uid, "channelNumber": number}),
+            ("setClientRole", {"clientRole": "CR_IBN"}),
+            ("writeChannelToBeLinksToDevice", {"deviceUID": device_uid, "channelNumbers": [number]}),
+            ("setClientRole", {"clientRole": "CR_VISU"}),
+        ])
+        attributes = self.scene_state().attributes
+        self.assertEqual(attributes["entity_id"], [light, cover])
+        self.assertNotIn(switch, attributes["levels"])
+        # Its scene value was the default already, nothing to program
+        self.assertEqual(self.written(), [])
+        self.assert_no_warnings()
+
+    async def test_scene_member_changes_are_validated(self):
+        light, _, cover = self.scene_members()
+        other, _ = self.other_dimmer()
+        for service, data in (
+            ("add_scene_member", {"member": light}),  # already a member
+            ("add_scene_member", {"member": other, "position": 50}),
+            ("add_scene_member", {"member": cover.replace("cover.", "light.")}),
+            ("remove_scene_member", {"member": other}),  # not a member
+        ):
+            with self.subTest(service=service, data=data), self.assertRaises(ServiceValidationError):
+                await self.change_member(service, **data)
+            self.assertEqual(self.link_requests(), [])
+
+        # The scenes the server makes for locations can't be changed
+        await self.set_scenes_option("all_with_location")
+        kitchen = self.entity_id("scene", "Enet Smart Home Server Kitchen lights on")
+        with self.assertRaises(ServiceValidationError):
+            await self.hass.services.async_call(
+                "enet", "add_scene_member", {"entity_id": kitchen, "member": other}, blocking=True
+            )
+
+    async def test_add_scene_member_rejected_by_the_server(self):
+        entity_id, _ = self.other_dimmer()
+        self.hub.link_result = "TOO_MANY_LINKS"
+        with self.assertRaisesRegex(HomeAssistantError, "TOO_MANY_LINKS"):
+            await self.change_member("add_scene_member", member=entity_id)
+        self.assertEqual(self.requests("writeChannelToBeLinksToDevice"), [])
+        self.assertNotIn(entity_id, self.scene_state().attributes["entity_id"])
 
     async def test_failed_write_raises_an_error(self):
         light, _, _ = self.scene_members()
