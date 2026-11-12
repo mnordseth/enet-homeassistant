@@ -10,7 +10,9 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.device_registry import DeviceEntry
+from homeassistant.helpers.typing import ConfigType
 
 from .aioenet import AuthError, EnetClient, EnetServerError, normalize_url
 from .const import (
@@ -37,6 +39,18 @@ PLATFORMS: list[Platform] = [
 ]
 
 type EnetConfigEntry = ConfigEntry[EnetClient]
+
+
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Set up the actions that are not for an entity"""
+    # Imported here: the scene platform pulls in much of Home Assistant
+    from .scene import async_setup_services  # noqa: PLC0415
+
+    async_setup_services(hass)
+    return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: EnetConfigEntry) -> bool:

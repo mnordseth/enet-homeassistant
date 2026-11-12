@@ -76,16 +76,26 @@ class OfflineEnetClient(aioenet.EnetClient):
     deviceParameterValuesReceived event, like the real server.
     """
 
+    # The state of the server, kept when the entry reloads (a new client),
+    # reset for every test by reset_server()
+    server_scenes = {}  # uid -> name
+    parameters = {}  # uid -> {"toBe": value dict, "current": value dict, "device": value dict}
+    added = {}  # scene uid -> channel uids added to the scene
+    removed = set()  # (scene uid, channel uid) removed from the scene
+
+    @classmethod
+    def reset_server(cls):
+        cls.server_scenes = dict(SCENE_NAMES)
+        cls.parameters = {}
+        cls.added = {}
+        cls.removed = set()
+
     def __init__(self, url, user, passwd):
         super().__init__(url, user, passwd, noconnect=True, load_file=str(DEVICES))
         self.requests = []
-        # uid -> {"toBe": value dict, "current": value dict, "device": value dict}
-        self.parameters = {}
         self.write_success = True
         self.learns = {}
         self.read_fails = False
-        self.added = {}  # scene uid -> channels added to the scene
-        self.removed = set()  # (scene uid, channel uid) removed from the scene
         self.link_result = "OK"
         self.programming_turns_off = False  # programming restarts the actuator, it comes back off
 
@@ -105,7 +115,7 @@ class OfflineEnetClient(aioenet.EnetClient):
         """(slot, [(channel, [(parameter type, value type, value)])]) of a scene"""
         slot, members = self._initial_scene_members(scene_uid)
         members = [(c, p) for c, p in members if (scene_uid, c.uid) not in self.removed]
-        for channel in self.added.get(scene_uid, []):
+        for channel in (self.find_channel(uid) for uid in self.added.get(scene_uid, [])):
             # A new member has the default values of the scene slot
             mode = aioenet.ChannelApplicationMode
             match channel.application_mode:
@@ -137,6 +147,9 @@ class OfflineEnetClient(aioenet.EnetClient):
     def channel(self, device_uid, channel_number):
         return self.get_channel(device_uid, channel_number)
 
+    def find_channel(self, uid):
+        return next(c for d in self.devices for c in d.channels if c.uid == uid)
+
     def scene_actions(self, scene_uids):
         actions = []
         for scene_uid in scene_uids:
@@ -158,7 +171,7 @@ class OfflineEnetClient(aioenet.EnetClient):
                     "channelNumber": channel.channel["no"],
                     "sceneParameters": scene_parameters,
                 })
-            actions.append({"uid": scene_uid, "name": SCENE_NAMES[scene_uid],
+            actions.append({"uid": scene_uid, "name": self.server_scenes[scene_uid],
                             "deviceChannels": device_channels})
         return {"sceneActions": actions}
 
@@ -167,7 +180,16 @@ class OfflineEnetClient(aioenet.EnetClient):
         uid = (params or {}).get("deviceParameterUID")
         match method:
             case "getSceneActionUIDs":
-                return SCENES
+                return {"sceneActionUIDs": [
+                    {"sceneActionUID": uid, "sceneActionName": name}
+                    for uid, name in self.server_scenes.items()
+                ]}
+            case "createSceneAction":
+                uid = f"scene-new-{len(self.server_scenes)}"
+                self.server_scenes[uid] = params["sceneActionName"]
+                return {"sceneActionUID": uid}
+            case "deleteSceneAction":
+                self.server_scenes.pop(params["sceneActionUID"])
             case "getSceneActions":
                 return self.scene_actions(params["sceneActionUIDs"])
             case "getToBeValuesFromDeviceParameter":
@@ -203,14 +225,14 @@ class OfflineEnetClient(aioenet.EnetClient):
                 if self.link_result == "OK":
                     channel = self.channel(params["deviceUID"], params["channelNumber"])
                     self.removed.discard((params["sceneActionUID"], channel.uid))
-                    self.added.setdefault(params["sceneActionUID"], []).append(channel)
+                    self.added.setdefault(params["sceneActionUID"], []).append(channel.uid)
                 return {"linkResult": self.link_result}
             case "removeActorChannelFromSceneAction":
                 channel = self.channel(params["deviceUID"], params["channelNumber"])
                 self.removed.add((params["sceneActionUID"], channel.uid))
                 added = self.added.get(params["sceneActionUID"], [])
-                if channel in added:
-                    added.remove(channel)
+                if channel.uid in added:
+                    added.remove(channel.uid)
                 # The scene values are reset to the defaults, on the server only
                 for param_uid, param in self.parameters.items():
                     if param_uid.startswith(f"{channel.uid}-"):
@@ -268,6 +290,7 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         logging.getLogger().addHandler(self.log)
         self._patch = patch.object(enet, "EnetClient", OfflineEnetClient)
         self._patch.start()
+        OfflineEnetClient.reset_server()
         self._settle_patch = patch.object(aioenet.scenes, "LEARN_SETTLE_SECONDS", 0)
         self._settle_patch.start()
         self._restore_patch = patch.object(aioenet.scenes, "RESTORE_DELAY_SECONDS", 0)
@@ -830,6 +853,98 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
             await self.change_member("add_scene_member", member=entity_id)
         self.assertEqual(self.requests("writeChannelToBeLinksToDevice"), [])
         self.assertNotIn(entity_id, self.scene_state().attributes["entity_id"])
+
+    async def create_scene(self, **data):
+        self.hub.requests.clear()
+        await self.hass.services.async_call("enet", "create_scene", data, blocking=True)
+        requests = list(self.hub.requests)
+        await self.hass.async_block_till_done()  # the entry reloads
+        self.assertEqual(self.entry.state, config_entries.ConfigEntryState.LOADED)
+        self.hub = self.entry.runtime_data
+        return requests
+
+    async def test_create_scene_with_members_at_their_current_state(self):
+        dimmer_entity, dimmer = self.other_dimmer()
+        functions = aioenet.ChannelTypeFunctionName
+        dimmer.set_current_value(functions.ON_OFF, True)
+        dimmer.set_current_value(functions.BRIGHTNESS, 45)
+        _, switch, _ = self.scene_members()
+        _, switch_channel, _ = self.hub.scene_channels()
+        switch_channel.current_values[
+            switch_channel.get_channel_configuration_entry("outputDeviceFunctions", functions.ON_OFF)
+        ] = {"value": True}  # the default of the slot
+        dimmer_uid = f"{dimmer.uid}-PT_INDA.SCV1"
+        self.hub.learns = {dimmer_uid: 45}
+        # Adding them restarts them; they learn the state from before
+        self.hub.programming_turns_off = True
+
+        requests = await self.create_scene(name="Movie", members=[dimmer_entity, switch], icon="sofa")
+        methods = [m for m, _ in requests]
+        self.assertEqual(requests[methods.index("createSceneAction")][1],
+                         {"sceneActionName": "[libenet:34]Movie"})
+        self.assertEqual(methods.count("addActorChannelToSceneAction"), 2)
+        self.assertEqual(methods.count("writeChannelToBeLinksToDevice"), 2)
+        # Both were on: switched back on before the members learn
+        on_again = [p for m, p in requests if m == "callInputDeviceFunction"]
+        self.assertEqual([p["values"][0]["value"] for p in on_again], [45, True])
+        self.assertLess(methods.index("callInputDeviceFunction"), methods.index("storeActualSceneValues"))
+        # Only the dimmer changed from the default and is read back, nothing is programmed
+        self.assertEqual([p["deviceParameterUID"] for m, p in requests
+                          if m == "readValuesFromDeviceParameter"], [dimmer_uid])
+        self.assertNotIn("writeToBeValuesToDeviceParameter", methods)
+
+        scene = self.hass.states.get(self.entity_id("scene", "Enet Smart Home Server Movie"))
+        self.assertEqual(scene.attributes["entity_id"], [dimmer_entity, switch])
+        self.assertEqual(scene.attributes["levels"], {dimmer_entity: 45, switch: "on"})
+        self.entity_id("button", "Enet Smart Home Server Save Movie")
+        self.assert_no_warnings()
+
+    async def test_create_scene_rejects_other_entities(self):
+        with self.assertRaises(ServiceValidationError):
+            await self.create_scene(name="Movie", members=["light.not_enet"])
+        self.assertEqual(self.requests("createSceneAction"), [])
+
+    async def test_failed_create_scene_deletes_the_scene_again(self):
+        dimmer_entity, _ = self.other_dimmer()
+        _, switch, _ = self.scene_members()
+        self.hub.link_result = "TOO_MANY_LINKS"
+        with self.assertRaisesRegex(HomeAssistantError, "TOO_MANY_LINKS"):
+            await self.create_scene(name="Movie", members=[dimmer_entity, switch])
+        self.assertEqual(len(self.requests("deleteSceneAction")), 1)
+        self.assertEqual(sorted(self.hub.server_scenes), sorted(SCENE_NAMES))
+
+    async def test_delete_scene(self):
+        dimmer, switch, blind = self.hub.scene_channels()
+        self.hub.requests.clear()
+        await self.hass.services.async_call(
+            "enet", "delete_scene", {"entity_id": self.scene_state().entity_id}, blocking=True
+        )
+        self.assertEqual(self.requests("deleteSceneAction"), [{"sceneActionUID": "scene-1"}])
+        # The links of the former members' devices are programmed, so they are not left modified
+        self.assertEqual(
+            [p["deviceUID"] for p in self.requests("writeToBeLinksToDevice")],
+            list(dict.fromkeys(c.device.uid for c in (dimmer, switch, blind))),
+        )
+        await self.hass.async_block_till_done()  # the entry reloads
+        self.hub = self.entry.runtime_data
+        self.assertEqual(self.scene_entities(), ([], []))
+        self.assert_no_warnings()
+
+    async def test_scenes_of_locations_cant_be_deleted(self):
+        await self.set_scenes_option("all_with_location")
+        kitchen = self.entity_id("scene", "Enet Smart Home Server Kitchen lights on")
+        with self.assertRaises(ServiceValidationError):
+            await self.hass.services.async_call(
+                "enet", "delete_scene", {"entity_id": kitchen}, blocking=True
+            )
+        self.assertEqual(self.requests("deleteSceneAction"), [])
+
+    def test_icons_of_the_action_match_the_app(self):
+        import yaml  # noqa: PLC0415 - a dependency of Home Assistant
+
+        services = yaml.safe_load((REPO / "custom_components/enet/services.yaml").read_text())
+        options = services["create_scene"]["fields"]["icon"]["selector"]["select"]["options"]
+        self.assertEqual(tuple(options), aioenet.SCENE_ICONS)
 
     async def test_failed_write_raises_an_error(self):
         light, _, _ = self.scene_members()

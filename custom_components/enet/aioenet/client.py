@@ -802,6 +802,22 @@ class EnetClient:
         actions = (result or {}).get("sceneActions") or []
         return actions[0] if actions else None
 
+    async def create_scene_action(self, name):
+        """Create an empty scene on the server and return its uid"""
+        result = await self.request(
+            URL.SCENE, "createSceneAction", {"sceneActionName": name}
+        )
+        uid = (result or {}).get("sceneActionUID")
+        if not uid:
+            raise EnetServerError(f"The scene {name} was not created")
+        return uid
+
+    async def delete_scene_action(self, scene_uid):
+        """Delete a scene on the server. The server removes its links from the devices."""
+        await self.request(
+            URL.SCENE, "deleteSceneAction", {"sceneActionUID": scene_uid}
+        )
+
     async def add_scene_member(self, scene_uid, device_uid, channel_number):
         """Add an actuator channel to a scene and program its links"""
         result = await self.request(

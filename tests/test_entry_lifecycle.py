@@ -61,6 +61,9 @@ _stub("homeassistant.exceptions", ConfigEntryNotReady=ConfigEntryNotReady,
 _stub("homeassistant.const", Platform=Platform)
 _stub("homeassistant.core", HomeAssistant=object, callback=lambda func: func)
 _stub("homeassistant.helpers.entity", DeviceInfo=dict)
+_stub("homeassistant.helpers.config_validation",
+      config_entry_only_config_schema=lambda domain: None)
+_stub("homeassistant.helpers.typing", ConfigType=dict)
 _stub("homeassistant.helpers.device_registry", DeviceEntry=object,
       async_get=lambda hass: DeviceRegistry())
 

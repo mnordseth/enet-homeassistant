@@ -34,6 +34,25 @@ RESTORED_MODES = (
 )
 
 
+# The icons of scenes in the Enet app, in the order of its IconType. The app
+# names scenes "[libenet:<icon number>]<name>".
+SCENE_ICONS = (
+    "undefined", "alarm_clock", "away", "bath", "bed", "book", "boy", "bread",
+    "car", "chefs_hat", "croissant", "cup", "cupcake", "dinner", "fitness",
+    "gamepad", "girl", "heart", "home", "ice", "keys", "lightning", "man", "moon",
+    "movie_projector", "notebook", "notes", "palm_tree", "people", "pot", "rain",
+    "silverware", "siren", "soccer", "sofa", "storm", "suitcase", "sun", "sunset",
+    "teddy", "travel_case", "tv", "wall_clock", "wine", "woman", "blinds_down",
+    "blinds_up", "lights_off", "lights_on", "energy_off", "energy_on",
+)
+DEFAULT_SCENE_ICON = "lights_on"
+
+
+def app_scene_name(name, icon=DEFAULT_SCENE_ICON):
+    """The name of a scene as the Enet app names it, with its icon"""
+    return f"[libenet:{SCENE_ICONS.index(icon)}]{name}"
+
+
 def same_scene_value(a, b):
     """True if two scene values are equal, except for rounding"""
     if isinstance(a, str) or isinstance(b, str):
@@ -371,8 +390,56 @@ class EnetScene:
         finally:
             self._notify()
 
-    async def store_current_values(self):
-        """Store the current state of every member in the scene. Returns the
+    @classmethod
+    async def create(cls, client, name, channels, icon=DEFAULT_SCENE_ICON):
+        """Create a scene on the server with the channels as members, at their
+        current state. Returns the scene.
+
+        Adding the members programs their links, which restarts them: they are
+        switched back on, and then learn the state they had before. If a member
+        can't be added, the scene is deleted again.
+        """
+        states = {channel.uid: SceneMember.channel_state(channel) for channel in channels}
+        full_name = app_scene_name(name, icon)
+        scene = cls(client, {"uid": await client.create_scene_action(full_name),
+                             "name": full_name})
+        scene.values_loaded = True  # no members yet
+        try:
+            async with scene.keep_light_states(channels):
+                for channel in channels:
+                    await scene.add_member(channel)
+        except Exception:
+            log.warning("Scene %s: a member could not be added, deleting the scene", full_name)
+            try:
+                await scene.delete()
+            except (EnetServerError, aiohttp.ClientError, TimeoutError) as e:
+                log.warning("Scene %s could not be deleted: %s", full_name, e)
+            raise
+        # Let dimmers that were switched back on reach their level
+        await asyncio.sleep(LEARN_SETTLE_SECONDS)
+        await scene.store_current_values(states)
+        return scene
+
+    async def delete(self):
+        """Delete the scene on the server. The server removes the links from the
+        devices but marks them as modified, so their links are programmed
+        again, and lights that were on are switched back on."""
+        channels = [member.channel for member in self.members]
+        device_uids = list(dict.fromkeys(member.device_uid for member in self.members))
+        async with self.keep_light_states(channels):
+            await self.client.delete_scene_action(self.uid)
+            for device_uid in device_uids:
+                try:
+                    await self.client.write_links(device_uid)
+                except (EnetServerError, aiohttp.ClientError, TimeoutError) as e:
+                    log.warning("Scene %s: the links of a device could not be "
+                                "programmed after deleting it: %s", self.name, e)
+        self.members = []
+        self._notify()
+
+    async def store_current_values(self, states=None):
+        """Store the current state of every member in the scene, or the state
+        in states (channel uid -> SceneMember.channel_state()). Returns the
         number of members that changed.
 
         The members learn their current state from one scene telegram, and the
@@ -390,7 +457,7 @@ class EnetScene:
             if member.channel is None:
                 unknown.append(member)
                 continue
-            level, slats = member.current_values()
+            level, slats = member.current_values((states or {}).get(member.uid))
             if member.level is not None and member.level.value == level:
                 level = None
             if member.slats is not None and member.slats.value == slats:

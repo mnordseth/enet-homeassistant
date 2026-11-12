@@ -72,7 +72,21 @@ The scenes can be changed from Home Assistant. The changes are stored on the Ene
     member: light.kitchen
   ```
 
-Setting a level with `enet.set_scene_level` and adding or removing a member program the device by radio, which takes a few seconds per member (adding a member about 20 seconds). Programming restarts the device, and lights and switches that were on come back off: the integration switches them back on to their level afterwards. The members of the lights on/off scenes the server makes for each room can't be changed. Scenes can't be edited in Home Assistant's scene editor, which only edits Home Assistant's own scenes.
+- **Create a scene:** the action `enet.create_scene` creates a scene with lights, switches and covers at their current state. `icon` is the scene's icon in the Enet app (`lights_on` if left out). The scene is added in Home Assistant, with its *Save* button, and shows up in the Enet app.
+
+  ```yaml
+  action: enet.create_scene
+  data:
+    name: Movie
+    members:
+      - light.living_room
+      - light.kitchen
+    icon: movie_projector
+  ```
+
+- **Delete a scene:** the action `enet.delete_scene` deletes the scene on the Enet server, so it is gone from the Enet app and the scene buttons as well.
+
+Setting a level with `enet.set_scene_level`, adding or removing a member, and creating or deleting a scene program the devices by radio, which takes a few seconds per member (adding a member about 20 seconds). Programming restarts the device, and lights and switches that were on come back off: the integration switches them back on to their level afterwards. The lights on/off scenes the server makes for each room can't be changed or deleted. Scenes can't be edited in Home Assistant's scene editor, which only edits Home Assistant's own scenes.
 
 ### Motion detectors
 

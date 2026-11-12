@@ -16,9 +16,18 @@ from .client import (
 from .const import URL
 from .devices import ActuatorChannel, Device, DeviceChannel, SensorChannel, create_device
 from .errors import AuthError, EnetServerError
-from .scenes import EnetScene, SceneMember, SceneParameter, SceneValueKind
+from .scenes import (
+    DEFAULT_SCENE_ICON,
+    SCENE_ICONS,
+    EnetScene,
+    SceneMember,
+    SceneParameter,
+    SceneValueKind,
+)
 
 __all__ = [
+    "DEFAULT_SCENE_ICON",
+    "SCENE_ICONS",
     "URL",
     "ActuatorChannel",
     "AuthError",

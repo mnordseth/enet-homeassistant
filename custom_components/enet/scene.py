@@ -8,14 +8,22 @@ import voluptuous as vol
 
 from homeassistant.components.scene import Scene as SceneEntity
 from homeassistant.const import ATTR_ENTITY_ID, STATE_OFF, STATE_ON
-from homeassistant.core import callback
+from homeassistant.config_entries import ConfigEntryState
+from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import entity_platform
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo
 
-from .aioenet import EnetScene, EnetServerError, SceneMember, SceneValueKind
+from .aioenet import (
+    DEFAULT_SCENE_ICON,
+    SCENE_ICONS,
+    EnetScene,
+    EnetServerError,
+    SceneMember,
+    SceneValueKind,
+)
 from .const import DOMAIN, NAME_ENET_CONTROLLER, NAME_ENET_SERVER
 
 _LOGGER = logging.getLogger(__name__)
@@ -31,6 +39,12 @@ SERVICE_SAVE_SCENE = "save_scene"
 SERVICE_SET_SCENE_LEVEL = "set_scene_level"
 SERVICE_ADD_SCENE_MEMBER = "add_scene_member"
 SERVICE_REMOVE_SCENE_MEMBER = "remove_scene_member"
+SERVICE_CREATE_SCENE = "create_scene"
+SERVICE_DELETE_SCENE = "delete_scene"
+ATTR_NAME = "name"
+ATTR_MEMBERS = "members"
+ATTR_ICON = "icon"
+ATTR_CONFIG_ENTRY_ID = "config_entry_id"
 
 PERCENT = vol.All(vol.Coerce(int), vol.Range(min=0, max=100))
 SET_SCENE_LEVEL_SCHEMA = {
@@ -46,7 +60,73 @@ REMOVE_SCENE_MEMBER_SCHEMA = {vol.Required(ATTR_MEMBER): cv.entity_id}
 LIGHT_LEVEL_FIELDS = (ATTR_BRIGHTNESS_PCT, ATTR_STATE)
 COVER_LEVEL_FIELDS = (ATTR_POSITION, ATTR_TILT_POSITION)
 
+CREATE_SCENE_SCHEMA = vol.Schema(
+    {
+        vol.Required(ATTR_NAME): vol.All(cv.string, vol.Length(min=1)),
+        vol.Optional(ATTR_MEMBERS, default=[]): cv.entity_ids,
+        vol.Optional(ATTR_ICON, default=DEFAULT_SCENE_ICON): vol.In(SCENE_ICONS),
+        vol.Optional(ATTR_CONFIG_ENTRY_ID): cv.string,
+    }
+)
+
 MEMBER_DOMAINS = ("light", "switch", "cover")
+
+
+def channel_for_entity(hass: HomeAssistant, hub, entity_id: str):
+    """The Enet actuator channel of a light, switch or cover entity, or None"""
+    entry = er.async_get(hass).async_get(entity_id)
+    if entry is None or entry.platform != DOMAIN or entry.domain not in MEMBER_DOMAINS:
+        return None
+    return next(
+        (c for d in hub.devices for c in d.channels if c.uid == entry.unique_id), None
+    )
+
+
+def _entry_for_call(hass: HomeAssistant, call: ServiceCall):
+    """The loaded config entry an action is for: the one given, or the only one"""
+    entries = [
+        e for e in hass.config_entries.async_entries(DOMAIN)
+        if e.state is ConfigEntryState.LOADED
+    ]
+    if entry_id := call.data.get(ATTR_CONFIG_ENTRY_ID):
+        entries = [e for e in entries if e.entry_id == entry_id]
+        if not entries:
+            raise ServiceValidationError(f"No loaded Enet Smart Home entry {entry_id}")
+    if len(entries) != 1:
+        raise ServiceValidationError(
+            "There is no loaded Enet Smart Home entry" if not entries
+            else "There are several Enet servers, give the config_entry_id"
+        )
+    return entries[0]
+
+
+@callback
+def async_setup_services(hass: HomeAssistant) -> None:
+    """Actions that are not for an existing scene"""
+
+    async def create_scene(call: ServiceCall) -> None:
+        entry = _entry_for_call(hass, call)
+        hub = entry.runtime_data
+        name = call.data[ATTR_NAME]
+        channels = []
+        for entity_id in call.data[ATTR_MEMBERS]:
+            channel = channel_for_entity(hass, hub, entity_id)
+            if channel is None:
+                raise ServiceValidationError(
+                    f"{entity_id} is not a light, switch or cover of the Enet server"
+                )
+            if channel not in channels:
+                channels.append(channel)
+        try:
+            await EnetScene.create(hub, name, channels, call.data[ATTR_ICON])
+        except (EnetServerError, aiohttp.ClientError, TimeoutError) as e:
+            raise HomeAssistantError(f"Failed to create the scene {name}: {e}") from e
+        # The scenes are read when the entry is set up
+        hass.config_entries.async_schedule_reload(entry.entry_id)
+
+    hass.services.async_register(
+        DOMAIN, SERVICE_CREATE_SCENE, create_scene, schema=CREATE_SCENE_SCHEMA
+    )
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -66,6 +146,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     platform.async_register_entity_service(
         SERVICE_REMOVE_SCENE_MEMBER, REMOVE_SCENE_MEMBER_SCHEMA, "async_remove_scene_member"
     )
+    platform.async_register_entity_service(SERVICE_DELETE_SCENE, None, "async_delete_scene")
     _LOGGER.debug("Finished async setup()")
 
 
@@ -202,13 +283,20 @@ class EnetSceneEntity(SceneEntity):
 
     def _channel(self, entity_id):
         """The Enet actuator channel of a light, switch or cover entity, or None"""
-        entry = er.async_get(self.hass).async_get(entity_id)
-        if entry is None or entry.platform != DOMAIN or entry.domain not in MEMBER_DOMAINS:
-            return None
-        return next(
-            (c for d in self.scene.client.devices for c in d.channels if c.uid == entry.unique_id),
-            None,
-        )
+        return channel_for_entity(self.hass, self.scene.client, entity_id)
+
+    async def async_delete_scene(self) -> None:
+        """Delete the scene on the Enet server."""
+        if self.scene.automatic:
+            raise ServiceValidationError(
+                f"{self.name} is made by the Enet server for a location and can't be deleted"
+            )
+        try:
+            await self.scene.delete()
+        except (EnetServerError, aiohttp.ClientError, TimeoutError) as e:
+            raise HomeAssistantError(f"Failed to delete the scene {self.name}: {e}") from e
+        # The scenes are read when the entry is set up: removes this entity
+        self.hass.config_entries.async_schedule_reload(self.platform.config_entry.entry_id)
 
     async def async_add_scene_member(self, **kwargs) -> None:
         """Add a light, switch or cover to the scene, at the given level or at

@@ -155,6 +155,32 @@
                     "description": "Light, switch or cover to remove from the scene."
                 }
             }
+        },
+        "create_scene": {
+            "name": "Create scene",
+            "description": "Creates a scene on the Enet server with lights, switches and covers at their current state. The scene is shown in the Enet app as well.",
+            "fields": {
+                "name": {
+                    "name": "Name",
+                    "description": "Name of the scene."
+                },
+                "members": {
+                    "name": "Members",
+                    "description": "Lights, switches and covers of the scene. They are stored at their current state."
+                },
+                "icon": {
+                    "name": "Icon",
+                    "description": "Icon of the scene in the Enet app."
+                },
+                "config_entry_id": {
+                    "name": "Enet server",
+                    "description": "The Enet server to create the scene on. Only needed with more than one."
+                }
+            }
+        },
+        "delete_scene": {
+            "name": "Delete scene",
+            "description": "Deletes the scene on the Enet server. It is gone from the Enet app and the scene buttons as well."
         }
     },
     "options": {

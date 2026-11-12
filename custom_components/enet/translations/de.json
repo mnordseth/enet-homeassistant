@@ -155,6 +155,32 @@
                     "description": "Licht, Schalter oder Rollladen, der aus der Szene entfernt wird."
                 }
             }
+        },
+        "create_scene": {
+            "name": "Szene erstellen",
+            "description": "Erstellt eine Szene auf dem Enet Server mit Lichtern, Schaltern und Rollläden in ihrem aktuellen Zustand. Die Szene wird auch in der Enet App angezeigt.",
+            "fields": {
+                "name": {
+                    "name": "Name",
+                    "description": "Name der Szene."
+                },
+                "members": {
+                    "name": "Mitglieder",
+                    "description": "Lichter, Schalter und Rollläden der Szene. Sie werden in ihrem aktuellen Zustand gespeichert."
+                },
+                "icon": {
+                    "name": "Symbol",
+                    "description": "Symbol der Szene in der Enet App."
+                },
+                "config_entry_id": {
+                    "name": "Enet Server",
+                    "description": "Der Enet Server, auf dem die Szene erstellt wird. Nur bei mehr als einem nötig."
+                }
+            }
+        },
+        "delete_scene": {
+            "name": "Szene löschen",
+            "description": "Löscht die Szene auf dem Enet Server. Sie verschwindet auch aus der Enet App und von den Szenentasten."
         }
     },
     "options": {
