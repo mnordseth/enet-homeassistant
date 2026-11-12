@@ -16,12 +16,9 @@ from homeassistant.helpers.typing import ConfigType
 
 from .aioenet import AuthError, EnetClient, EnetServerError, normalize_url
 from .const import (
-    CONF_SCENES,
-    DEFAULT_SCENES,
+    CONF_LOCATION_SCENES,
     DOMAIN,
     NAME_ENET_CONTROLLER,
-    SCENES_ALL_WITH_LOCATION,
-    SCENES_LIBENET,
 )
 from .device import async_setup_devices
 from .events import async_setup_enet_events
@@ -87,11 +84,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: EnetConfigEntry) -> bool
             entry, unique_id=normalize_url(entry.data["url"])
         )
 
-    scenes_option = entry.options.get(CONF_SCENES, DEFAULT_SCENES)
     try:
         hub.scenes = await hub.get_scene_actions(
-            only_libenet=scenes_option == SCENES_LIBENET,
-            automatic_scenes=scenes_option == SCENES_ALL_WITH_LOCATION,
+            only_libenet=False,
+            automatic_scenes=entry.options.get(CONF_LOCATION_SCENES, False),
         )
         hub.scenes_read = True
     except (TimeoutError, aiohttp.ClientError, EnetServerError) as e:

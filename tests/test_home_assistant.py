@@ -52,7 +52,7 @@ from custom_components.enet import aioenet, device_trigger, diagnostics  # noqa:
 SCENES = {
     "sceneActionUIDs": [
         {"sceneActionUID": "scene-1", "sceneActionName": "[libenet] Evening"},
-        {"sceneActionUID": "scene-2", "sceneActionName": "Made in the Enet app"},
+        {"sceneActionUID": "scene-2", "sceneActionName": "Made without the app"},
         {"sceneActionUID": "scene-3", "sceneActionName": "~LocSceneLightsOn_Kitchen"},
         {"sceneActionUID": "scene-4", "sceneActionName": "~LocSceneBlindsOn_Kitchen"},
     ]
@@ -477,12 +477,12 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(len(await self.call("cover", "stop_cover_tilt", cover)), 1)
         self.assert_no_warnings()
 
-    async def set_scenes_option(self, value):
-        """Change the scenes option in the options flow, the entry reloads"""
+    async def set_location_scenes(self, value):
+        """Change the option in the options flow, the entry reloads"""
         result = await self.hass.config_entries.options.async_init(self.entry.entry_id)
         self.assertEqual(result["type"], "form")
         result = await self.hass.config_entries.options.async_configure(
-            result["flow_id"], {"scenes": value}
+            result["flow_id"], {"location_scenes": value}
         )
         self.assertEqual(result["type"], "create_entry")
         await self.hass.async_block_till_done()
@@ -495,39 +495,39 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
             sorted(e.unique_id for e in self.entities("button")),
         )
 
-    async def test_scenes_option_adds_and_removes_scenes(self):
-        await self.set_scenes_option("all")
-        self.assertEqual(self.scene_entities(), (
-            ["scene-1", "scene-2"], ["scene-1-save", "scene-2-save"]))
-
-        # The automatic scenes too, but not the one without members
-        await self.set_scenes_option("all_with_location")
+    async def test_location_scenes_option_adds_and_removes_them(self):
+        # The scenes of locations too, but not the one without members
+        await self.set_location_scenes(True)
         self.assertEqual(self.scene_entities(), (
             ["scene-1", "scene-2", "scene-3"], ["scene-1-save", "scene-2-save", "scene-3-save"]))
         self.entity_id("scene", "Enet Smart Home Server Kitchen lights on")
-        self.entity_id("scene", "Enet Smart Home Server Made in the Enet app")
+        self.assertEqual(self.entry.options, {"location_scenes": True})
 
-        await self.set_scenes_option("libenet")
-        self.assertEqual(self.scene_entities(), (["scene-1"], ["scene-1-save"]))
+        await self.set_location_scenes(False)
+        self.assertEqual(self.scene_entities(), (
+            ["scene-1", "scene-2"], ["scene-1-save", "scene-2-save"]))
         self.assert_no_warnings()
 
     async def test_scenes_are_kept_when_they_cannot_be_read(self):
-        await self.set_scenes_option("all")
+        await self.set_location_scenes(True)
         with patch.object(OfflineEnetClient, "get_scene_actions",
                           side_effect=aioenet.EnetServerError("busy")):
-            await self.set_scenes_option("libenet")
+            await self.set_location_scenes(False)
         self.assertEqual(self.scene_entities(), (
-            ["scene-1", "scene-2"], ["scene-1-save", "scene-2-save"]))
+            ["scene-1", "scene-2", "scene-3"], ["scene-1-save", "scene-2-save", "scene-3-save"]))
         self.assertEqual(
             [r.getMessage() for r in self.log.records],
             ["Failed to read the scenes of the Enet server: busy"],
         )
 
-    async def test_only_libenet_scenes_are_added_and_activated(self):
-        scenes = self.entities("scene")
-        self.assertEqual([e.unique_id for e in scenes], ["scene-1"])
-        self.assertEqual(self.requests("getSceneActions"), [{"sceneActionUIDs": ["scene-1"]}])
+    async def test_scenes_are_added_and_activated(self):
+        # Also scenes without the "[libenet:<icon>]" name of the Enet app,
+        # not the scenes of locations
+        self.assertEqual(self.scene_entities()[0], ["scene-1", "scene-2"])
+        self.assertEqual(self.requests("getSceneActions"),
+                         [{"sceneActionUIDs": ["scene-1", "scene-2"]}])
         scene = self.entity_id("scene", "Enet Smart Home Server Evening")
+        self.entity_id("scene", "Enet Smart Home Server Made without the app")
 
         self.hub.requests.clear()
         await self.hass.services.async_call(
@@ -839,7 +839,7 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(self.link_requests(), [])
 
         # The scenes the server makes for locations can't be changed
-        await self.set_scenes_option("all_with_location")
+        await self.set_location_scenes(True)
         kitchen = self.entity_id("scene", "Enet Smart Home Server Kitchen lights on")
         with self.assertRaises(ServiceValidationError):
             await self.hass.services.async_call(
@@ -927,11 +927,11 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         )
         await self.hass.async_block_till_done()  # the entry reloads
         self.hub = self.entry.runtime_data
-        self.assertEqual(self.scene_entities(), ([], []))
+        self.assertEqual(self.scene_entities(), (["scene-2"], ["scene-2-save"]))
         self.assert_no_warnings()
 
     async def test_scenes_of_locations_cant_be_deleted(self):
-        await self.set_scenes_option("all_with_location")
+        await self.set_location_scenes(True)
         kitchen = self.entity_id("scene", "Enet Smart Home Server Kitchen lights on")
         with self.assertRaises(ServiceValidationError):
             await self.hass.services.async_call(

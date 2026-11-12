@@ -334,5 +334,13 @@
   "scene-1-save": {
     "entity_id": "button.enet_smart_home_server_save_evening",
     "name": "Enet Smart Home Server Save Evening"
+  },
+  "scene-2": {
+    "entity_id": "scene.enet_smart_home_server_made_without_the_app",
+    "name": "Enet Smart Home Server Made without the app"
+  },
+  "scene-2-save": {
+    "entity_id": "button.enet_smart_home_server_save_made_without_the_app",
+    "name": "Enet Smart Home Server Save Made without the app"
   }
 }
