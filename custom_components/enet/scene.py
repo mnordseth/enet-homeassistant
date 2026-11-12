@@ -1,5 +1,6 @@
 """Support for Enet scenes"""
 
+from collections import Counter
 import logging
 from typing import Any
 
@@ -12,6 +13,7 @@ from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_platform
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo
@@ -70,6 +72,9 @@ CREATE_SCENE_SCHEMA = vol.Schema(
 )
 
 MEMBER_DOMAINS = ("light", "switch", "cover")
+# Set in the entity registry options of a scene once it was put in the area
+# of its room, so an area the user removes stays removed
+OPTION_ROOM_AREA_SET = "room_area_set"
 
 
 def channel_for_entity(hass: HomeAssistant, hub, entity_id: str):
@@ -133,7 +138,12 @@ async def async_setup_entry(hass, entry, async_add_entities):
     """Add Enet scenes"""
     hub = entry.runtime_data
     async_remove_stale_entities(hass, entry, "scene", {scene.uid for scene in hub.scenes})
-    async_add_entities([EnetSceneEntity(scene) for scene in hub.scenes])
+    room_areas = {}
+    if any(scene.location_uid for scene in hub.scenes):
+        room_areas = await _async_room_areas(hass, entry.entry_id, hub)
+    async_add_entities(
+        [EnetSceneEntity(scene, room_areas.get(scene.location_uid)) for scene in hub.scenes]
+    )
 
     platform = entity_platform.async_get_current_platform()
     platform.async_register_entity_service(SERVICE_SAVE_SCENE, None, "async_save_scene")
@@ -148,6 +158,32 @@ async def async_setup_entry(hass, entry, async_add_entities):
     )
     platform.async_register_entity_service(SERVICE_DELETE_SCENE, None, "async_delete_scene")
     _LOGGER.debug("Finished async setup()")
+
+
+async def _async_room_areas(hass: HomeAssistant, entry_id: str, hub) -> dict[str, str]:
+    """Location uid of each room -> the area most of its devices are in"""
+    try:
+        rooms = await hub.get_room_devices()
+    except (EnetServerError, aiohttp.ClientError, TimeoutError) as e:
+        _LOGGER.warning("Failed to read the rooms of the Enet server: %s", e)
+        return {}
+    dev_reg = dr.async_get(hass)
+
+    def device(uid):
+        if hasattr(dev_reg, "async_get_device_by_identifier"):  # Home Assistant 2026.11
+            return dev_reg.async_get_device_by_identifier((DOMAIN, uid), entry_id)
+        return dev_reg.async_get_device(identifiers={(DOMAIN, uid)})
+
+    areas = {}
+    for location_uid, device_uids in rooms.items():
+        counts = Counter(
+            found.area_id
+            for uid in device_uids
+            if (found := device(uid)) and found.area_id
+        ).most_common(2)
+        if counts and (len(counts) == 1 or counts[0][1] > counts[1][1]):
+            areas[location_uid] = counts[0][0]
+    return areas
 
 
 def scene_name(scene: EnetScene) -> str:
@@ -176,8 +212,17 @@ def server_device_info() -> DeviceInfo:
     )
 
 
+def check_changeable(scene: EnetScene) -> None:
+    """The scenes the server makes for locations can't be changed"""
+    if scene.automatic:
+        raise ServiceValidationError(
+            f"{scene_name(scene)} is made by the Enet server for a location and can't be changed"
+        )
+
+
 async def async_store_current_values(scene: EnetScene) -> None:
     """Store the current state of every member in the scene"""
+    check_changeable(scene)
     try:
         changed = await scene.store_current_values()
     except ValueError as e:
@@ -196,8 +241,9 @@ class EnetSceneEntity(SceneEntity):
     # The levels can be long, and are read from the Enet server anyway
     _unrecorded_attributes = frozenset({ATTR_LEVELS})
 
-    def __init__(self, scene: EnetScene):
+    def __init__(self, scene: EnetScene, room_area: str | None = None):
         self.scene = scene
+        self._room_area = room_area  # the area of the room of a room scene
         self.uid = scene.uid
         _LOGGER.debug("EnetSceneEntity.init()  done %s", self.name)
 
@@ -219,6 +265,23 @@ class EnetSceneEntity(SceneEntity):
     async def async_added_to_hass(self) -> None:
         """Update the attributes when the scene values change."""
         self.async_on_remove(self.scene.subscribe(self.async_write_ha_state))
+        self._async_set_room_area()
+
+    @callback
+    def _async_set_room_area(self) -> None:
+        """Put the scene of a room in the area of the room's devices, once, and
+        only when it has no area"""
+        if not self._room_area:
+            return
+        ent_reg = er.async_get(self.hass)
+        entry = ent_reg.async_get(self.entity_id)
+        if entry is None or entry.options.get(DOMAIN, {}).get(OPTION_ROOM_AREA_SET):
+            return
+        if entry.area_id is None:
+            ent_reg.async_update_entity(self.entity_id, area_id=self._room_area)
+        ent_reg.async_update_entity_options(
+            self.entity_id, DOMAIN, {**entry.options.get(DOMAIN, {}), OPTION_ROOM_AREA_SET: True}
+        )
 
     async def async_activate(self, **kwargs):
         """Activate Enet scene."""
@@ -254,6 +317,7 @@ class EnetSceneEntity(SceneEntity):
 
     async def async_set_scene_level(self, **kwargs) -> None:
         """Change the level of one member of the scene."""
+        check_changeable(self.scene)
         member_entity_id = kwargs[ATTR_MEMBER]
         entry = er.async_get(self.hass).async_get(member_entity_id)
         member = None
@@ -273,13 +337,6 @@ class EnetSceneEntity(SceneEntity):
             raise HomeAssistantError(
                 f"Failed to change {member_entity_id} in scene {self.name}: {e}"
             ) from e
-
-    def _check_members_changeable(self) -> None:
-        if self.scene.automatic:
-            raise ServiceValidationError(
-                f"{self.name} is made by the Enet server for a location, "
-                "its members can't be changed"
-            )
 
     def _channel(self, entity_id):
         """The Enet actuator channel of a light, switch or cover entity, or None"""
@@ -301,7 +358,7 @@ class EnetSceneEntity(SceneEntity):
     async def async_add_scene_member(self, **kwargs) -> None:
         """Add a light, switch or cover to the scene, at the given level or at
         its current state."""
-        self._check_members_changeable()
+        check_changeable(self.scene)
         entity_id = kwargs[ATTR_MEMBER]
         channel = self._channel(entity_id)
         if channel is None:
@@ -353,7 +410,7 @@ class EnetSceneEntity(SceneEntity):
 
     async def async_remove_scene_member(self, **kwargs) -> None:
         """Remove a light, switch or cover from the scene."""
-        self._check_members_changeable()
+        check_changeable(self.scene)
         entity_id = kwargs[ATTR_MEMBER]
         channel = self._channel(entity_id)
         member = self.scene.get_member(channel.uid) if channel is not None else None

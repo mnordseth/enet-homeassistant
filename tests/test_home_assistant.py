@@ -42,6 +42,7 @@ from homeassistant.components.cover import CoverEntityFeature  # noqa: E402
 from homeassistant.const import ATTR_FRIENDLY_NAME, STATE_UNAVAILABLE  # noqa: E402
 from homeassistant.core_config import async_process_ha_core_config  # noqa: E402
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError  # noqa: E402
+from homeassistant.helpers import area_registry as ar  # noqa: E402
 from homeassistant.helpers import device_registry as dr  # noqa: E402
 from homeassistant.helpers import entity_registry as er  # noqa: E402
 
@@ -58,6 +59,8 @@ SCENES = {
     ]
 }
 SCENE_NAMES = {s["sceneActionUID"]: s["sceneActionName"] for s in SCENES["sceneActionUIDs"]}
+# The scenes of locations belong to the room Kitchen
+SCENE_LOCATIONS = {"scene-3": "loc-kitchen", "scene-4": "loc-kitchen"}
 
 
 SCENE_SLOT = 5
@@ -172,8 +175,19 @@ class OfflineEnetClient(aioenet.EnetClient):
                     "sceneParameters": scene_parameters,
                 })
             actions.append({"uid": scene_uid, "name": self.server_scenes[scene_uid],
+                            "locationUID": SCENE_LOCATIONS.get(scene_uid),
                             "deviceChannels": device_channels})
         return {"sceneActions": actions}
+
+    def locations(self):
+        """The home with a floor and the room Kitchen, with the dimmer and switch of the scene"""
+        dimmer, switch, _ = self.scene_channels()
+        room = {"uid": "loc-kitchen", "type": 3, "name": "Kitchen", "childLocations": [],
+                "deviceUIDs": [{"deviceUID": dimmer.device.uid}, {"deviceUID": switch.device.uid}]}
+        floor = {"uid": "loc-floor", "type": 2, "name": "Ground floor",
+                 "childLocations": [room], "deviceUIDs": []}
+        return {"locations": [{"uid": "loc-home", "type": 1, "name": "Home",
+                               "childLocations": [floor], "deviceUIDs": []}]}
 
     async def request(self, url, method, params, *args, **kwargs):
         self.requests.append((method, params))
@@ -190,6 +204,8 @@ class OfflineEnetClient(aioenet.EnetClient):
                 return {"sceneActionUID": uid}
             case "deleteSceneAction":
                 self.server_scenes.pop(params["sceneActionUID"])
+            case "getLocations":
+                return self.locations()
             case "getSceneActions":
                 return self.scene_actions(params["sceneActionUIDs"])
             case "getToBeValuesFromDeviceParameter":
@@ -499,7 +515,7 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         # The scenes of locations too, but not the one without members
         await self.set_location_scenes(True)
         self.assertEqual(self.scene_entities(), (
-            ["scene-1", "scene-2", "scene-3"], ["scene-1-save", "scene-2-save", "scene-3-save"]))
+            ["scene-1", "scene-2", "scene-3"], ["scene-1-save", "scene-2-save"]))
         self.entity_id("scene", "Enet Smart Home Server Kitchen lights on")
         self.assertEqual(self.entry.options, {"location_scenes": True})
 
@@ -508,13 +524,75 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
             ["scene-1", "scene-2"], ["scene-1-save", "scene-2-save"]))
         self.assert_no_warnings()
 
+    def put_room_devices_in_areas(self, dimmer_area, switch_area):
+        """Put the devices of the room Kitchen in areas, returns the area ids"""
+        areas = ar.async_get(self.hass)
+        ids = {}
+        dimmer, switch, _ = self.hub.scene_channels()
+        for channel, name in ((dimmer, dimmer_area), (switch, switch_area)):
+            if name:
+                area = areas.async_get_area_by_name(name) or areas.async_create(name)
+                ids[name] = area.id
+                dr.async_get(self.hass).async_update_device(
+                    self.device(channel.device.uid).id, area_id=area.id
+                )
+        return ids
+
+    def scene_area(self, name):
+        ent_reg = er.async_get(self.hass)
+        return ent_reg.async_get(self.entity_id("scene", name)).area_id
+
+    async def test_room_scenes_get_the_area_of_their_room(self):
+        ids = self.put_room_devices_in_areas("Kitchen", "Kitchen")
+        await self.set_location_scenes(True)
+        self.assertEqual(self.scene_area("Enet Smart Home Server Kitchen lights on"), ids["Kitchen"])
+        self.assertIsNone(self.scene_area("Enet Smart Home Server Evening"))
+        self.assert_no_warnings()
+
+    async def test_room_scene_areas_changed_by_the_user_are_kept(self):
+        ids = self.put_room_devices_in_areas("Kitchen", None)  # the area of most devices
+        await self.set_location_scenes(True)
+        name = "Enet Smart Home Server Kitchen lights on"
+        self.assertEqual(self.scene_area(name), ids["Kitchen"])
+
+        # Removed by the user: not set again after a reload
+        er.async_get(self.hass).async_update_entity(self.entity_id("scene", name), area_id=None)
+        await self.hass.config_entries.async_reload(self.entry.entry_id)
+        await self.hass.async_block_till_done()
+        self.assertIsNone(self.scene_area(name))
+
+    async def test_room_scenes_get_no_area_when_the_devices_are_split(self):
+        self.put_room_devices_in_areas("Kitchen", "Dining room")
+        await self.set_location_scenes(True)
+        self.assertIsNone(self.scene_area("Enet Smart Home Server Kitchen lights on"))
+
+    async def test_location_scenes_cant_be_changed(self):
+        await self.set_location_scenes(True)
+        kitchen = self.entity_id("scene", "Enet Smart Home Server Kitchen lights on")
+        light, _, _ = self.scene_members()
+        self.hub.requests.clear()
+        for service, data in (
+            ("save_scene", {}),
+            ("set_scene_level", {"member": light, "brightness_pct": 20}),
+            ("remove_scene_member", {"member": light}),
+            ("delete_scene", {}),
+        ):
+            with self.subTest(service=service), self.assertRaisesRegex(
+                ServiceValidationError, "made by the Enet server"
+            ):
+                await self.hass.services.async_call(
+                    "enet", service, {"entity_id": kitchen, **data}, blocking=True
+                )
+        self.assertEqual(self.requests("storeActualSceneValues"), [])
+        self.assertEqual(self.written(), [])
+
     async def test_scenes_are_kept_when_they_cannot_be_read(self):
         await self.set_location_scenes(True)
         with patch.object(OfflineEnetClient, "get_scene_actions",
                           side_effect=aioenet.EnetServerError("busy")):
             await self.set_location_scenes(False)
         self.assertEqual(self.scene_entities(), (
-            ["scene-1", "scene-2", "scene-3"], ["scene-1-save", "scene-2-save", "scene-3-save"]))
+            ["scene-1", "scene-2", "scene-3"], ["scene-1-save", "scene-2-save"]))
         self.assertEqual(
             [r.getMessage() for r in self.log.records],
             ["Failed to read the scenes of the Enet server: busy"],

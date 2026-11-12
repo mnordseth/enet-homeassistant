@@ -208,6 +208,8 @@ class EnetScene:
         self.client = client
         self.uid = raw["uid"]
         self.name = raw.get("name", "")
+        # The location of the scenes the server makes for locations, else None
+        self.location_uid = raw.get("locationUID")
         self.members = [SceneMember(self, member) for member in raw.get("deviceChannels", [])]
         self.values_loaded = False
         self._subscribers = []

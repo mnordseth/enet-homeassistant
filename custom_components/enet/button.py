@@ -18,9 +18,10 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    """Add a save button for every Enet scene"""
+    """Add a save button for every Enet scene, except the scenes the server
+    makes for locations, which can't be changed"""
     hub = entry.runtime_data
-    buttons = [EnetSceneSaveButton(scene) for scene in hub.scenes]
+    buttons = [EnetSceneSaveButton(scene) for scene in hub.scenes if not scene.automatic]
     async_remove_stale_entities(
         hass, entry, "button", {button.unique_id for button in buttons}
     )

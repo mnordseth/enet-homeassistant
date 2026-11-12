@@ -45,6 +45,8 @@ VALUE_TYPE_ROCKER_SWITCH_TIME = "VT_ROCKER_SWITCH_TIME"
 VALUE_DOWN_BUTTON = "DOWN_BUTTON"
 EVENT_RETRY_BASE_DELAY = 2
 PING_INTERVAL = 28
+# Location types: the home, a floor, a room. Only rooms have devices.
+LOCATION_TYPE_ROOM = 3
 
 
 @dataclass
@@ -545,6 +547,21 @@ class EnetClient:
         params = {"locationUIDs": []}
         result = await self.request(URL.VISUALIZATION, "getLocations", params)
         return result["locations"]
+
+    async def get_room_devices(self):
+        """Return the rooms of the server: location uid -> uids of its devices"""
+        rooms = {}
+
+        def walk(locations):
+            for location in locations:
+                if location.get("type") == LOCATION_TYPE_ROOM:
+                    rooms[location["uid"]] = [
+                        device["deviceUID"] for device in location.get("deviceUIDs") or []
+                    ]
+                walk(location.get("childLocations") or [])
+
+        walk(await self.get_locations())
+        return rooms
 
     async def get_device_locations(self):
         """Return a dict of locations to device"""

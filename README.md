@@ -35,7 +35,7 @@ Button presses are also fired on the event bus as `enet_event`, with the data `d
 
 The scenes of the Enet server are added as scenes: the scenes made in the Enet app, and scenes created from Home Assistant. Activating one runs the scene on the Enet server, the same as the scene buttons and the Enet app.
 
-The server also makes lights on/off scenes for each room, each floor and the whole home, which the Enet app uses for the on/off switch of a room. To add those too, turn on **Lights on/off scenes of rooms** under **Settings → Devices & services → Enet Smart Home → Configure**. They are named like *Kitchen lights on*. Room scenes without members, like the blinds scenes in a house without blinds, are left out.
+The server also makes lights on/off scenes for each room, each floor and the whole home, which the Enet app uses for the on/off switch of a room. To add those too, turn on **Lights on/off scenes of rooms** under **Settings → Devices & services → Enet Smart Home → Configure**. They are named like *Kitchen lights on*, and are put in the area of the room's devices. Room scenes without members, like the blinds scenes in a house without blinds, are left out. They can be activated, but not changed: they have no *Save* button, and the server keeps their members in step with the rooms itself.
 
 When the option is changed, the integration reloads. Scenes that are no longer added are removed, with their *Save* buttons.
 
