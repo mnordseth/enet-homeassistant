@@ -21,6 +21,10 @@ The integration talks to the server on your local network. Changes are pushed by
 | Battery powered devices | Battery state sensor (diagnostic) |
 | Scenes on the Enet server | Scene and a button to save it (see below) |
 
+### Areas and floors
+
+The devices are put in an area for their room in the Enet server, and the areas on floors for the server's floors. Floors are created when needed. Rooms with the same name on different floors become areas like *Hall (First floor)*. The area is only suggested when a device is added: devices that come back after removing and adding the integration again keep the area they had. An area gets its floor once, and only if it has none, so areas and floors you change are kept.
+
 ### Buttons
 
 Every button creates an event entity, and a rocker creates one for each side. Each button can be used as a device trigger in automations for:

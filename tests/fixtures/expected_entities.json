@@ -36,35 +36,35 @@
     "name": "Name 15"
   },
   "1fb68d33-bc85-43aa-b459-34510110013a-1": {
-    "entity_id": "light.name_16_name_17",
+    "entity_id": "light.kitchen_ground_floor_name_16_name_17",
     "name": "Name 16 Name 17"
   },
   "1fb68d33-bc85-43aa-b459-34510110013a-2": {
-    "entity_id": "light.name_16_name_19",
+    "entity_id": "light.kitchen_ground_floor_name_16_name_19",
     "name": "Name 16 Name 19"
   },
   "1fb68d33-bc85-43aa-b459-34510110013a-3": {
-    "entity_id": "light.name_16_name_21",
+    "entity_id": "light.kitchen_ground_floor_name_16_name_21",
     "name": "Name 16 Name 21"
   },
   "1fb68d33-bc85-43aa-b459-34510110013a-4": {
-    "entity_id": "switch.name_16_name_23",
+    "entity_id": "switch.kitchen_ground_floor_name_16_name_23",
     "name": "Name 16 Name 23"
   },
   "1fb68d33-bc85-43aa-b459-34510110013a-5": {
-    "entity_id": "light.name_16_name_18",
+    "entity_id": "light.kitchen_ground_floor_name_16_name_18",
     "name": "Name 16 Name 18"
   },
   "1fb68d33-bc85-43aa-b459-34510110013a-6": {
-    "entity_id": "light.name_16_name_20",
+    "entity_id": "light.kitchen_ground_floor_name_16_name_20",
     "name": "Name 16 Name 20"
   },
   "1fb68d33-bc85-43aa-b459-34510110013a-7": {
-    "entity_id": "light.name_16_name_22",
+    "entity_id": "light.kitchen_ground_floor_name_16_name_22",
     "name": "Name 16 Name 22"
   },
   "1fb68d33-bc85-43aa-b459-34510110013a-8": {
-    "entity_id": "light.name_16_name_24",
+    "entity_id": "light.kitchen_ground_floor_name_16_name_24",
     "name": "Name 16 Name 24"
   },
   "1fb68d33-bc85-43aa-b459-345104305726-1": {
@@ -76,27 +76,27 @@
     "name": "Name 14"
   },
   "1fb68d33-bc85-43aa-b459-3451045004ce-1": {
-    "entity_id": "light.name_46_name_47",
+    "entity_id": "light.kitchen_first_floor_name_46_name_47",
     "name": "Name 46 Name 47"
   },
   "1fb68d33-bc85-43aa-b459-3451045004ce-2": {
-    "entity_id": "light.name_46_name_49",
+    "entity_id": "light.kitchen_first_floor_name_46_name_49",
     "name": "Name 46 Name 49"
   },
   "1fb68d33-bc85-43aa-b459-3451045004ce-3": {
-    "entity_id": "cover.name_46_name_51",
+    "entity_id": "cover.kitchen_first_floor_name_46_name_51",
     "name": "Name 46 Name 51"
   },
   "1fb68d33-bc85-43aa-b459-3451045004ce-4": {
-    "entity_id": "cover.name_46_name_52",
+    "entity_id": "cover.kitchen_first_floor_name_46_name_52",
     "name": "Name 46 Name 52"
   },
   "1fb68d33-bc85-43aa-b459-3451045004ce-5": {
-    "entity_id": "light.name_46_name_48",
+    "entity_id": "light.kitchen_first_floor_name_46_name_48",
     "name": "Name 46 Name 48"
   },
   "1fb68d33-bc85-43aa-b459-3451045004ce-6": {
-    "entity_id": "light.name_46_name_50",
+    "entity_id": "light.kitchen_first_floor_name_46_name_50",
     "name": "Name 46 Name 50"
   },
   "1fb68d33-bc85-43aa-b459-345104609a38-1-current": {
@@ -236,7 +236,7 @@
     "name": "Name 5 Battery state"
   },
   "83ec3031-f8f0-4972-a92b-2df30000175b-1": {
-    "entity_id": "light.name_1",
+    "entity_id": "light.kitchen_ground_floor_name_1",
     "name": "Name 1"
   },
   "83ec3031-f8f0-4972-a92b-2df300001ced-1-button-1": {

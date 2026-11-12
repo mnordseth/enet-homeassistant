@@ -6,6 +6,7 @@ import time
 import json
 import random
 
+from collections import Counter
 from dataclasses import dataclass
 
 import asyncio
@@ -46,6 +47,7 @@ VALUE_DOWN_BUTTON = "DOWN_BUTTON"
 EVENT_RETRY_BASE_DELAY = 2
 PING_INTERVAL = 28
 # Location types: the home, a floor, a room. Only rooms have devices.
+LOCATION_TYPE_FLOOR = 2
 LOCATION_TYPE_ROOM = 3
 
 
@@ -514,9 +516,10 @@ class EnetClient:
 
     async def get_devices(self, device_uids=None):
         """Get all the devices registered on the server"""
-        device_locations = {}
+        locations = await self.get_locations()
+        device_locations = self._device_paths(locations)
+        places = self._device_places(locations)
         if not self._raw_json:
-            device_locations = await self.get_device_locations()
             if device_uids is None:
                 device_uids = list(device_locations.keys())
             params = {
@@ -538,15 +541,41 @@ class EnetClient:
                 log.info("Ignoring catalog device %s", device.name)
                 continue
             device.location = device_locations.get(device.uid, "")
+            device.room, device.floor = places.get(device.uid, (None, None))
             devices.append(device)
 
+        # Rooms with the same name on different floors are different areas
+        rooms = {(d.room, d.floor) for d in devices if d.room}
+        names = Counter(room for room, _ in rooms)
+        for device in devices:
+            if device.room and names[device.room] > 1 and device.floor:
+                device.area_name = f"{device.room} ({device.floor})"
+            else:
+                device.area_name = device.room or ""
         return devices
 
     async def get_locations(self):
         """Get all locations"""
         params = {"locationUIDs": []}
         result = await self.request(URL.VISUALIZATION, "getLocations", params)
-        return result["locations"]
+        return (result or {}).get("locations", [])
+
+    @staticmethod
+    def _device_places(locations):
+        """Device uid -> (room name, floor name), from the location types"""
+        places = {}
+
+        def walk(locations, floor):
+            for location in locations:
+                if location.get("type") == LOCATION_TYPE_FLOOR:
+                    floor = location["name"]
+                room = location["name"] if location.get("type") == LOCATION_TYPE_ROOM else None
+                for device in location.get("deviceUIDs") or []:
+                    places[device["deviceUID"]] = (room, floor)
+                walk(location.get("childLocations") or [], floor)
+
+        walk(locations, None)
+        return places
 
     async def get_room_devices(self):
         """Return the rooms of the server: location uid -> uids of its devices"""
@@ -564,8 +593,12 @@ class EnetClient:
         return rooms
 
     async def get_device_locations(self):
-        """Return a dict of locations to device"""
-        locations = await self.get_locations()
+        """Return a dict of device uid -> the path of its location"""
+        return self._device_paths(await self.get_locations())
+
+    @staticmethod
+    def _device_paths(locations):
+        """Device uid -> the path of its location, like Home:Floor:Room"""
         device_to_loc = {}
 
         def recurse_locations(locations, parent, level=0):

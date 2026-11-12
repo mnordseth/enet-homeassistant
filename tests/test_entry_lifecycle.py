@@ -50,7 +50,18 @@ class ConfigEntryAuthFailed(Exception):
 
 class DeviceRegistry:
     def async_get_or_create(self, **kwargs):
-        return types.SimpleNamespace(id="device-id")
+        return types.SimpleNamespace(id="device-id", area_id=None)
+
+
+class Store:
+    def __init__(self, hass, version, key):
+        pass
+
+    async def async_load(self):
+        return None
+
+    async def async_save(self, data):
+        pass
 
 
 _stub("homeassistant")
@@ -66,6 +77,9 @@ _stub("homeassistant.helpers.config_validation",
 _stub("homeassistant.helpers.typing", ConfigType=dict)
 _stub("homeassistant.helpers.device_registry", DeviceEntry=object,
       async_get=lambda hass: DeviceRegistry())
+_stub("homeassistant.helpers.area_registry", async_get=lambda hass: None)
+_stub("homeassistant.helpers.floor_registry", async_get=lambda hass: None)
+_stub("homeassistant.helpers.storage", Store=Store)
 
 source = Path(__file__).resolve().parents[1] / "custom_components" / "enet"
 spec = importlib.util.spec_from_file_location(

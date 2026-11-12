@@ -121,6 +121,13 @@ async def async_unload_entry(hass: HomeAssistant, entry: EnetConfigEntry) -> boo
     return unload_ok
 
 
+async def async_remove_entry(hass: HomeAssistant, entry: EnetConfigEntry) -> None:
+    """Remove what the entry stored when the integration is removed"""
+    from .device import floors_store  # noqa: PLC0415
+
+    await floors_store(hass, entry.entry_id).async_remove()
+
+
 async def async_remove_config_entry_device(
     hass: HomeAssistant, config_entry: EnetConfigEntry, device_entry: DeviceEntry
 ) -> bool:

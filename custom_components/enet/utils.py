@@ -16,5 +16,5 @@ def get_device_info(enet_device):
         ),
         model=f"{enet_device.device_type} ({enet_data.get_device_name_from_device_type_id(enet_device.device_type)})",
         serial_number=enet_device.serial_number,
-        suggested_area=enet_device.location.partition(":")[2],
+        suggested_area=enet_device.area_name,
     )

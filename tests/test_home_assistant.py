@@ -45,6 +45,7 @@ from homeassistant.exceptions import HomeAssistantError, ServiceValidationError 
 from homeassistant.helpers import area_registry as ar  # noqa: E402
 from homeassistant.helpers import device_registry as dr  # noqa: E402
 from homeassistant.helpers import entity_registry as er  # noqa: E402
+from homeassistant.helpers import floor_registry as fr  # noqa: E402
 
 # Imported before an event loop runs: enet_data loads its data with asyncio.run()
 import custom_components.enet as enet  # noqa: E402
@@ -102,10 +103,10 @@ class OfflineEnetClient(aioenet.EnetClient):
         self.link_result = "OK"
         self.programming_turns_off = False  # programming restarts the actuator, it comes back off
 
-    def scene_channels(self):
+    def scene_channels(self, devices=None):
         """The dimmer, switch and blind of the scene"""
         mode = aioenet.ChannelApplicationMode
-        channels = [c for d in self.devices for c in d.channels]
+        channels = [c for d in (devices or self.devices) for c in d.channels]
         dimmer = next(c for c in channels if c.application_mode == mode.LIGHT_DIMMING)
         switch = next(c for c in channels if c.application_mode == mode.SWITCHING)
         blind = next(
@@ -180,14 +181,25 @@ class OfflineEnetClient(aioenet.EnetClient):
         return {"sceneActions": actions}
 
     def locations(self):
-        """The home with a floor and the room Kitchen, with the dimmer and switch of the scene"""
-        dimmer, switch, _ = self.scene_channels()
-        room = {"uid": "loc-kitchen", "type": 3, "name": "Kitchen", "childLocations": [],
-                "deviceUIDs": [{"deviceUID": dimmer.device.uid}, {"deviceUID": switch.device.uid}]}
-        floor = {"uid": "loc-floor", "type": 2, "name": "Ground floor",
-                 "childLocations": [room], "deviceUIDs": []}
+        """The home with two floors, each with a room named Kitchen: the one on
+        the ground floor has the dimmer and switch of the scene, the other the
+        blind"""
+        # Also asked for while the devices are read
+        devices = self.devices or [
+            d for raw in self._raw_json if (d := aioenet.create_device(self, raw))
+        ]
+        dimmer, switch, blind = self.scene_channels(devices)
+        kitchen = {"uid": "loc-kitchen", "type": 3, "name": "Kitchen", "childLocations": [],
+                   "deviceUIDs": [{"deviceUID": dimmer.device.uid},
+                                  {"deviceUID": switch.device.uid}]}
+        upstairs = {"uid": "loc-kitchen-2", "type": 3, "name": "Kitchen", "childLocations": [],
+                    "deviceUIDs": [{"deviceUID": blind.device.uid}]}
+        ground = {"uid": "loc-floor", "type": 2, "name": "Ground floor",
+                  "childLocations": [kitchen], "deviceUIDs": []}
+        first = {"uid": "loc-floor-2", "type": 2, "name": "First floor",
+                 "childLocations": [upstairs], "deviceUIDs": []}
         return {"locations": [{"uid": "loc-home", "type": 1, "name": "Home",
-                               "childLocations": [floor], "deviceUIDs": []}]}
+                               "childLocations": [ground, first], "deviceUIDs": []}]}
 
     async def request(self, url, method, params, *args, **kwargs):
         self.requests.append((method, params))
@@ -530,12 +542,13 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         ids = {}
         dimmer, switch, _ = self.hub.scene_channels()
         for channel, name in ((dimmer, dimmer_area), (switch, switch_area)):
+            area_id = None
             if name:
                 area = areas.async_get_area_by_name(name) or areas.async_create(name)
-                ids[name] = area.id
-                dr.async_get(self.hass).async_update_device(
-                    self.device(channel.device.uid).id, area_id=area.id
-                )
+                ids[name] = area_id = area.id
+            dr.async_get(self.hass).async_update_device(
+                self.device(channel.device.uid).id, area_id=area_id
+            )
         return ids
 
     def scene_area(self, name):
@@ -585,6 +598,47 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
                 )
         self.assertEqual(self.requests("storeActualSceneValues"), [])
         self.assertEqual(self.written(), [])
+
+    def area_and_floor(self, device_uid):
+        """(area name, floor name) of a device"""
+        area = ar.async_get(self.hass).async_get_area(self.device(device_uid).area_id)
+        if area is None:
+            return None, None
+        floor = fr.async_get(self.hass).async_get_floor(area.floor_id) if area.floor_id else None
+        return area.name, floor.name if floor else None
+
+    async def test_devices_get_the_area_of_their_room_on_its_floor(self):
+        dimmer, switch, blind = self.hub.scene_channels()
+        # Two rooms are named Kitchen: the floor is added to their area names
+        self.assertEqual(self.area_and_floor(dimmer.device.uid),
+                         ("Kitchen (Ground floor)", "Ground floor"))
+        self.assertEqual(self.area_and_floor(switch.device.uid),
+                         ("Kitchen (Ground floor)", "Ground floor"))
+        self.assertEqual(self.area_and_floor(blind.device.uid),
+                         ("Kitchen (First floor)", "First floor"))
+        self.assert_no_warnings()
+
+    async def test_floors_changed_by_the_user_are_kept(self):
+        dimmer, _, blind = self.hub.scene_channels()
+        areas = ar.async_get(self.hass)
+        # The user removes the floor of one area and moves the other to another floor
+        downstairs = areas.async_get_area(self.device(dimmer.device.uid).area_id)
+        areas.async_update(downstairs.id, floor_id=None)
+        cellar = fr.async_get(self.hass).async_create("Cellar")
+        upstairs = areas.async_get_area(self.device(blind.device.uid).area_id)
+        areas.async_update(upstairs.id, floor_id=cellar.floor_id)
+
+        await self.hass.config_entries.async_reload(self.entry.entry_id)
+        await self.hass.async_block_till_done()
+        self.assertEqual(self.area_and_floor(dimmer.device.uid), ("Kitchen (Ground floor)", None))
+        self.assertEqual(self.area_and_floor(blind.device.uid), ("Kitchen (First floor)", "Cellar"))
+
+    async def test_removing_the_integration_removes_its_stored_floors(self):
+        path = Path(self.hass.config.path(".storage", f"enet_floors_{self.entry.entry_id}"))
+        self.assertTrue(path.exists())  # written when the areas were put on floors
+        await self.hass.config_entries.async_remove(self.entry.entry_id)
+        await self.hass.async_block_till_done()
+        self.assertFalse(path.exists())
 
     async def test_scenes_are_kept_when_they_cannot_be_read(self):
         await self.set_location_scenes(True)

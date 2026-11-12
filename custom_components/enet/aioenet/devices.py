@@ -48,7 +48,10 @@ class Device:
         self.client = client
         self._raw = raw
         self.channels = []
-        self.location = ""
+        self.location = ""  # the path of its location, "Home:Floor:Room"
+        self.room = None  # the name of its room, its floor, from the locations
+        self.floor = None
+        self.area_name = ""  # suggested area: the room, with the floor if the name is not unique
         self.uid = self._raw["uid"]
         self.name = self._raw["installationArea"]
         self.device_type = self._raw["typeID"]
