@@ -50,7 +50,7 @@ Each scene shows its members and their levels in the attributes:
 
 The scenes can be changed from Home Assistant. The changes are stored on the Enet server, and are used by the scene buttons and the Enet app as well:
 
-- **Save the current state:** set the lights the way you want them, then press the scene's *Save* button (on the Enet Smart Home Server device), or use the action `enet.save_scene`. Every member is stored at its current level. Only members that changed are written.
+- **Save the current state:** set the lights the way you want them, then press the scene's *Save* button (on the Enet Smart Home Server device), or use the action `enet.save_scene`. Every member is stored at its current level. The members store their level themselves when they receive one scene telegram, and the changed levels are then read back from the devices. This takes a few seconds, and the lights don't flicker. A member that misses the telegram is programmed with its level instead. Nothing is sent when no member changed.
 - **Change one member:** the action `enet.set_scene_level` sets the level of one member: `brightness_pct` or `state` for lights and switches, `position` and `tilt_position` for covers.
 
   ```yaml
@@ -62,7 +62,7 @@ The scenes can be changed from Home Assistant. The changes are stored on the Ene
     brightness_pct: 40
   ```
 
-Each change is programmed into the devices by radio, which takes a few seconds per member. Members can't be added to or removed from a scene from Home Assistant yet. Scenes can't be edited in Home Assistant's scene editor, which only edits Home Assistant's own scenes.
+A level set with `enet.set_scene_level` is programmed into the device by radio, which takes a few seconds per member. Members can't be added to or removed from a scene from Home Assistant yet. Scenes can't be edited in Home Assistant's scene editor, which only edits Home Assistant's own scenes.
 
 ### Motion detectors
 

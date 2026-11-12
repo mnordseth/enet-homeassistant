@@ -27,8 +27,14 @@ ID_FILTER_ALL = "*"
 EVENT_DEVICE_BATTERY_STATE_CHANGED = "deviceBatteryStateChanged"
 EVENT_OUTPUT_DEVICE_FUNCTION_CALLED = "outputDeviceFunctionCalled"
 EVENT_WRITE_VALUES_TO_DEVICE_PARAMETER_COMPLETED = "writeValuesToDeviceParameterCompleted"
+# The values of a parameter read from the device: always after a read,
+# changed or not. deviceParameterChanged also comes when the value changed.
+EVENT_DEVICE_PARAMETER_VALUES_RECEIVED = "deviceParameterValuesReceived"
+EVENT_DEVICE_PARAMETER_CHANGED = "deviceParameterChanged"
 # Seconds to wait until the server has programmed a parameter into the device
 PARAMETER_WRITE_TIMEOUT = 60
+# Seconds to wait until the server has read a parameter from the device
+PARAMETER_READ_TIMEOUT = 15
 VALUE_TYPE_ROCKER_STATE = "VT_ROCKER_STATE"
 VALUE_TYPE_ROCKER_SWITCH_TIME = "VT_ROCKER_SWITCH_TIME"
 VALUE_DOWN_BUTTON = "DOWN_BUTTON"
@@ -119,6 +125,9 @@ class EnetClient:
         self.scenes = []
         self.scenes_read = False  # set when the scenes were read from the server
         self._parameter_writes = {}
+        self._parameter_reads = {}
+        # Parameter reads and writes go one at a time, the devices are
+        # programmed and read by radio
         self._write_lock = asyncio.Lock()
         self._auth_lock = asyncio.Lock()
         self._auth_generation = 0
@@ -265,6 +274,12 @@ class EnetClient:
                 # Not a duplicate when the same parameter is written twice
                 self._handle_parameter_write_completed(event)
                 continue
+            if event["event"] in (
+                EVENT_DEVICE_PARAMETER_VALUES_RECEIVED,
+                EVENT_DEVICE_PARAMETER_CHANGED,
+            ):
+                self._handle_parameter_read(event)
+                continue
             if (
                 time.time() - self._last_event_ts < 0.5
                 and event["event"] == self._last_event.get("event")
@@ -287,6 +302,12 @@ class EnetClient:
         future = self._parameter_writes.get(data.get("deviceParameterUID"))
         if future is not None and not future.done():
             future.set_result(data)
+
+    def _handle_parameter_read(self, event):
+        data = event.get("eventData") or {}
+        future = self._parameter_reads.get(data.get("deviceParameterUID"))
+        if future is not None and not future.done():
+            future.set_result(data.get("values") or [])
 
     async def _handle_output_device_function_called(self, event):
         data = event["eventData"]
@@ -671,6 +692,54 @@ class EnetClient:
                         )
                     except Exception as e:  # noqa: BLE001 - best effort cleanup
                         log.debug("Failed to unregister %s: %s", event, e)
+
+    async def read_device_parameter(self, parameter_uid, timeout=PARAMETER_READ_TIMEOUT):
+        """Read a device parameter from the device into the server, so both its
+        configured and its programmed value are the value in the device.
+
+        Returns the values read. Raises EnetServerError if the device did not
+        answer in time.
+        """
+        async with self._write_lock:
+            future = asyncio.get_running_loop().create_future()
+            self._parameter_reads[parameter_uid] = future
+            params = {"deviceParameterUID": parameter_uid}
+            events = (
+                "EventDeviceParameterChanged",
+                "EventSynchronisationCompleted",
+            )
+            try:
+                for event in events:
+                    await self.request(URL.VISUALIZATION, f"register{event}", params)
+                await self.request(
+                    URL.VISUALIZATION, "readValuesFromDeviceParameter", params
+                )
+                try:
+                    async with asyncio.timeout(timeout):
+                        return await future
+                except TimeoutError:
+                    raise EnetServerError(
+                        f"The device did not answer within {timeout} seconds"
+                    ) from None
+            finally:
+                self._parameter_reads.pop(parameter_uid, None)
+                for event in events:
+                    try:
+                        await self.request(
+                            URL.VISUALIZATION, f"unregister{event}", params
+                        )
+                    except Exception as e:  # noqa: BLE001 - best effort cleanup
+                        log.debug("Failed to unregister %s: %s", event, e)
+
+    async def store_scene_values(self, scene_uid):
+        """Make the members of a scene store their current state in the scene.
+
+        The actuators learn it from one scene telegram; the values configured
+        on the server are not changed, see read_device_parameter().
+        """
+        await self.request(
+            URL.SCENE, "storeActualSceneValues", {"sceneActionUID": scene_uid}
+        )
 
     async def setup_event_subscription(self, func_uid):
         """Subscribe for outputDeviceFunction events"""

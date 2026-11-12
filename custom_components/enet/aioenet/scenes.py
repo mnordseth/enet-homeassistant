@@ -1,5 +1,6 @@
 """Scenes on the Enet server ("scene actions") and their members"""
 
+import asyncio
 import logging
 import re
 
@@ -7,12 +8,29 @@ from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any
 
+import aiohttp
 
 from ..enet_data.enums import ChannelApplicationMode, ChannelTypeFunctionName
 
 from .errors import EnetServerError
 
 log = logging.getLogger(__name__)
+
+# Seconds between the scene telegram that makes the actuators learn their
+# current state and reading the learned values back
+LEARN_SETTLE_SECONDS = 2
+# A learned value may differ this much from the state it was learned from
+# (dimmers and blinds round between percent and the byte in the actuator)
+LEARNED_VALUE_TOLERANCE = 1
+
+
+def same_scene_value(a, b):
+    """True if two scene values are equal, except for rounding"""
+    if isinstance(a, str) or isinstance(b, str):
+        return str(a).upper() == str(b).upper()
+    if a is None or b is None:
+        return a is b
+    return abs(a - b) <= LEARNED_VALUE_TOLERANCE
 
 
 # Scene parameters of an actuator channel, ie PT_INDA.SCV1[5]
@@ -221,14 +239,23 @@ class EnetScene:
             self._notify()
 
     async def store_current_values(self):
-        """Store the current state of every member in the scene. Only changed
-        values are written. Returns the number of members that changed."""
+        """Store the current state of every member in the scene. Returns the
+        number of members that changed.
+
+        The members learn their current state from one scene telegram, and the
+        learned values of the changed members are read back, so the values on
+        the server match the actuators. This is much faster than programming
+        every actuator, and the lights do not restart. A member whose learned
+        value cannot be read or is not its current state is programmed with
+        the value instead. Nothing is sent when no member changed.
+        """
         if not self.values_loaded:
             await self.load_values()
         changes = []
+        unknown = []
         for member in self.members:
             if member.channel is None:
-                log.warning("Scene %s: skipping unknown channel %s", self.name, member.uid)
+                unknown.append(member)
                 continue
             level, slats = member.current_values()
             if member.level is not None and member.level.value == level:
@@ -237,6 +264,59 @@ class EnetScene:
                 slats = None
             if level is not None or slats is not None:
                 changes.append((member, level, slats))
-        for member, level, slats in changes:
-            await self.set_member_values(member, level, slats)
+        if not changes:
+            return 0
+
+        try:
+            await self.client.store_scene_values(self.uid)
+        except (EnetServerError, aiohttp.ClientError, TimeoutError) as e:
+            log.warning(
+                "Scene %s: the members could not learn their state (%s), "
+                "programming the values instead", self.name, e
+            )
+            for member, level, slats in changes:
+                await self.set_member_values(member, level, slats)
+            return len(changes)
+
+        await asyncio.sleep(LEARN_SETTLE_SECONDS)
+        try:
+            for member, level, slats in changes:
+                if not await self._read_learned_values(member, level, slats):
+                    await self.set_member_values(member, level, slats)
+            # Their state is not known, but they learned it as well
+            for member in unknown:
+                log.warning(
+                    "Scene %s: %s is not a known channel, reading its learned value",
+                    self.name, member.uid,
+                )
+                await self._read_learned_values(member, None, None)
+        finally:
+            self._notify()
         return len(changes)
+
+    async def _read_learned_values(self, member, level, slats):
+        """Read the learned values of a member from its actuator. Returns False
+        if they could not be read or are not the expected level and slats."""
+        ok = True
+        for param, expected in ((member.level, level), (member.slats, slats)):
+            if param is None:
+                continue
+            try:
+                values = await self.client.read_device_parameter(param.uid)
+            except (EnetServerError, aiohttp.ClientError, TimeoutError) as e:
+                log.warning(
+                    "Scene %s: could not read the learned value of %s (%s), "
+                    "programming it instead", self.name, member.name, e
+                )
+                ok = False
+                continue
+            if values:
+                param.value = values[0].get("value")
+                param.value_type_id = values[0].get("valueTypeID") or param.value_type_id
+            if expected is not None and not same_scene_value(param.value, expected):
+                log.warning(
+                    "Scene %s: %s learned %s instead of %s, programming it instead",
+                    self.name, member.name, param.value, expected,
+                )
+                ok = False
+        return ok

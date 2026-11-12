@@ -69,13 +69,21 @@ class OfflineEnetClient(aioenet.EnetClient):
     The scene "Evening" has a dimmer, a switch and a blind with slats from the
     fixture as members. Scene parameters are stored, and a write is reported
     with a writeValuesToDeviceParameterCompleted event like the real server.
+
+    storeActualSceneValues makes the actuators learn the values in `learns`
+    (parameter uid -> value), and readValuesFromDeviceParameter copies the
+    value in the actuator to the server and reports it with a
+    deviceParameterValuesReceived event, like the real server.
     """
 
     def __init__(self, url, user, passwd):
         super().__init__(url, user, passwd, noconnect=True, load_file=str(DEVICES))
         self.requests = []
-        self.parameters = {}  # uid -> {"toBe": value dict, "current": value dict}
+        # uid -> {"toBe": value dict, "current": value dict, "device": value dict}
+        self.parameters = {}
         self.write_success = True
+        self.learns = {}
+        self.read_fails = False
 
     def scene_channels(self):
         """The dimmer, switch and blind of the scene"""
@@ -147,16 +155,31 @@ class OfflineEnetClient(aioenet.EnetClient):
             case "writeToBeValuesToDeviceParameter":
                 if self.write_success:
                     self.parameters[uid]["current"] = self.parameters[uid]["toBe"]
-                event = {"sequenceNumber": 0,
-                         "event": "writeValuesToDeviceParameterCompleted",
-                         "eventData": {"deviceParameterUID": uid,
-                                       "success": self.write_success,
-                                       "errorCode": 0 if self.write_success else 7,
-                                       "errorData": ""}}
-                asyncio.get_running_loop().call_soon(
-                    asyncio.ensure_future, self.handle_events({"events": [event]})
-                )
+                    self.parameters[uid]["device"] = self.parameters[uid]["toBe"]
+                self._send_event("writeValuesToDeviceParameterCompleted",
+                                 {"deviceParameterUID": uid,
+                                  "success": self.write_success,
+                                  "errorCode": 0 if self.write_success else 7,
+                                  "errorData": ""})
+            case "storeActualSceneValues":
+                for learned_uid, value in self.learns.items():
+                    param = self.parameters[learned_uid]
+                    param["device"] = {**param["current"], "value": value}
+            case "readValuesFromDeviceParameter":
+                if self.read_fails:
+                    raise aioenet.EnetServerError("readValuesFromDeviceParameter failed")
+                param = self.parameters[uid]
+                value = param.get("device", param["current"])
+                param["toBe"] = param["current"] = value
+                self._send_event("deviceParameterValuesReceived",
+                                 {"deviceParameterUID": uid, "values": [value]})
         return None
+
+    def _send_event(self, name, data):
+        event = {"sequenceNumber": 0, "event": name, "eventData": data}
+        asyncio.get_running_loop().call_soon(
+            asyncio.ensure_future, self.handle_events({"events": [event]})
+        )
 
 
 class RecordingHandler(logging.Handler):
@@ -186,6 +209,8 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         logging.getLogger().addHandler(self.log)
         self._patch = patch.object(enet, "EnetClient", OfflineEnetClient)
         self._patch.start()
+        self._settle_patch = patch.object(aioenet.scenes, "LEARN_SETTLE_SECONDS", 0)
+        self._settle_patch.start()
 
         hass = self.hass = core.HomeAssistant(self._config_dir.name)
         hass.config.skip_pip = True
@@ -217,6 +242,7 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
             await self.hass.config_entries.async_unload(self.entry.entry_id)
         await self.hass.async_stop(force=True)
         self._patch.stop()
+        self._settle_patch.stop()
         logging.getLogger().removeHandler(self.log)
         self._config_dir.cleanup()
 
@@ -506,8 +532,9 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
                 await self.set_scene_level(**data)
         self.assertEqual(self.written(), [])
 
-    async def test_save_scene_stores_the_current_state(self):
-        light, switch, cover = self.scene_members()
+    def set_scene_member_states(self):
+        """Dim the light to 35 and switch the switch off; the blind is as in
+        the scene. Returns the scene parameter uids of the dimmer and switch."""
         dimmer, switch_channel, blind = self.hub.scene_channels()
         functions = aioenet.ChannelTypeFunctionName
         dimmer.set_current_value(functions.ON_OFF, True)
@@ -517,24 +544,67 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         ] = {"value": False}
         blind.set_current_value(functions.COVER_POSITION, 30)  # as in the scene
         blind.set_current_value(functions.TILT_POSITION, 10)
+        return f"{dimmer.uid}-PT_INDA.SCV1", f"{switch_channel.uid}-PT_INSA.SCV1"
 
+    async def save_scene(self):
         self.hub.requests.clear()
         button = self.entity_id("button", "Enet Smart Home Server Save Evening")
         await self.hass.services.async_call(
             "button", "press", {"entity_id": button}, blocking=True
         )
-        # Only the changed members are written
-        self.assertEqual(self.written(), [(f"{dimmer.uid}-PT_INDA.SCV1", 35),
-                                          (f"{switch_channel.uid}-PT_INSA.SCV1", "OFF")])
-        self.assertEqual(self.scene_state().attributes["levels"][light], 35)
 
-        # Nothing changed since, nothing is written
+    def read_back(self):
+        """Parameter uids read back from the actuators"""
+        return [p["deviceParameterUID"] for p in self.requests("readValuesFromDeviceParameter")]
+
+    async def test_save_scene_learns_and_reads_back_the_current_state(self):
+        light, switch, _ = self.scene_members()
+        dimmer_uid, switch_uid = self.set_scene_member_states()
+        self.hub.learns = {dimmer_uid: 35, switch_uid: "OFF"}
+
+        await self.save_scene()
+        # One scene telegram makes the members learn, the changed ones are
+        # read back, and nothing is programmed
+        self.assertEqual(self.requests("storeActualSceneValues"), [{"sceneActionUID": "scene-1"}])
+        self.assertEqual(self.read_back(), [dimmer_uid, switch_uid])
+        self.assertEqual(self.written(), [])
+        self.assertEqual(self.hub.parameters[dimmer_uid]["toBe"]["value"], 35)
+        levels = self.scene_state().attributes["levels"]
+        self.assertEqual((levels[light], levels[switch]), (35, "off"))
+
+        # Nothing changed since, nothing is sent
         self.hub.requests.clear()
         await self.hass.services.async_call(
             "enet", "save_scene", {"entity_id": self.scene_state().entity_id}, blocking=True
         )
-        self.assertEqual(self.written(), [])
+        self.assertEqual(self.requests("storeActualSceneValues"), [])
+        self.assertEqual(self.read_back(), [])
         self.assert_no_warnings()
+
+    async def test_save_scene_programs_a_member_that_learned_another_value(self):
+        light, switch, _ = self.scene_members()
+        dimmer_uid, switch_uid = self.set_scene_member_states()
+        # The switch did not get the telegram and still has the scene value
+        self.hub.learns = {dimmer_uid: 35}
+
+        await self.save_scene()
+        self.assertEqual(self.read_back(), [dimmer_uid, switch_uid])
+        self.assertEqual(self.written(), [(switch_uid, "OFF")])
+        levels = self.scene_state().attributes["levels"]
+        self.assertEqual((levels[light], levels[switch]), (35, "off"))
+        self.assertIn("learned ON instead of OFF", self.log.records[-1].getMessage())
+
+    async def test_save_scene_programs_the_members_when_reading_fails(self):
+        light, switch, _ = self.scene_members()
+        dimmer_uid, switch_uid = self.set_scene_member_states()
+        self.hub.learns = {dimmer_uid: 35, switch_uid: "OFF"}
+        self.hub.read_fails = True
+
+        await self.save_scene()
+        self.assertEqual(self.written(), [(dimmer_uid, 35), (switch_uid, "OFF")])
+        levels = self.scene_state().attributes["levels"]
+        self.assertEqual((levels[light], levels[switch]), (35, "off"))
+        self.assertTrue(self.log.records)
 
     async def test_failed_write_raises_an_error(self):
         light, _, _ = self.scene_members()
