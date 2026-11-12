@@ -33,7 +33,15 @@ Button presses are also fired on the event bus as `enet_event`, with the data `d
 
 ### Scenes
 
-Scenes defined in the Enet app whose name contains `libenet` are added as scenes. Activating one runs the scene on the Enet server, the same as the scene buttons and the Enet app.
+Scenes defined in the Enet app are added as scenes. Activating one runs the scene on the Enet server, the same as the scene buttons and the Enet app.
+
+Which scenes are added is set under **Settings → Devices & services → Enet Smart Home → Configure**:
+
+- **Only scenes with "libenet" in the name** (the default)
+- **All scenes made in the Enet app**
+- **All scenes, and the lights on/off scenes the server creates for each room.** These are named like *Kitchen lights on*. Room scenes without members, like the blinds scenes in a house without blinds, are left out.
+
+When the option is changed, the integration reloads. Scenes that are no longer added are removed, with their *Save* buttons.
 
 Each scene shows its members and their levels in the attributes:
 

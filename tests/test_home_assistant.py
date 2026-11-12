@@ -52,9 +52,12 @@ from custom_components.enet import aioenet, device_trigger, diagnostics  # noqa:
 SCENES = {
     "sceneActionUIDs": [
         {"sceneActionUID": "scene-1", "sceneActionName": "[libenet] Evening"},
-        {"sceneActionUID": "scene-2", "sceneActionName": "Not for Home Assistant"},
+        {"sceneActionUID": "scene-2", "sceneActionName": "Made in the Enet app"},
+        {"sceneActionUID": "scene-3", "sceneActionName": "~LocSceneLightsOn_Kitchen"},
+        {"sceneActionUID": "scene-4", "sceneActionName": "~LocSceneBlindsOn_Kitchen"},
     ]
 }
+SCENE_NAMES = {s["sceneActionUID"]: s["sceneActionName"] for s in SCENES["sceneActionUIDs"]}
 
 
 SCENE_SLOT = 5
@@ -86,31 +89,46 @@ class OfflineEnetClient(aioenet.EnetClient):
         )
         return dimmer, switch, blind
 
-    def scene_actions(self):
+    def scene_members(self, scene_uid):
+        """(slot, [(channel, [(parameter type, value type, value)])]) of a scene"""
         dimmer, switch, blind = self.scene_channels()
-        members = [
-            (dimmer, [("PT_INDA.SCV1", "VT_SCALING_RANGE_0_100_DEF_100", 60)]),
-            (switch, [("PT_INSA.SCV1", "VT_SCV_SWITCH_DEF_ON", "ON")]),
-            (blind, [("PT_INBA.SCV1", "VT_SCALING_RANGE_0_100_DEF_0", 30),
-                     ("PT_INBA.SCV2", "VT_SCALING_RANGE_0_100_DEF_0", 10)]),
-        ]
-        device_channels = []
-        for channel, params in members:
-            scene_parameters = []
-            for type_id, value_type, value in params:
-                uid = f"{channel.uid}-{type_id}"
-                value = {"valueTypeID": value_type, "value": value}
-                self.parameters.setdefault(uid, {"toBe": value, "current": value})
-                scene_parameters.append(
-                    {"deviceParameterUID": uid, "deviceParameterTypeID": f"{type_id}[{SCENE_SLOT}]"}
-                )
-            device_channels.append({
-                "deviceUID": channel.device.uid,
-                "channelNumber": channel.channel["no"],
-                "sceneParameters": scene_parameters,
-            })
-        return {"sceneActions": [{"uid": "scene-1", "name": "[libenet] Evening",
-                                  "deviceChannels": device_channels}]}
+        dimmer_level = ("PT_INDA.SCV1", "VT_SCALING_RANGE_0_100_DEF_100", 60)
+        match scene_uid:
+            case "scene-1":
+                return SCENE_SLOT, [
+                    (dimmer, [dimmer_level]),
+                    (switch, [("PT_INSA.SCV1", "VT_SCV_SWITCH_DEF_ON", "ON")]),
+                    (blind, [("PT_INBA.SCV1", "VT_SCALING_RANGE_0_100_DEF_0", 30),
+                             ("PT_INBA.SCV2", "VT_SCALING_RANGE_0_100_DEF_0", 10)]),
+                ]
+            case "scene-3":  # automatic "lights on" scene of a location
+                return 16, [(dimmer, [dimmer_level])]
+        return SCENE_SLOT, []  # scene-2 and scene-4 have no members
+
+    def scene_actions(self, scene_uids):
+        actions = []
+        for scene_uid in scene_uids:
+            slot, members = self.scene_members(scene_uid)
+            device_channels = []
+            for channel, params in members:
+                scene_parameters = []
+                for type_id, value_type, value in params:
+                    uid = f"{channel.uid}-{type_id}"
+                    if slot != SCENE_SLOT:
+                        uid += f"-{slot}"
+                    value = {"valueTypeID": value_type, "value": value}
+                    self.parameters.setdefault(uid, {"toBe": value, "current": value})
+                    scene_parameters.append(
+                        {"deviceParameterUID": uid, "deviceParameterTypeID": f"{type_id}[{slot}]"}
+                    )
+                device_channels.append({
+                    "deviceUID": channel.device.uid,
+                    "channelNumber": channel.channel["no"],
+                    "sceneParameters": scene_parameters,
+                })
+            actions.append({"uid": scene_uid, "name": SCENE_NAMES[scene_uid],
+                            "deviceChannels": device_channels})
+        return {"sceneActions": actions}
 
     async def request(self, url, method, params, *args, **kwargs):
         self.requests.append((method, params))
@@ -119,8 +137,7 @@ class OfflineEnetClient(aioenet.EnetClient):
             case "getSceneActionUIDs":
                 return SCENES
             case "getSceneActions":
-                assert params == {"sceneActionUIDs": ["scene-1"]}, params
-                return self.scene_actions()
+                return self.scene_actions(params["sceneActionUIDs"])
             case "getToBeValuesFromDeviceParameter":
                 return {"toBeValues": [self.parameters[uid]["toBe"]]}
             case "getCurrentValuesFromDeviceParameter":
@@ -349,9 +366,56 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(len(await self.call("cover", "stop_cover_tilt", cover)), 1)
         self.assert_no_warnings()
 
+    async def set_scenes_option(self, value):
+        """Change the scenes option in the options flow, the entry reloads"""
+        result = await self.hass.config_entries.options.async_init(self.entry.entry_id)
+        self.assertEqual(result["type"], "form")
+        result = await self.hass.config_entries.options.async_configure(
+            result["flow_id"], {"scenes": value}
+        )
+        self.assertEqual(result["type"], "create_entry")
+        await self.hass.async_block_till_done()
+        self.assertEqual(self.entry.state, config_entries.ConfigEntryState.LOADED)
+        self.hub = self.entry.runtime_data  # the reload creates a new client
+
+    def scene_entities(self):
+        return (
+            sorted(e.unique_id for e in self.entities("scene")),
+            sorted(e.unique_id for e in self.entities("button")),
+        )
+
+    async def test_scenes_option_adds_and_removes_scenes(self):
+        await self.set_scenes_option("all")
+        self.assertEqual(self.scene_entities(), (
+            ["scene-1", "scene-2"], ["scene-1-save", "scene-2-save"]))
+
+        # The automatic scenes too, but not the one without members
+        await self.set_scenes_option("all_with_location")
+        self.assertEqual(self.scene_entities(), (
+            ["scene-1", "scene-2", "scene-3"], ["scene-1-save", "scene-2-save", "scene-3-save"]))
+        self.entity_id("scene", "Enet Smart Home Server Kitchen lights on")
+        self.entity_id("scene", "Enet Smart Home Server Made in the Enet app")
+
+        await self.set_scenes_option("libenet")
+        self.assertEqual(self.scene_entities(), (["scene-1"], ["scene-1-save"]))
+        self.assert_no_warnings()
+
+    async def test_scenes_are_kept_when_they_cannot_be_read(self):
+        await self.set_scenes_option("all")
+        with patch.object(OfflineEnetClient, "get_scene_actions",
+                          side_effect=aioenet.EnetServerError("busy")):
+            await self.set_scenes_option("libenet")
+        self.assertEqual(self.scene_entities(), (
+            ["scene-1", "scene-2"], ["scene-1-save", "scene-2-save"]))
+        self.assertEqual(
+            [r.getMessage() for r in self.log.records],
+            ["Failed to read the scenes of the Enet server: busy"],
+        )
+
     async def test_only_libenet_scenes_are_added_and_activated(self):
         scenes = self.entities("scene")
         self.assertEqual([e.unique_id for e in scenes], ["scene-1"])
+        self.assertEqual(self.requests("getSceneActions"), [{"sceneActionUIDs": ["scene-1"]}])
         scene = self.entity_id("scene", "Enet Smart Home Server Evening")
 
         self.hub.requests.clear()

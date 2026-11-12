@@ -7,7 +7,12 @@ from homeassistant.const import EntityCategory
 from homeassistant.helpers.entity import DeviceInfo
 
 from .aioenet import EnetScene
-from .scene import async_store_current_values, scene_name, server_device_info
+from .scene import (
+    async_remove_stale_entities,
+    async_store_current_values,
+    scene_name,
+    server_device_info,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -15,7 +20,11 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass, entry, async_add_entities):
     """Add a save button for every Enet scene"""
     hub = entry.runtime_data
-    async_add_entities([EnetSceneSaveButton(scene) for scene in hub.scenes])
+    buttons = [EnetSceneSaveButton(scene) for scene in hub.scenes]
+    async_remove_stale_entities(
+        hass, entry, "button", {button.unique_id for button in buttons}
+    )
+    async_add_entities(buttons)
 
 
 class EnetSceneSaveButton(ButtonEntity):

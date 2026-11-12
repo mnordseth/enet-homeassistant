@@ -138,6 +138,10 @@ class SceneMember:
 class EnetScene:
     """A scene on the Enet server ("scene action") and its members"""
 
+    # The server creates scenes per location itself, ie ~LocSceneLightsOn_Kitchen
+    AUTOMATIC_PREFIX = "~"
+    AUTOMATIC_NAME_RE = re.compile(r"^~LocScene(Lights|Blinds)(On|Off)_(.+)$")
+
     def __init__(self, client, raw):
         self.client = client
         self.uid = raw["uid"]
@@ -148,6 +152,27 @@ class EnetScene:
 
     def __repr__(self):
         return f"{self.__class__.__name__} ({self.name} members={self.members})"
+
+    @classmethod
+    def is_automatic_name(cls, name):
+        """True for the scenes the server creates itself"""
+        return name.startswith(cls.AUTOMATIC_PREFIX)
+
+    @property
+    def automatic(self):
+        return self.is_automatic_name(self.name)
+
+    @property
+    def display_name(self):
+        """The name without the [libenet...] prefix, and automatic scenes as
+        "<location> lights on" instead of ~LocSceneLightsOn_<location>"""
+        name = self.name
+        if name.startswith("[libenet") and "]" in name:
+            return name.split("]", 1)[-1].strip()
+        if match := self.AUTOMATIC_NAME_RE.match(name):
+            kind, state, location = match.groups()
+            return f"{location} {kind.lower()} {state.lower()}"
+        return name
 
     def subscribe(self, callback):
         """Subscribe to changes of the scene values. The callback is called

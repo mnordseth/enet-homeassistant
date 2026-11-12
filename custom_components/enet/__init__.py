@@ -13,7 +13,14 @@ from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers.device_registry import DeviceEntry
 
 from .aioenet import AuthError, EnetClient, EnetServerError, normalize_url
-from .const import DOMAIN, NAME_ENET_CONTROLLER
+from .const import (
+    CONF_SCENES,
+    DEFAULT_SCENES,
+    DOMAIN,
+    NAME_ENET_CONTROLLER,
+    SCENES_ALL_WITH_LOCATION,
+    SCENES_LIBENET,
+)
 from .device import async_setup_devices
 from .events import async_setup_enet_events
 
@@ -66,8 +73,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: EnetConfigEntry) -> bool
             entry, unique_id=normalize_url(entry.data["url"])
         )
 
+    scenes_option = entry.options.get(CONF_SCENES, DEFAULT_SCENES)
     try:
-        hub.scenes = await hub.get_scene_actions()
+        hub.scenes = await hub.get_scene_actions(
+            only_libenet=scenes_option == SCENES_LIBENET,
+            automatic_scenes=scenes_option == SCENES_ALL_WITH_LOCATION,
+        )
+        hub.scenes_read = True
     except (TimeoutError, aiohttp.ClientError, EnetServerError) as e:
         _LOGGER.warning("Failed to read the scenes of the Enet server: %s", e)
         hub.scenes = []
@@ -75,6 +87,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: EnetConfigEntry) -> bool
     entry.runtime_data = hub
     await async_setup_devices(hass, entry, hub)
     async_setup_enet_events(hass, entry, hub)
+    entry.async_on_unload(entry.add_update_listener(_async_options_updated))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     if hub.scenes:
         # The scene values are only shown as attributes, do not delay the setup
@@ -82,6 +95,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: EnetConfigEntry) -> bool
             hass, hub.load_scene_values(), name=f"enet scene values {hub.baseurl}"
         )
     return True
+
+
+async def _async_options_updated(hass: HomeAssistant, entry: EnetConfigEntry) -> None:
+    """Reload the entry when the options change, to add the chosen scenes."""
+    await hass.config_entries.async_reload(entry.entry_id)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: EnetConfigEntry) -> bool:

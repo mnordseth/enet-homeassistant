@@ -11,13 +11,25 @@ import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.const import CONF_PASSWORD, CONF_URL, CONF_USERNAME
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.components import zeroconf
+from homeassistant.helpers.selector import (
+    SelectSelector,
+    SelectSelectorConfig,
+    SelectSelectorMode,
+)
 
 from . import aioenet
 from .aioenet import normalize_url
-from .const import DOMAIN
+from .const import (
+    CONF_SCENES,
+    DEFAULT_SCENES,
+    DOMAIN,
+    SCENES_ALL,
+    SCENES_ALL_WITH_LOCATION,
+    SCENES_LIBENET,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -66,6 +78,12 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Enet Smart Home."""
 
     VERSION = 1
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry):
+        """Options of the integration: which scenes are added."""
+        return OptionsFlow(config_entry)
 
     def _url_configured(self, url: str, exclude_entry_id: str | None = None) -> bool:
         """Return True if another config entry already uses the Enet server at url."""
@@ -205,6 +223,34 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if self._async_current_entries():
             return self.async_abort(reason="already_configured")
         return self.async_abort(reason="discovery_not_supported")
+
+
+class OptionsFlow(config_entries.OptionsFlow):
+    """Choose which scenes of the Enet server are added."""
+
+    def __init__(self, entry: config_entries.ConfigEntry) -> None:
+        # Not self.config_entry: Home Assistant sets that itself in newer versions
+        self._entry = entry
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> config_entries.ConfigFlowResult:
+        if user_input is not None:
+            return self.async_create_entry(data=user_input)
+
+        current = self._entry.options.get(CONF_SCENES, DEFAULT_SCENES)
+        schema = vol.Schema(
+            {
+                vol.Required(CONF_SCENES, default=current): SelectSelector(
+                    SelectSelectorConfig(
+                        options=[SCENES_LIBENET, SCENES_ALL, SCENES_ALL_WITH_LOCATION],
+                        mode=SelectSelectorMode.LIST,
+                        translation_key=CONF_SCENES,
+                    )
+                ),
+            }
+        )
+        return self.async_show_form(step_id="init", data_schema=schema)
 
 
 class CannotConnect(HomeAssistantError):

@@ -81,11 +81,15 @@ class FakeConfigEntry:
         self.entry_id = "entry"
         self.data = {"url": url, "username": "user", "password": "secret"}
         self.unique_id = url
+        self.options = {}
         self._background_tasks = set()
         self._on_unload = []
 
     def async_on_unload(self, func):
         self._on_unload.append(func)
+
+    def add_update_listener(self, listener):
+        return lambda: None
 
     def async_create_background_task(self, hass, target, name, eager_start=True):
         task = asyncio.create_task(target, name=name)

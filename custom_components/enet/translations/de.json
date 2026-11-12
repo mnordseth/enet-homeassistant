@@ -120,5 +120,27 @@
                 }
             }
         }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Enet Smart Home Optionen",
+                "data": {
+                    "scenes": "Szenen"
+                },
+                "data_description": {
+                    "scenes": "Welche Szenen des Enet Servers zu Home Assistant hinzugefügt werden. Szenen, die nicht mehr hinzugefügt werden, werden entfernt."
+                }
+            }
+        }
+    },
+    "selector": {
+        "scenes": {
+            "options": {
+                "libenet": "Nur Szenen mit \"libenet\" im Namen",
+                "all": "Alle in der Enet App erstellten Szenen",
+                "all_with_location": "Alle Szenen und die Szenen Licht an/aus, die der Server für jeden Raum anlegt"
+            }
+        }
     }
 }

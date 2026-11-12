@@ -117,6 +117,7 @@ class EnetClient:
         self.function_uid_map = {}
         self.devices = []
         self.scenes = []
+        self.scenes_read = False  # set when the scenes were read from the server
         self._parameter_writes = {}
         self._write_lock = asyncio.Lock()
         self._auth_lock = asyncio.Lock()
@@ -558,15 +559,22 @@ class EnetClient:
                 return next((c for c in device.channels if c.uid == uid), None)
         return None
 
-    async def get_scene_actions(self, only_libenet=True):
+    async def get_scene_actions(self, only_libenet=True, automatic_scenes=False):
         """Return the scenes of the server as EnetScene objects with their
         members. The scene values are not loaded, see EnetScene.load_values().
+
+        only_libenet: only scenes with libenet in the name.
+        automatic_scenes: also the scenes the server creates itself, named
+        like ~LocSceneLightsOn_<location>. Those without members are left out.
         """
         result = await self.request(URL.SCENE, "getSceneActionUIDs", None)
         names = {}
         for scene in (result or {}).get("sceneActionUIDs", []):
             name = scene["sceneActionName"]
-            if only_libenet and "libenet" not in name:
+            if only_libenet:
+                if "libenet" not in name:
+                    continue
+            elif EnetScene.is_automatic_name(name) and not automatic_scenes:
                 continue
             names[scene["sceneActionUID"]] = name
         if not names:
@@ -578,10 +586,11 @@ class EnetClient:
         details = {
             action["uid"]: action for action in (result or {}).get("sceneActions", [])
         }
-        return [
+        scenes = [
             EnetScene(self, details.get(uid, {"uid": uid, "name": name}))
             for uid, name in names.items()
         ]
+        return [scene for scene in scenes if scene.members or not scene.automatic]
 
     async def load_scene_values(self):
         """Load the values of all scenes, one scene after the other"""

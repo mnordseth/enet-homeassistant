@@ -8,6 +8,7 @@ import voluptuous as vol
 
 from homeassistant.components.scene import Scene as SceneEntity
 from homeassistant.const import ATTR_ENTITY_ID, STATE_OFF, STATE_ON
+from homeassistant.core import callback
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import entity_platform
@@ -44,6 +45,7 @@ MEMBER_DOMAINS = ("light", "switch", "cover")
 async def async_setup_entry(hass, entry, async_add_entities):
     """Add Enet scenes"""
     hub = entry.runtime_data
+    async_remove_stale_entities(hass, entry, "scene", {scene.uid for scene in hub.scenes})
     async_add_entities([EnetSceneEntity(scene) for scene in hub.scenes])
 
     platform = entity_platform.async_get_current_platform()
@@ -55,11 +57,21 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 
 def scene_name(scene: EnetScene) -> str:
-    """Return the name of the scene without the [libenet...] prefix"""
-    name = scene.name
-    if name.startswith("[libenet") and "]" in name:
-        name = name.split("]", 1)[-1].strip()
-    return name
+    """Return the name of the scene shown in Home Assistant"""
+    return scene.display_name
+
+
+@callback
+def async_remove_stale_entities(hass, entry, domain, unique_ids) -> None:
+    """Remove the entities of scenes that are no longer added, ie after the
+    scenes option was changed. Only when the scenes could be read."""
+    if not entry.runtime_data.scenes_read:
+        return
+    ent_reg = er.async_get(hass)
+    for entity in er.async_entries_for_config_entry(ent_reg, entry.entry_id):
+        if entity.domain == domain and entity.unique_id not in unique_ids:
+            _LOGGER.debug("Removing %s, its scene is no longer added", entity.entity_id)
+            ent_reg.async_remove(entity.entity_id)
 
 
 def server_device_info() -> DeviceInfo:
