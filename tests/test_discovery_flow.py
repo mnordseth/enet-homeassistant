@@ -49,7 +49,8 @@ _stub(
 )
 _stub("homeassistant.core", HomeAssistant=object, callback=lambda func: func)
 _stub("homeassistant.helpers")
-_stub("homeassistant.helpers.selector", BooleanSelector=object)
+_stub("homeassistant.helpers.selector", BooleanSelector=object, SelectSelector=object,
+      SelectSelectorConfig=object, SelectSelectorMode=object)
 _stub("homeassistant.exceptions", HomeAssistantError=Exception)
 sys.modules["homeassistant"].config_entries = sys.modules["homeassistant.config_entries"]
 sys.modules["homeassistant.components"].zeroconf = sys.modules[

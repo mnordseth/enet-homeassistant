@@ -59,6 +59,18 @@ class EnetBaseChannelEntity(EnetBaseEntity, Entity):
         """Link the entity to its device, registered by async_setup_devices"""
         return DeviceInfo(identifiers={(DOMAIN, self.channel.device.uid)})
 
+    def scene_did_it(self, on, percent=None) -> bool:
+        """True if this command is already done by the Enet scene that a Home
+        Assistant scene just called (scene_sync.py): it is not sent then.
+        Otherwise the command is noted, so it is not corrected afterwards."""
+        sync = getattr(self.channel.device.client, "scene_sync", None)
+        if sync is None:
+            return False
+        if sync.suppressed(self.channel.uid, on, percent):
+            return True
+        sync.note_command(self.channel.uid)
+        return False
+
     @property
     def native_value(self) -> int:
         """Return the last value reported by the sensor."""

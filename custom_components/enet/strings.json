@@ -188,10 +188,43 @@
       "init": {
         "title": "Enet Smart Home options",
         "data": {
+          "scene_editor": "Edit Enet scenes in the scene editor",
           "location_scenes": "Lights on/off scenes of rooms"
         },
         "data_description": {
+          "scene_editor": "Make the scenes of the Enet server Home Assistant scenes (in scenes.yaml), to edit them in the scene editor, and give every Home Assistant scene with Enet lights a scene on the Enet server for the scene buttons and the Enet app. Changes on either side are synced.",
           "location_scenes": "Also add the scenes the Enet server makes for each room, each floor and the whole home, which switch all their lights on or off. Scenes made in the Enet app are always added."
+        }
+      },
+      "scene_editor_off": {
+        "title": "Scenes in the scene editor",
+        "description": "{count} scenes in the scene editor were made from the scenes of the Enet server. Without the option they are not synced anymore. Kept, they are ordinary Home Assistant scenes, next to the scenes of the integration with the same names. Deleted, the integration's scenes come back with their entity ids. The scenes on the Enet server are not changed.",
+        "data": {
+          "leftover_scenes": "Scenes made from Enet scenes"
+        }
+      }
+    }
+  },
+  "selector": {
+    "leftover_scenes": {
+      "options": {
+        "keep": "Keep them as Home Assistant scenes",
+        "delete": "Delete them from the scene editor"
+      }
+    }
+  },
+  "issues": {
+    "leftover_scenes": {
+      "title": "Scenes left behind by the Enet integration",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Scenes left behind by the Enet integration",
+            "description": "{title} was removed. {count} scenes in the scene editor were made from the scenes of its Enet server and are not synced anymore. Choose whether to keep them as ordinary Home Assistant scenes or delete them. The scenes on the Enet server are not changed. If you add the integration again, they are linked to the Enet scenes again.",
+            "data": {
+              "leftover_scenes": "Scenes made from Enet scenes"
+            }
+          }
         }
       }
     }

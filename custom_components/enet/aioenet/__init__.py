@@ -10,6 +10,7 @@ from .client import (
     BatteryStateEvent,
     ButtonEvent,
     EnetClient,
+    SceneChangedEvent,
     ValueUpdateEvent,
     normalize_url,
 )
@@ -23,6 +24,7 @@ from .scenes import (
     SceneMember,
     SceneParameter,
     SceneValueKind,
+    app_scene_name,
 )
 
 __all__ = [
@@ -40,11 +42,13 @@ __all__ = [
     "EnetClient",
     "EnetScene",
     "EnetServerError",
+    "SceneChangedEvent",
     "SceneMember",
     "SceneParameter",
     "SceneValueKind",
     "SensorChannel",
     "ValueUpdateEvent",
+    "app_scene_name",
     "create_device",
     "normalize_url",
 ]

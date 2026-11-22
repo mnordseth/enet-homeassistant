@@ -137,12 +137,13 @@ def async_setup_services(hass: HomeAssistant) -> None:
 async def async_setup_entry(hass, entry, async_add_entities):
     """Add Enet scenes"""
     hub = entry.runtime_data
-    async_remove_stale_entities(hass, entry, "scene", {scene.uid for scene in hub.scenes})
+    scenes = unlinked_scenes(hub)
+    async_remove_stale_entities(hass, entry, "scene", {scene.uid for scene in scenes})
     room_areas = {}
-    if any(scene.location_uid for scene in hub.scenes):
+    if any(scene.location_uid for scene in scenes):
         room_areas = await _async_room_areas(hass, entry.entry_id, hub)
     async_add_entities(
-        [EnetSceneEntity(scene, room_areas.get(scene.location_uid)) for scene in hub.scenes]
+        [EnetSceneEntity(scene, room_areas.get(scene.location_uid)) for scene in scenes]
     )
 
     platform = entity_platform.async_get_current_platform()
@@ -184,6 +185,14 @@ async def _async_room_areas(hass: HomeAssistant, entry_id: str, hub) -> dict[str
         if counts and (len(counts) == 1 or counts[0][1] > counts[1][1]):
             areas[location_uid] = counts[0][0]
     return areas
+
+
+def unlinked_scenes(hub) -> list[EnetScene]:
+    """The scenes that are entities of the integration: not the ones that are
+    Home Assistant scenes (scene_sync.py)"""
+    sync = getattr(hub, "scene_sync", None)
+    linked = sync.linked_scene_uids if sync is not None else set()
+    return [scene for scene in hub.scenes if scene.uid not in linked]
 
 
 def scene_name(scene: EnetScene) -> str:

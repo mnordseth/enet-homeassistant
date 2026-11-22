@@ -28,6 +28,13 @@ ID_FILTER_ALL = "*"
 EVENT_DEVICE_BATTERY_STATE_CHANGED = "deviceBatteryStateChanged"
 EVENT_OUTPUT_DEVICE_FUNCTION_CALLED = "outputDeviceFunctionCalled"
 EVENT_WRITE_VALUES_TO_DEVICE_PARAMETER_COMPLETED = "writeValuesToDeviceParameterCompleted"
+# A scene was created, changed or deleted: in the Enet app, through the API,
+# or by running it (its status changes)
+SCENE_EVENTS = {
+    "sceneActionCreated": "created",
+    "sceneActionChanged": "changed",
+    "sceneActionDeleted": "deleted",
+}
 # The values of a parameter read from the device: always after a read,
 # changed or not. deviceParameterChanged also comes when the value changed.
 EVENT_DEVICE_PARAMETER_VALUES_RECEIVED = "deviceParameterValuesReceived"
@@ -58,6 +65,14 @@ class ButtonEvent:
     channel: "DeviceChannel"
     subtype: int
     type: ButtonEventType
+
+
+@dataclass
+class SceneChangedEvent:
+    "A scene on the server was created, changed or deleted"
+
+    scene_uid: str
+    change: str  # created, changed or deleted
 
 
 @dataclass
@@ -143,6 +158,7 @@ class EnetClient:
         self._auth_generation = 0
         self._event_subscriptions = set()
         self._battery_events_subscribed = False
+        self._scene_events_subscribed = False
 
         if load_file:
             with open(load_file) as fp:
@@ -190,6 +206,7 @@ class EnetClient:
         """Initialize events for all output functions"""
         log.debug("Setting up event listners")
         await self.setup_event_subscription_battery_state()
+        await self.setup_event_subscription_scenes()
         for device in self.devices:
             func_uids = device.get_function_uids_for_event()
             self.function_uid_map.update(func_uids)
@@ -309,6 +326,10 @@ class EnetClient:
                 await self._handle_output_device_function_called(event)
             elif event["event"] == EVENT_DEVICE_BATTERY_STATE_CHANGED:
                 self._handle_battery_state_changed(event)
+            elif event["event"] in SCENE_EVENTS:
+                uid = (event.get("eventData") or {}).get("sceneActionUID")
+                if uid:
+                    self._notify_subscribers(SceneChangedEvent(uid, SCENE_EVENTS[event["event"]]))
 
     def _handle_parameter_write_completed(self, event):
         data = event.get("eventData") or {}
@@ -453,6 +474,9 @@ class EnetClient:
             await self._do_request(
                 URL.VISUALIZATION, "registerEventDeviceBatteryStateChanged", None
             )
+        if self._scene_events_subscribed:
+            for name in ("Created", "Changed", "Deleted"):
+                await self._do_request(URL.SCENE, f"registerEventSceneAction{name}", None)
         for func_uid in sorted(self._event_subscriptions):
             await self._do_request(
                 URL.VISUALIZATION,
@@ -862,6 +886,14 @@ class EnetClient:
             raise EnetServerError(f"The scene {name} was not created")
         return uid
 
+    async def rename_scene_action(self, scene_uid, name):
+        """Change the name of a scene on the server"""
+        await self.request(
+            URL.SCENE,
+            "setSceneActionName",
+            {"sceneActionUID": scene_uid, "sceneActionName": name},
+        )
+
     async def delete_scene_action(self, scene_uid):
         """Delete a scene on the server. The server removes its links from the devices."""
         await self.request(
@@ -920,6 +952,12 @@ class EnetClient:
         )
         self._battery_events_subscribed = True
         return result
+
+    async def setup_event_subscription_scenes(self):
+        """Subscribe for sceneActionCreated, -Changed and -Deleted events"""
+        for name in ("Created", "Changed", "Deleted"):
+            await self.request(URL.SCENE, f"registerEventSceneAction{name}", None)
+        self._scene_events_subscribed = True
 
     async def get_events(self):
         """Poll Enet server for events"""
