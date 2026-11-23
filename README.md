@@ -19,7 +19,11 @@ The integration talks to the server on your local network. Changes are pushed by
 | Motion detectors | Motion binary sensor |
 | Buttons, rockers and scene buttons | Event entities and device triggers (see below) |
 | Battery powered devices | Battery state sensor (diagnostic) |
-| Scenes on the Enet server | Scene (see below) |
+| Scenes on the Enet server | Scene and a button to save it (see below) |
+
+### Areas and floors
+
+The devices are put in an area for their room in the Enet server, and the areas on floors for the server's floors. Floors are created when needed. Rooms with the same name on different floors become areas like *Hall (First floor)*. The area is only suggested when a device is added: devices that come back after removing and adding the integration again keep the area they had. An area gets its floor once, and only if it has none, so areas and floors you change are kept.
 
 ### Buttons
 
@@ -33,7 +37,70 @@ Button presses are also fired on the event bus as `enet_event`, with the data `d
 
 ### Scenes
 
-Scenes defined in the Enet app can be activated from Home Assistant.
+The scenes of the Enet server are added as scenes: the scenes made in the Enet app, and scenes created from Home Assistant. Activating one runs the scene on the Enet server, the same as the scene buttons and the Enet app.
+
+The server also makes lights on/off scenes for each room, each floor and the whole home, which the Enet app uses for the on/off switch of a room. To add those too, turn on **Lights on/off scenes of rooms** under **Settings → Devices & services → Enet Smart Home → Configure**. They are named like *Kitchen lights on*, and are put in the area of the room's devices. Room scenes without members, like the blinds scenes in a house without blinds, are left out. They can be activated, but not changed: they have no *Save* button, and the server keeps their members in step with the rooms itself.
+
+When the option is changed, the integration reloads. Scenes that are no longer added are removed, with their *Save* buttons.
+
+Each scene shows its members and their levels in the attributes:
+
+- `entity_id`: the lights, switches and covers of the scene
+- `levels`: the level of each member in the scene. Brightness in percent for dimmers (0 is off), `on`/`off` for switches, and `position` and `tilt_position` for covers (100 is open). The levels are read from the server after startup, so they can take a moment to appear.
+
+The scenes can be changed from Home Assistant. The changes are stored on the Enet server, and are used by the scene buttons and the Enet app as well:
+
+- **Save the current state:** set the lights the way you want them, then press the scene's *Save* button (on the Enet Smart Home Server device), or use the action `enet.save_scene`. Every member is stored at its current level. The members store their level themselves when they receive one scene telegram, and the changed levels are then read back from the devices. This takes a few seconds, and the lights don't flicker. A member that misses the telegram is programmed with its level instead. Nothing is sent when no member changed.
+- **Change one member:** the action `enet.set_scene_level` sets the level of one member: `brightness_pct` or `state` for lights and switches, `position` and `tilt_position` for covers.
+
+  ```yaml
+  action: enet.set_scene_level
+  target:
+    entity_id: scene.enet_smart_home_server_evening
+  data:
+    member: light.kitchen
+    brightness_pct: 40
+  ```
+
+- **Add or remove a member:** the actions `enet.add_scene_member` and `enet.remove_scene_member` add a light, switch or cover to the scene or remove it. A new member is stored at its current state, or at the level given like for `enet.set_scene_level`.
+
+  ```yaml
+  action: enet.add_scene_member
+  target:
+    entity_id: scene.enet_smart_home_server_evening
+  data:
+    member: light.kitchen
+  ```
+
+- **Create a scene:** the action `enet.create_scene` creates a scene with lights, switches and covers at their current state. `icon` is the scene's icon in the Enet app (`lights_on` if left out). The scene is added in Home Assistant, with its *Save* button, and shows up in the Enet app.
+
+  ```yaml
+  action: enet.create_scene
+  data:
+    name: Movie
+    members:
+      - light.living_room
+      - light.kitchen
+    icon: movie_projector
+  ```
+
+- **Delete a scene:** the action `enet.delete_scene` deletes the scene on the Enet server, so it is gone from the Enet app and the scene buttons as well.
+
+Setting a level with `enet.set_scene_level`, adding or removing a member, and creating or deleting a scene program the devices by radio, which takes a few seconds per member (adding a member about 20 seconds). Programming restarts the device, and lights and switches that were on come back off: the integration switches them back on to their level afterwards. The lights on/off scenes the server makes for each room can't be changed or deleted. Scenes can't be edited in Home Assistant's scene editor, which only edits Home Assistant's own scenes.
+
+#### Editing scenes in the scene editor
+
+Turn on **Edit Enet scenes in the scene editor** under **Configure** to edit the Enet scenes in Home Assistant's scene editor, with live edit:
+
+- The scenes of the Enet server become Home Assistant scenes (in `scenes.yaml`), with the levels stored in the scene. They keep their entity id; the integration's scene entity and *Save* button are removed.
+- Every Home Assistant scene with Enet lights, switches or covers gets a scene on the Enet server with those members, shown in the Enet app and usable for the scene buttons. Other entities in the scene, like Hue lamps, stay in the Home Assistant scene only.
+- Saving in the scene editor changes the Enet scene: members are added or removed, and the levels stored. After live edit the lights are at their levels, and they store them themselves in a few seconds; otherwise each changed member is programmed.
+- Changes in the Enet app update the Home Assistant scene. A scene deleted on either side is deleted on the other. When a scene was changed on both sides, Home Assistant's version is kept.
+- Running the scene sends the Enet scene, so its Enet lights switch together with one radio telegram, and Home Assistant switches the other entities. Enet lights that missed the telegram are switched individually a few seconds later. With a `transition`, Home Assistant switches all of them itself.
+
+Scenes that can't be a Home Assistant scene stay scenes of the integration: the lights on/off scenes of rooms, scenes without members or with other actions (like "all off" scenes made of other scenes), and scenes with a member that is not in Home Assistant. `scenes.yaml` must be loaded (`scene: !include scenes.yaml` in `configuration.yaml`, as in a new installation).
+
+When you turn the option off, you are asked whether to keep the scenes made from the Enet scenes as ordinary Home Assistant scenes or delete them from the scene editor. When you remove the integration, the same question shows up under **Settings → Repairs** (until Home Assistant restarts; the scenes are kept otherwise). The scenes on the Enet server are never changed by this. If you add the integration again, the scenes left in `scenes.yaml` are linked to their Enet scenes again instead of being added twice.
 
 ### Motion detectors
 

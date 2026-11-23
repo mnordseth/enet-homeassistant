@@ -19,7 +19,7 @@
       "modelName": "eNet Server"
     }
   ],
-  "version": "2026.11.2",
+  "version": "2026.11.3b1",
   "zeroconf": [
     "_enet._tcp.local."
   ]

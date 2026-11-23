@@ -65,6 +65,11 @@
                     "battery_weak": "Schwach"
                 }
             }
+        },
+        "button": {
+            "save_scene": {
+                "name": "{scene} speichern"
+            }
         }
     },
     "device_automation": {
@@ -82,6 +87,146 @@
             "initial_press": "\"{subtype}\" wurde gedrückt",
             "long_release": "\"{subtype}\" wurde nach langem Drücken losgelassen",
             "short_release": "\"{subtype}\" wurde nach kurzem Drücken losgelassen"
+        }
+    },
+    "services": {
+        "save_scene": {
+            "name": "Szene speichern",
+            "description": "Speichert den aktuellen Zustand aller Lichter, Schalter und Rollläden der Szene in der Szene auf dem Enet Server."
+        },
+        "set_scene_level": {
+            "name": "Szenenwert setzen",
+            "description": "Ändert den Wert eines Mitglieds der Szene auf dem Enet Server.",
+            "fields": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Licht, Schalter oder Rollladen der Szene, der geändert wird."
+                },
+                "brightness_pct": {
+                    "name": "Helligkeit",
+                    "description": "Helligkeit eines Dimmers in der Szene, 0 ist aus."
+                },
+                "state": {
+                    "name": "Zustand",
+                    "description": "Ein oder aus, für Schalter und Lichter."
+                },
+                "position": {
+                    "name": "Position",
+                    "description": "Position eines Rollladens in der Szene, 100 ist offen."
+                },
+                "tilt_position": {
+                    "name": "Lamellenposition",
+                    "description": "Lamellenposition einer Jalousie in der Szene, 100 ist offen."
+                }
+            }
+        },
+        "add_scene_member": {
+            "name": "Szenenmitglied hinzufügen",
+            "description": "Fügt der Szene auf dem Enet Server ein Licht, einen Schalter oder einen Rollladen hinzu, mit dem angegebenen Wert oder dem aktuellen Zustand.",
+            "fields": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Licht, Schalter oder Rollladen, der der Szene hinzugefügt wird."
+                },
+                "brightness_pct": {
+                    "name": "Helligkeit",
+                    "description": "Helligkeit eines Dimmers in der Szene, 0 ist aus. Weglassen für den aktuellen Zustand."
+                },
+                "state": {
+                    "name": "Zustand",
+                    "description": "Ein oder aus, für Schalter und Lichter. Weglassen für den aktuellen Zustand."
+                },
+                "position": {
+                    "name": "Position",
+                    "description": "Position eines Rollladens in der Szene, 100 ist offen. Weglassen für den aktuellen Zustand."
+                },
+                "tilt_position": {
+                    "name": "Lamellenposition",
+                    "description": "Lamellenposition einer Jalousie in der Szene, 100 ist offen. Weglassen für den aktuellen Zustand."
+                }
+            }
+        },
+        "remove_scene_member": {
+            "name": "Szenenmitglied entfernen",
+            "description": "Entfernt ein Licht, einen Schalter oder einen Rollladen aus der Szene auf dem Enet Server.",
+            "fields": {
+                "member": {
+                    "name": "Mitglied",
+                    "description": "Licht, Schalter oder Rollladen, der aus der Szene entfernt wird."
+                }
+            }
+        },
+        "create_scene": {
+            "name": "Szene erstellen",
+            "description": "Erstellt eine Szene auf dem Enet Server mit Lichtern, Schaltern und Rollläden in ihrem aktuellen Zustand. Die Szene wird auch in der Enet App angezeigt.",
+            "fields": {
+                "name": {
+                    "name": "Name",
+                    "description": "Name der Szene."
+                },
+                "members": {
+                    "name": "Mitglieder",
+                    "description": "Lichter, Schalter und Rollläden der Szene. Sie werden in ihrem aktuellen Zustand gespeichert."
+                },
+                "icon": {
+                    "name": "Symbol",
+                    "description": "Symbol der Szene in der Enet App."
+                },
+                "config_entry_id": {
+                    "name": "Enet Server",
+                    "description": "Der Enet Server, auf dem die Szene erstellt wird. Nur bei mehr als einem nötig."
+                }
+            }
+        },
+        "delete_scene": {
+            "name": "Szene löschen",
+            "description": "Löscht die Szene auf dem Enet Server. Sie verschwindet auch aus der Enet App und von den Szenentasten."
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Enet Smart Home Optionen",
+                "data": {
+                    "scene_editor": "Enet-Szenen im Szeneneditor bearbeiten",
+                    "location_scenes": "Licht-ein/aus-Szenen der Räume"
+                },
+                "data_description": {
+                    "scene_editor": "Die Szenen des Enet Servers werden Home-Assistant-Szenen (in scenes.yaml), um sie im Szeneneditor zu bearbeiten, und jede Home-Assistant-Szene mit Enet-Lichtern bekommt eine Szene auf dem Enet Server für die Szenentasten und die Enet App. Änderungen auf beiden Seiten werden abgeglichen.",
+                    "location_scenes": "Auch die Szenen hinzufügen, die der Enet Server für jeden Raum, jede Etage und das ganze Haus anlegt und die alle ihre Lichter ein- oder ausschalten. Szenen aus der Enet App werden immer hinzugefügt."
+                }
+            },
+            "scene_editor_off": {
+                "title": "Szenen im Szeneneditor",
+                "description": "{count} Szenen im Szeneneditor wurden aus den Szenen des Enet Servers erstellt. Ohne die Option werden sie nicht mehr abgeglichen. Behalten, sind sie normale Home-Assistant-Szenen, neben den gleichnamigen Szenen der Integration. Gelöscht, bekommen die Szenen der Integration ihre Entitäts-IDs zurück. Die Szenen auf dem Enet Server werden nicht geändert.",
+                "data": {
+                    "leftover_scenes": "Aus Enet-Szenen erstellte Szenen"
+                }
+            }
+        }
+    },
+    "selector": {
+        "leftover_scenes": {
+            "options": {
+                "keep": "Als Home-Assistant-Szenen behalten",
+                "delete": "Aus dem Szeneneditor löschen"
+            }
+        }
+    },
+    "issues": {
+        "leftover_scenes": {
+            "title": "Von der Enet-Integration hinterlassene Szenen",
+            "fix_flow": {
+                "step": {
+                    "init": {
+                        "title": "Von der Enet-Integration hinterlassene Szenen",
+                        "description": "{title} wurde entfernt. {count} Szenen im Szeneneditor wurden aus den Szenen seines Enet Servers erstellt und werden nicht mehr abgeglichen. Wähle, ob sie als normale Home-Assistant-Szenen bleiben oder gelöscht werden. Die Szenen auf dem Enet Server werden nicht geändert. Wird die Integration wieder hinzugefügt, werden sie wieder mit den Enet-Szenen verknüpft.",
+                        "data": {
+                            "leftover_scenes": "Aus Enet-Szenen erstellte Szenen"
+                        }
+                    }
+                }
+            }
         }
     }
 }

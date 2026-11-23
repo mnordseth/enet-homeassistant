@@ -32,6 +32,7 @@ def _stub(name, **attrs):
 class Platform(enum.StrEnum):
     LIGHT = "light"
     SCENE = "scene"
+    BUTTON = "button"
     COVER = "cover"
     SENSOR = "sensor"
     SWITCH = "switch"
@@ -49,7 +50,18 @@ class ConfigEntryAuthFailed(Exception):
 
 class DeviceRegistry:
     def async_get_or_create(self, **kwargs):
-        return types.SimpleNamespace(id="device-id")
+        return types.SimpleNamespace(id="device-id", area_id=None)
+
+
+class Store:
+    def __init__(self, hass, version, key):
+        pass
+
+    async def async_load(self):
+        return None
+
+    async def async_save(self, data):
+        pass
 
 
 _stub("homeassistant")
@@ -60,8 +72,15 @@ _stub("homeassistant.exceptions", ConfigEntryNotReady=ConfigEntryNotReady,
 _stub("homeassistant.const", Platform=Platform)
 _stub("homeassistant.core", HomeAssistant=object, callback=lambda func: func)
 _stub("homeassistant.helpers.entity", DeviceInfo=dict)
+_stub("homeassistant.helpers.config_validation",
+      config_entry_only_config_schema=lambda domain: None)
+_stub("homeassistant.helpers.typing", ConfigType=dict)
 _stub("homeassistant.helpers.device_registry", DeviceEntry=object,
       async_get=lambda hass: DeviceRegistry())
+_stub("homeassistant.helpers.area_registry", async_get=lambda hass: None)
+_stub("homeassistant.helpers.floor_registry", async_get=lambda hass: None)
+_stub("homeassistant.helpers.issue_registry")
+_stub("homeassistant.helpers.storage", Store=Store)
 
 source = Path(__file__).resolve().parents[1] / "custom_components" / "enet"
 spec = importlib.util.spec_from_file_location(
@@ -80,11 +99,15 @@ class FakeConfigEntry:
         self.entry_id = "entry"
         self.data = {"url": url, "username": "user", "password": "secret"}
         self.unique_id = url
+        self.options = {}
         self._background_tasks = set()
         self._on_unload = []
 
     def async_on_unload(self, func):
         self._on_unload.append(func)
+
+    def add_update_listener(self, listener):
+        return lambda: None
 
     def async_create_background_task(self, hass, target, name, eager_start=True):
         task = asyncio.create_task(target, name=name)

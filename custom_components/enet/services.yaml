@@ -1,0 +1,184 @@
+save_scene:
+  target:
+    entity:
+      integration: enet
+      domain: scene
+
+set_scene_level:
+  target:
+    entity:
+      integration: enet
+      domain: scene
+  fields:
+    member:
+      required: true
+      selector:
+        entity:
+          integration: enet
+          domain:
+            - light
+            - switch
+            - cover
+    brightness_pct:
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+    state:
+      selector:
+        select:
+          options:
+            - "on"
+            - "off"
+    position:
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+    tilt_position:
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+
+add_scene_member:
+  target:
+    entity:
+      integration: enet
+      domain: scene
+  fields:
+    member:
+      required: true
+      selector:
+        entity:
+          integration: enet
+          domain:
+            - light
+            - switch
+            - cover
+    brightness_pct:
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+    state:
+      selector:
+        select:
+          options:
+            - "on"
+            - "off"
+    position:
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+    tilt_position:
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+
+remove_scene_member:
+  target:
+    entity:
+      integration: enet
+      domain: scene
+  fields:
+    member:
+      required: true
+      selector:
+        entity:
+          integration: enet
+          domain:
+            - light
+            - switch
+            - cover
+
+create_scene:
+  fields:
+    name:
+      required: true
+      selector:
+        text:
+    members:
+      selector:
+        entity:
+          multiple: true
+          integration: enet
+          domain:
+            - light
+            - switch
+            - cover
+    icon:
+      default: lights_on
+      selector:
+        select:
+          mode: dropdown
+          options:
+            - undefined
+            - alarm_clock
+            - away
+            - bath
+            - bed
+            - book
+            - boy
+            - bread
+            - car
+            - chefs_hat
+            - croissant
+            - cup
+            - cupcake
+            - dinner
+            - fitness
+            - gamepad
+            - girl
+            - heart
+            - home
+            - ice
+            - keys
+            - lightning
+            - man
+            - moon
+            - movie_projector
+            - notebook
+            - notes
+            - palm_tree
+            - people
+            - pot
+            - rain
+            - silverware
+            - siren
+            - soccer
+            - sofa
+            - storm
+            - suitcase
+            - sun
+            - sunset
+            - teddy
+            - travel_case
+            - tv
+            - wall_clock
+            - wine
+            - woman
+            - blinds_down
+            - blinds_up
+            - lights_off
+            - lights_on
+            - energy_off
+            - energy_on
+    config_entry_id:
+      selector:
+        config_entry:
+          integration: enet
+
+delete_scene:
+  target:
+    entity:
+      integration: enet
+      domain: scene
