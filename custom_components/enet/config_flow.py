@@ -5,15 +5,17 @@ from __future__ import annotations
 import logging
 from collections.abc import Mapping
 from typing import Any
+from urllib.parse import urlparse
 
 import aiohttp
 import voluptuous as vol
 
 from homeassistant import config_entries
-from homeassistant.const import CONF_PASSWORD, CONF_URL, CONF_USERNAME
+from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_URL, CONF_USERNAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
-from homeassistant.components import zeroconf
+from homeassistant.helpers.service_info.ssdp import SsdpServiceInfo
+from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
 from homeassistant.helpers.selector import (
     BooleanSelector,
     SelectSelector,
@@ -27,6 +29,7 @@ from .const import (
     CONF_LEFTOVER_SCENES,
     CONF_LOCATION_SCENES,
     CONF_SCENE_EDITOR,
+    CONF_SERIAL_NUMBER,
     DOMAIN,
     LEFTOVER_DELETE,
     LEFTOVER_KEEP,
@@ -35,6 +38,8 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 TITLE = "Enet Smart Home"
+# Option of a discovered server: HTTPS (True) or HTTP
+CONF_SECURE = "secure_connection"
 
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
@@ -79,6 +84,11 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Enet Smart Home."""
 
     VERSION = 1
+
+    def __init__(self) -> None:
+        super().__init__()
+        # Url and serial number of a discovered server
+        self._discovered: dict[str, Any] = {}
 
     @staticmethod
     @callback
@@ -194,36 +204,106 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_zeroconf(
-        self, discovery_info: zeroconf.ZeroconfServiceInfo
+        self, discovery_info: ZeroconfServiceInfo
     ) -> config_entries.ConfigFlowResult:
-        """Handle a discovered Enet Server.
-
-        This flow is triggered by the Zeroconf component. It will check if the
-        host is already configured and delegate to the import step if not.
-        """
-        _LOGGER.info("Enet Zeroconf discovery: %s", discovery_info)
-        return self._async_abort_discovery()
+        """An Enet server found by zeroconf: it announces a web service on port
+        80 and a secure one on port 443, with its address and serial number"""
+        _LOGGER.debug("Enet zeroconf discovery: %s", discovery_info)
+        properties = discovery_info.properties
+        host = properties.get("address") or str(discovery_info.ip_address)
+        return await self._async_discovered(
+            host, properties.get("deviceSerialNumber"),
+            # An entry may use its name, like eNetServer.local
+            discovery_info.hostname.rstrip("."),
+        )
 
     async def async_step_ssdp(
-        self, discovery_info: config_entries.SsdpServiceInfo
+        self, discovery_info: SsdpServiceInfo
     ) -> config_entries.ConfigFlowResult:
-        """Handle a discovered Enet Server
+        """An Enet server found by SSDP"""
+        _LOGGER.debug("Enet SSDP discovery: %s", discovery_info)
+        host = urlparse(discovery_info.ssdp_location or "").hostname
+        if not host:
+            return self.async_abort(reason="cannot_connect")
+        return await self._async_discovered(
+            host, discovery_info.upnp.get("serialNumber")
+        )
 
-        This flow is triggered by the SSDP component. It will check if the
-        host is already configured and delegate to the import step if not.
-        """
-        _LOGGER.info("Enet SSDP discovery: %s", discovery_info)
-        return self._async_abort_discovery()
+    async def _async_discovered(
+        self, host: str, serial: str | None, hostname: str | None = None
+    ) -> config_entries.ConfigFlowResult:
+        """Show the setup form with the url of a discovered server, unless it is
+        set up already"""
+        names = {host.lower(), (hostname or host).lower()}
+        for entry in self._async_current_entries(include_ignore=False):
+            url = entry.data.get(CONF_URL, "")
+            if (urlparse(url).hostname or "").lower() in names:
+                if serial and entry.data.get(CONF_SERIAL_NUMBER) != serial:
+                    # Remembered, to find the server when its address changes
+                    self.hass.config_entries.async_update_entry(
+                        entry, data={**entry.data, CONF_SERIAL_NUMBER: serial}
+                    )
+                return self.async_abort(reason="already_configured")
+            if serial and entry.data.get(CONF_SERIAL_NUMBER) == serial:
+                # The server got a new address
+                old = urlparse(url)
+                netloc = f"{host}:{old.port}" if old.port else host
+                new_url = normalize_url(old._replace(netloc=netloc).geturl())
+                _LOGGER.info("The Enet server %s moved to %s", url, new_url)
+                self.hass.config_entries.async_update_entry(
+                    entry, data={**entry.data, CONF_URL: new_url}, unique_id=new_url
+                )
+                self.hass.config_entries.async_schedule_reload(entry.entry_id)
+                return self.async_abort(reason="already_configured")
 
-    def _async_abort_discovery(self) -> config_entries.ConfigFlowResult:
-        """Abort a discovery flow, as setting up from discovery is not supported yet.
+        # One flow for both web services and SSDP; ignoring it ignores the server
+        await self.async_set_unique_id(normalize_url(f"http://{host}"))
+        self._abort_if_unique_id_configured()
+        self._discovered = {CONF_HOST: host, CONF_SERIAL_NUMBER: serial}
+        self.context["title_placeholders"] = {"name": f"{TITLE} ({host})"}
+        return await self.async_step_discovery_confirm()
 
-        A discovery step must return a flow result; returning None makes Home
-        Assistant log an AttributeError for each discovered server at startup.
-        """
-        if self._async_current_entries():
-            return self.async_abort(reason="already_configured")
-        return self.async_abort(reason="discovery_not_supported")
+    async def async_step_discovery_confirm(
+        self, user_input: dict[str, Any] | None = None
+    ) -> config_entries.ConfigFlowResult:
+        """Set up a discovered server: choose HTTPS or HTTP, and log in"""
+        host = self._discovered[CONF_HOST]
+        errors: dict[str, str] = {}
+
+        if user_input is not None:
+            scheme = "https" if user_input[CONF_SECURE] else "http"
+            url = normalize_url(f"{scheme}://{host}")
+            if self._url_configured(url):
+                return self.async_abort(reason="already_configured")
+            data = {
+                CONF_URL: url,
+                CONF_USERNAME: user_input[CONF_USERNAME],
+                CONF_PASSWORD: user_input[CONF_PASSWORD],
+            }
+            errors = await async_try_connect(self.hass, data)
+            if not errors:
+                await self.async_set_unique_id(url, raise_on_progress=False)
+                self._abort_if_unique_id_configured()
+                if serial := self._discovered.get(CONF_SERIAL_NUMBER):
+                    data[CONF_SERIAL_NUMBER] = serial
+                return self.async_create_entry(title=TITLE, data=data)
+
+        defaults = user_input or {
+            # Enet servers announce a secure web service besides the plain one
+            CONF_SECURE: True,
+            CONF_USERNAME: "admin",
+            CONF_PASSWORD: "admin",
+        }
+        return self.async_show_form(
+            step_id="discovery_confirm",
+            data_schema=vol.Schema({
+                vol.Required(CONF_SECURE, default=defaults[CONF_SECURE]): BooleanSelector(),
+                vol.Required(CONF_USERNAME, default=defaults[CONF_USERNAME]): str,
+                vol.Required(CONF_PASSWORD, default=defaults[CONF_PASSWORD]): str,
+            }),
+            description_placeholders={CONF_HOST: host},
+            errors=errors,
+        )
 
 
 class OptionsFlow(config_entries.OptionsFlow):

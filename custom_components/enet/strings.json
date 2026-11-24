@@ -1,5 +1,6 @@
 {
   "config": {
+    "flow_title": "{name}",
     "step": {
       "user": {
         "title": "Connect to the Enet Smart Home server",
@@ -40,6 +41,20 @@
           "username": "User name used to log in to the Enet Smart Home server.",
           "password": "Password of the user."
         }
+      },
+      "discovery_confirm": {
+        "title": "Set up the discovered Enet server",
+        "description": "An Enet Smart Home server was found at {host}. Enter the login details to configure.",
+        "data": {
+          "secure_connection": "Secure connection (HTTPS)",
+          "username": "[%key:common::config_flow::data::username%]",
+          "password": "[%key:common::config_flow::data::password%]"
+        },
+        "data_description": {
+          "secure_connection": "Encrypts the communication with the server; its certificate is not checked.",
+          "username": "User name used to log in to the Enet Smart Home server.",
+          "password": "Password of the user."
+        }
       }
     },
     "error": {
@@ -50,15 +65,15 @@
     },
     "abort": {
       "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
-      "discovery_not_supported": "An Enet Smart Home server was discovered, but setting it up from discovery is not supported yet. Please add the integration manually.",
       "reconfigure_successful": "[%key:common::config_flow::abort::reconfigure_successful%]",
-      "reauth_successful": "[%key:common::config_flow::abort::reauth_successful%]"
+      "reauth_successful": "[%key:common::config_flow::abort::reauth_successful%]",
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]"
     }
   },
   "entity": {
     "sensor": {
       "battery_state": {
-        "name": "Battery state String",
+        "name": "Battery state",
         "state": {
           "no_state": "Unknown",
           "battery_ok": "Ok",

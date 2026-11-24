@@ -1,10 +1,11 @@
 {
     "config": {
+        "flow_title": "{name}",
         "abort": {
             "already_configured": "Device is already configured",
-            "discovery_not_supported": "An Enet Smart Home server was discovered, but setting it up from discovery is not supported yet. Please add the integration manually.",
             "reconfigure_successful": "Re-configuration was successful",
-            "reauth_successful": "Re-authentication was successful"
+            "reauth_successful": "Re-authentication was successful",
+            "cannot_connect": "Failed to connect"
         },
         "error": {
             "cannot_connect": "Failed to connect",
@@ -49,6 +50,20 @@
                     "password": "Password"
                 },
                 "data_description": {
+                    "username": "User name used to log in to the Enet Smart Home server.",
+                    "password": "Password of the user."
+                }
+            },
+            "discovery_confirm": {
+                "title": "Set up the discovered Enet server",
+                "description": "An Enet Smart Home server was found at {host}. Enter the login details to configure.",
+                "data": {
+                    "secure_connection": "Secure connection (HTTPS)",
+                    "username": "Username",
+                    "password": "Password"
+                },
+                "data_description": {
+                    "secure_connection": "Encrypts the communication with the server; its certificate is not checked.",
                     "username": "User name used to log in to the Enet Smart Home server.",
                     "password": "Password of the user."
                 }

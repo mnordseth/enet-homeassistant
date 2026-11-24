@@ -28,7 +28,8 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
-from unittest.mock import patch
+from ipaddress import ip_address
+from unittest.mock import AsyncMock, patch
 
 REPO = Path(__file__).resolve().parents[1]
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
@@ -50,11 +51,18 @@ from homeassistant.helpers import device_registry as dr  # noqa: E402
 from homeassistant.helpers import entity_registry as er  # noqa: E402
 from homeassistant.helpers import floor_registry as fr  # noqa: E402
 from homeassistant.helpers import issue_registry as ir  # noqa: E402
+from homeassistant.helpers.service_info.ssdp import SsdpServiceInfo  # noqa: E402
+from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo  # noqa: E402
 
 # Imported before an event loop runs: enet_data loads its data with asyncio.run()
 import custom_components.enet as enet  # noqa: E402
 import custom_components.enet.scene_sync as scene_sync  # noqa: E402
-from custom_components.enet import aioenet, device_trigger, diagnostics  # noqa: E402
+from custom_components.enet import (  # noqa: E402
+    aioenet,
+    config_flow,
+    device_trigger,
+    diagnostics,
+)
 
 SCENES = {
     "sceneActionUIDs": [
@@ -1557,6 +1565,118 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         )
         self.assertEqual((result["type"], result["reason"]), ("abort", "already_configured"))
         self.assert_no_warnings()
+
+    # --- Discovery ----------------------------------------------------------
+
+    @staticmethod
+    def zeroconf_info(address, port=80, serial="AAodCC4R"):
+        """As an Enet server announces itself (both web services)"""
+        return ZeroconfServiceInfo(
+            ip_address=ip_address(address) if address[0].isdigit() else ip_address("192.0.2.1"),
+            ip_addresses=[],
+            port=port,
+            hostname="eNetServer.local.",
+            type="_enet._tcp.local.",
+            name=f"eNet-Server {'Secure ' if port == 443 else ''}Web Service._enet._tcp.local.",
+            properties={"modelName": "eNet Server", "address": address,
+                        "modelVersion": "2.32.46916", "manufacturer": "JUNG",
+                        "deviceSerialNumber": serial},
+        )
+
+    async def discover(self, source, info):
+        return await self.hass.config_entries.flow.async_init(
+            "enet", context={"source": source}, data=info
+        )
+
+    async def discover_new_server(self):
+        return await self.discover("zeroconf", self.zeroconf_info("192.168.1.115"))
+
+    def secure_default(self, result):
+        key = next(k for k in result["data_schema"].schema if k == "secure_connection")
+        return key.default()
+
+    async def confirm(self, result, secure, connects=True):
+        """Choose the connection and log in; the new entry is not set up (it
+        would be the same offline server as the entry of the test)"""
+        error = None if connects else config_flow.CannotConnect()
+        with (patch("custom_components.enet.config_flow.validate_input",
+                    AsyncMock(side_effect=error)),
+              patch.object(enet, "async_setup_entry", AsyncMock(return_value=True))):
+            result = await self.hass.config_entries.flow.async_configure(
+                result["flow_id"],
+                {"secure_connection": secure, "username": "admin", "password": "secret"},
+            )
+            await self.hass.async_block_till_done()
+        return result
+
+    async def test_discovered_server_ticks_secure_connection(self):
+        result = await self.discover_new_server()
+        self.assertEqual((result["type"], result["step_id"]), ("form", "discovery_confirm"))
+        self.assertEqual(result["description_placeholders"], {"host": "192.168.1.115"})
+        self.assertTrue(self.secure_default(result))
+        flow = self.hass.config_entries.flow.async_get(result["flow_id"])
+        self.assertEqual(flow["context"]["title_placeholders"],
+                         {"name": "Enet Smart Home (192.168.1.115)"})
+        # The secure web service and SSDP are the same server
+        for source, info in [
+            ("zeroconf", self.zeroconf_info("192.168.1.115", 443)),
+            ("ssdp", SsdpServiceInfo(ssdp_usn="uuid:x", ssdp_st="upnp:rootdevice",
+                                     ssdp_location="http://192.168.1.115:49152/desc.xml",
+                                     upnp={"modelName": "eNet Server",
+                                           "serialNumber": "AAodCC4R"})),
+        ]:
+            other = await self.discover(source, info)
+            self.assertEqual((other["type"], other["reason"]), ("abort", "already_in_progress"))
+
+        # Not connecting: the form again, with the choice kept
+        result = await self.confirm(result, True, connects=False)
+        self.assertEqual(result["errors"], {"base": "cannot_connect"})
+        self.assertTrue(self.secure_default(result))
+        result = await self.confirm(result, True)
+        self.assertEqual(result["type"], "create_entry")
+        self.assertEqual(result["data"], {"url": "https://192.168.1.115", "username": "admin",
+                                          "password": "secret", "serial_number": "AAodCC4R"})
+        self.assertEqual(result["result"].unique_id, "https://192.168.1.115")
+        self.assert_no_warnings()
+
+    async def test_discovered_server_without_secure_connection_uses_http(self):
+        result = await self.discover_new_server()
+        result = await self.confirm(result, False)
+        self.assertEqual(result["data"]["url"], "http://192.168.1.115")
+
+    async def test_discovered_server_that_is_set_up_gets_its_serial_number(self):
+        for host in ("enet.invalid", "192.0.2.1"):
+            info = self.zeroconf_info(host)
+            if host != "enet.invalid":
+                # Set up by the name it announces
+                self.hass.config_entries.async_update_entry(
+                    self.entry, data={**self.entry.data, "url": "https://enetserver.local"}
+                )
+            result = await self.discover("zeroconf", info)
+            self.assertEqual((result["type"], result["reason"]), ("abort", "already_configured"))
+        self.assertEqual(self.entry.data["serial_number"], "AAodCC4R")
+
+    async def test_server_with_a_new_address_is_updated(self):
+        self.hass.config_entries.async_update_entry(
+            self.entry, data={**self.entry.data, "serial_number": "AAodCC4R"}
+        )
+        result = await self.discover("zeroconf", self.zeroconf_info("192.168.1.120"))
+        self.assertEqual((result["type"], result["reason"]), ("abort", "already_configured"))
+        await self.hass.async_block_till_done()
+        self.assertEqual(self.entry.data["url"], "http://192.168.1.120")
+        self.assertEqual(self.entry.unique_id, "http://192.168.1.120")
+        self.assertEqual(self.entry.state, config_entries.ConfigEntryState.LOADED)
+        self.assert_no_warnings()
+
+    async def test_ignored_server_is_not_discovered_again(self):
+        await self.discover_new_server()
+        await self.hass.config_entries.flow.async_init(
+            "enet", context={"source": config_entries.SOURCE_IGNORE},
+            data={"unique_id": "http://192.168.1.115", "title": "Enet"},
+        )
+        await self.hass.async_block_till_done()
+        result = await self.discover("zeroconf", self.zeroconf_info("192.168.1.115"))
+        self.assertEqual((result["type"], result["reason"]), ("abort", "already_configured"))
 
     async def test_unload_and_reload(self):
         entity_ids = {e.entity_id for e in self.entities()}

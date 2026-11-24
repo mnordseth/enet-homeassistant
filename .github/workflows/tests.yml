@@ -37,7 +37,6 @@ jobs:
 
       - name: Tests with stubbed Home Assistant
         run: |
-          python tests/test_discovery_flow.py
           python tests/test_entry_lifecycle.py
           python tests/test_session_recovery.py
 

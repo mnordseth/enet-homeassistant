@@ -137,7 +137,7 @@ The login is checked before the integration is added. Each Enet server can only 
 
 To change the URL or the login later, open the integration and select **Reconfigure**. If the server rejects the login, Home Assistant asks for the username and password again.
 
-Setting up a server found by network discovery is not supported yet. Add the integration manually as described above.
+Home Assistant finds Enet servers on the local network by themselves (zeroconf and SSDP): they show up under **Settings → Devices & services → Discovered**, and **Add** asks for the login. **Secure connection (HTTPS)** is ticked by default and encrypts the communication with the server. A server that is already added is not shown, and if its address changes, the integration finds it at the new address.
 
 ## Removal
 

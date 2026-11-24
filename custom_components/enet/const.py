@@ -9,6 +9,8 @@ NAME_ENET_SERVER = "Enet Smart Home Server"
 
 CONF_SUBTYPE = "subtype"
 CONF_UNIQUE_ID = "unique_id"
+# Serial number of the Enet server, from discovery
+CONF_SERIAL_NUMBER = "serial_number"
 
 # Option: also add the lights/blinds on/off scenes the server makes for each
 # location. The other scenes are always added.
