@@ -41,22 +41,19 @@ sys.path.insert(0, str(REPO))
 from homeassistant import bootstrap, config_entries, core, loader  # noqa: E402
 from homeassistant.components.cover import CoverEntityFeature  # noqa: E402
 from homeassistant.const import ATTR_FRIENDLY_NAME, STATE_UNAVAILABLE  # noqa: E402
-from homeassistant import config as conf_util  # noqa: E402
 from homeassistant.core_config import async_process_ha_core_config  # noqa: E402
-from homeassistant.setup import async_setup_component  # noqa: E402
-import yaml  # noqa: E402 - a dependency of Home Assistant
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError  # noqa: E402
 from homeassistant.helpers import area_registry as ar  # noqa: E402
 from homeassistant.helpers import device_registry as dr  # noqa: E402
 from homeassistant.helpers import entity_registry as er  # noqa: E402
 from homeassistant.helpers import floor_registry as fr  # noqa: E402
 from homeassistant.helpers import issue_registry as ir  # noqa: E402
+from homeassistant.helpers.storage import Store  # noqa: E402
 from homeassistant.helpers.service_info.ssdp import SsdpServiceInfo  # noqa: E402
 from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo  # noqa: E402
 
 # Imported before an event loop runs: enet_data loads its data with asyncio.run()
 import custom_components.enet as enet  # noqa: E402
-import custom_components.enet.scene_sync as scene_sync  # noqa: E402
 from custom_components.enet import (  # noqa: E402
     aioenet,
     config_flow,
@@ -115,7 +112,6 @@ class OfflineEnetClient(aioenet.EnetClient):
         self.read_fails = False
         self.link_result = "OK"
         self.programming_turns_off = False  # programming restarts the actuator, it comes back off
-        self.scene_call_lost = False
 
     def scene_channels(self, devices=None):
         """The dimmer, switch and blind of the scene"""
@@ -168,34 +164,6 @@ class OfflineEnetClient(aioenet.EnetClient):
     def find_channel(self, uid):
         return next(c for d in self.devices for c in d.channels if c.uid == uid)
 
-    @staticmethod
-    def parameter_uid(scene_uid, slot, channel, type_id):
-        uid = f"{channel.uid}-{type_id}"
-        if slot != SCENE_SLOT:
-            uid += f"-{slot}"
-        if scene_uid.startswith("scene-new"):  # a scene slot of its own
-            uid += f"-{scene_uid}"
-        return uid
-
-    def run_scene(self, scene_uid):
-        """The members go to their levels in the scene, unless the telegram is lost"""
-        if self.scene_call_lost:
-            return
-        functions = aioenet.ChannelTypeFunctionName
-        slot, members = self.scene_members(scene_uid)
-        for channel, params in members:
-            type_id = params[0][0]
-            param = self.parameters.get(self.parameter_uid(scene_uid, slot, channel, type_id))
-            if param is None or channel.application_mode == aioenet.ChannelApplicationMode.BLINDS:
-                continue
-            value = param["current"]["value"]
-            if isinstance(value, str):
-                channel.current_values[channel.get_channel_configuration_entry(
-                    "outputDeviceFunctions", functions.ON_OFF)] = {"value": value == "ON"}
-            else:
-                channel.set_current_value(functions.ON_OFF, value > 0)
-                channel.set_current_value(functions.BRIGHTNESS, value)
-
     def scene_actions(self, scene_uids):
         actions = []
         for scene_uid in scene_uids:
@@ -204,7 +172,9 @@ class OfflineEnetClient(aioenet.EnetClient):
             for channel, params in members:
                 scene_parameters = []
                 for type_id, value_type, value in params:
-                    uid = self.parameter_uid(scene_uid, slot, channel, type_id)
+                    uid = f"{channel.uid}-{type_id}"
+                    if slot != SCENE_SLOT:
+                        uid += f"-{slot}"
                     value = {"valueTypeID": value_type, "value": value}
                     self.parameters.setdefault(uid, {"toBe": value, "current": value})
                     scene_parameters.append(
@@ -256,10 +226,6 @@ class OfflineEnetClient(aioenet.EnetClient):
                 return {"sceneActionUID": uid}
             case "deleteSceneAction":
                 self.server_scenes.pop(params["sceneActionUID"])
-            case "executeAction":
-                self.run_scene(params["actionUID"])
-            case "setSceneActionName":
-                self.server_scenes[params["sceneActionUID"]] = params["sceneActionName"]
             case "getLocations":
                 return self.locations()
             case "getSceneActions":
@@ -367,11 +333,6 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         self._settle_patch.start()
         self._restore_patch = patch.object(aioenet.scenes, "RESTORE_DELAY_SECONDS", 0)
         self._restore_patch.start()
-        self._sync_patch = patch.object(scene_sync, "SYNC_DELAY", 0)
-        self._sync_patch.start()
-        # After Home Assistant's commands to the members, as in real use
-        self._correct_patch = patch.object(scene_sync, "CORRECT_DELAY", 0.1)
-        self._correct_patch.start()
 
         hass = self.hass = core.HomeAssistant(self._config_dir.name)
         hass.config.skip_pip = True
@@ -405,8 +366,6 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         self._patch.stop()
         self._settle_patch.stop()
         self._restore_patch.stop()
-        self._sync_patch.stop()
-        self._correct_patch.stop()
         logging.getLogger().removeHandler(self.log)
         self._config_dir.cleanup()
 
@@ -580,7 +539,7 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.scene_entities(), (
             ["scene-1", "scene-2", "scene-3"], ["scene-1-save", "scene-2-save"]))
         self.entity_id("scene", "Enet Smart Home Server Kitchen lights on")
-        self.assertEqual(self.entry.options, {"location_scenes": True, "scene_editor": False})
+        self.assertEqual(self.entry.options, {"location_scenes": True})
 
         await self.set_location_scenes(False)
         self.assertEqual(self.scene_entities(), (
@@ -690,6 +649,54 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         await self.hass.config_entries.async_remove(self.entry.entry_id)
         await self.hass.async_block_till_done()
         self.assertFalse(path.exists())
+
+    async def leave_scene_sync_behind(self, links):
+        """The state left by the scenes.yaml sync of 2026.11.3 and 2026.11.4"""
+        store = Store(self.hass, 1, f"enet_scene_links_{self.entry.entry_id}")
+        await store.async_save(links)
+        self.hass.config_entries.async_update_entry(
+            self.entry, options={"scene_editor": True, "location_scenes": False}
+        )  # reloads the entry
+        await self.hass.async_block_till_done()
+        return Path(self.hass.config.path(".storage", store.key))
+
+    def scene_sync_issue(self):
+        issue_id = f"scene_sync_removed_{self.entry.entry_id}"
+        return ir.async_get(self.hass).async_get_issue("enet", issue_id)
+
+    async def test_scenes_left_by_the_scene_sync_are_reported_not_changed(self):
+        scenes_yaml = Path(self.hass.config.path("scenes.yaml"))
+        scenes_yaml.write_text("- id: enet_scene-1\n  name: Evening\n  entities: {}\n")
+        path = await self.leave_scene_sync_behind({
+            "enet_scene-1": {"enet": "scene-1", "name": "Evening", "content": {}},
+            "1700000000": {"enet": "scene-9", "name": "Movie", "content": {}},
+        })
+        self.assertEqual(self.entry.state, config_entries.ConfigEntryState.LOADED)
+        self.assertEqual(dict(self.entry.options), {"location_scenes": False})
+        self.assertFalse(path.exists())
+        self.assertEqual(
+            scenes_yaml.read_text(), "- id: enet_scene-1\n  name: Evening\n  entities: {}\n"
+        )
+        issue = self.scene_sync_issue()
+        self.assertTrue(issue.is_fixable)
+        self.assertEqual(issue.translation_placeholders, {
+            "title": "Enet Smart Home", "from_enet": "- Evening", "to_enet": "- Movie",
+        })
+        # The scenes are entities of the integration again
+        self.assertEqual(self.scene_entities()[0], ["scene-1", "scene-2"])
+
+        await self.hass.config_entries.async_remove(self.entry.entry_id)
+        await self.hass.async_block_till_done()
+        self.assertIsNone(self.scene_sync_issue())
+
+    async def test_scene_sync_without_scenes_reports_nothing(self):
+        path = await self.leave_scene_sync_behind({})
+        self.assertFalse(path.exists())
+        self.assertNotIn("scene_editor", self.entry.options)
+        self.assertIsNone(self.scene_sync_issue())
+
+    async def test_no_scene_sync_reports_nothing(self):
+        self.assertIsNone(self.scene_sync_issue())
 
     async def test_scenes_are_kept_when_they_cannot_be_read(self):
         await self.set_location_scenes(True)
@@ -1056,7 +1063,7 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         switch_channel.current_values[
             switch_channel.get_channel_configuration_entry("outputDeviceFunctions", functions.ON_OFF)
         ] = {"value": True}  # the default of the slot
-        dimmer_uid = f"{dimmer.uid}-PT_INDA.SCV1-scene-new-4"
+        dimmer_uid = f"{dimmer.uid}-PT_INDA.SCV1"
         self.hub.learns = {dimmer_uid: 45}
         # Adding them restarts them; they learn the state from before
         self.hub.programming_turns_off = True
@@ -1128,337 +1135,6 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         services = yaml.safe_load((REPO / "custom_components/enet/services.yaml").read_text())
         options = services["create_scene"]["fields"]["icon"]["selector"]["select"]["options"]
         self.assertEqual(tuple(options), aioenet.SCENE_ICONS)
-
-    # --- Editing the Enet scenes in the scene editor (scene_sync.py) --------
-
-    def scenes_yaml(self):
-        return yaml.safe_load(Path(self.hass.config.path("scenes.yaml")).read_text()) or []
-
-    def write_scenes_yaml(self, scenes):
-        Path(self.hass.config.path("scenes.yaml")).write_text(yaml.safe_dump(scenes))
-
-    async def sync_done(self):
-        """Wait for the sync, and the sync after the scenes it wrote are reloaded"""
-        for _ in range(4):
-            await self.hass.async_block_till_done(wait_background_tasks=True)
-
-    async def enable_scene_editor(self, scenes=None):
-        """Load scenes.yaml with Home Assistant's scene integration, and turn the option on"""
-        Path(self.hass.config.path("configuration.yaml")).write_text("scene: !include scenes.yaml\n")
-        self.write_scenes_yaml(scenes or [])
-        config = await conf_util.async_hass_config_yaml(self.hass)
-        self.assertTrue(await async_setup_component(self.hass, "scene", config))
-        self.hub.requests.clear()
-        result = await self.hass.config_entries.options.async_init(self.entry.entry_id)
-        await self.hass.config_entries.options.async_configure(
-            result["flow_id"], {"scene_editor": True}
-        )
-        await self.sync_done()
-        self.hub = self.entry.runtime_data
-
-    async def reload_scenes(self):
-        """As saving in the scene editor does"""
-        self.hub.requests.clear()
-        await self.hass.services.async_call("scene", "reload", blocking=True)
-        await self.sync_done()
-
-    async def server_event(self, scene_uid, event="sceneActionChanged"):
-        self.hub.requests.clear()
-        await self.hub.handle_events({"events": [
-            {"sequenceNumber": 0, "event": event, "eventData": {"sceneActionUID": scene_uid}}
-        ]})
-        await asyncio.sleep(0)
-        await self.sync_done()
-
-    def evening_yaml(self):
-        return next(s for s in self.scenes_yaml() if s["id"] == "enet_scene-1")
-
-    async def test_enet_scenes_become_scenes_of_the_scene_editor(self):
-        light, switch, cover = self.scene_members()
-        evening = self.scene_state().entity_id
-        await self.enable_scene_editor()
-
-        # Evening has members; "Made without the app" has none and stays
-        self.assertEqual(self.scenes_yaml(), [{
-            "id": "enet_scene-1",
-            "name": "Evening",
-            "entities": {
-                light: {"state": "on", "brightness": 153},
-                switch: {"state": "on"},
-                cover: {"state": "open", "current_position": 70, "current_tilt_position": 90},
-            },
-        }])
-        # The scene keeps its entity id, the integration's entity and Save button are gone
-        entry = er.async_get(self.hass).async_get(evening)
-        self.assertEqual((entry.platform, entry.unique_id), ("homeassistant", "enet_scene-1"))
-        self.assertEqual(self.scene_entities(), (["scene-2"], ["scene-2-save"]))
-        self.assertEqual(self.hass.states.get(evening).attributes["entity_id"],
-                         [light, switch, cover])
-        self.assert_no_warnings()
-
-    async def test_saving_in_the_scene_editor_programs_changed_levels(self):
-        light, _, _ = self.scene_members()
-        dimmer, _, _ = self.hub.scene_channels()
-        await self.enable_scene_editor()
-        scenes = self.scenes_yaml()
-        scenes[0]["entities"][light] = {"state": "on", "brightness": 51}  # 20 %
-        self.write_scenes_yaml(scenes)
-
-        await self.reload_scenes()
-        # The light is not at 20 %: programmed, not learned
-        self.assertEqual(self.written(), [(f"{dimmer.uid}-PT_INDA.SCV1", 20)])
-        self.assertEqual(self.requests("storeActualSceneValues"), [])
-        self.assertEqual(self.evening_yaml()["entities"][light], {"state": "on", "brightness": 51})
-
-    async def test_saving_after_live_edit_learns_the_levels(self):
-        light, switch, cover = self.scene_members()
-        await self.enable_scene_editor()
-        dimmer, switch_channel, blind = self.hub.scene_channels()  # of the reloaded client
-        # Live edit: every member is at its level in the scene
-        functions = aioenet.ChannelTypeFunctionName
-        dimmer.set_current_value(functions.ON_OFF, True)
-        dimmer.set_current_value(functions.BRIGHTNESS, 20)
-        switch_channel.current_values[switch_channel.get_channel_configuration_entry(
-            "outputDeviceFunctions", functions.ON_OFF)] = {"value": True}
-        blind.set_current_value(functions.COVER_POSITION, 30)  # counted from open, as SCV1
-        blind.set_current_value(functions.TILT_POSITION, 10)
-        self.hub.learns = {f"{dimmer.uid}-PT_INDA.SCV1": 20}
-        scenes = self.scenes_yaml()
-        scenes[0]["entities"][light] = {"state": "on", "brightness": 51}
-        self.write_scenes_yaml(scenes)
-
-        await self.reload_scenes()
-        self.assertEqual(self.requests("storeActualSceneValues"), [{"sceneActionUID": "scene-1"}])
-        self.assertEqual(self.written(), [])
-        self.assertEqual(self.hub.parameters[f"{dimmer.uid}-PT_INDA.SCV1"]["toBe"]["value"], 20)
-
-    async def test_members_added_and_removed_in_the_scene_editor(self):
-        light, switch, cover = self.scene_members()
-        other, other_channel = self.other_dimmer()
-        await self.enable_scene_editor()
-        scenes = self.scenes_yaml()
-        del scenes[0]["entities"][switch]
-        scenes[0]["entities"][other] = {"state": "on", "brightness": 128}  # 50 %
-        self.write_scenes_yaml(scenes)
-
-        await self.reload_scenes()
-        methods = [m for m, _ in self.hub.requests]
-        self.assertIn("removeActorChannelFromSceneAction", methods)
-        self.assertEqual(self.requests("addActorChannelToSceneAction")[0]["deviceUID"],
-                         other_channel.device.uid)
-        self.assertIn((f"{other_channel.uid}-PT_INDA.SCV1", 50), self.written())
-        # The server's scene matches: nothing more to sync
-        await self.reload_scenes()
-        self.assertEqual([m for m, _ in self.hub.requests
-                          if m.startswith(("add", "remove", "write", "set"))], [])
-        self.assert_no_warnings()
-
-    async def test_changes_on_the_server_update_the_scene(self):
-        light, _, _ = self.scene_members()
-        dimmer, _, _ = self.hub.scene_channels()
-        await self.enable_scene_editor()
-        # Changed in the Enet app, and renamed
-        param = self.hub.parameters[f"{dimmer.uid}-PT_INDA.SCV1"]
-        param["toBe"] = param["current"] = {**param["toBe"], "value": 30}
-        self.hub.server_scenes["scene-1"] = "[libenet:42]Late evening"
-
-        await self.server_event("scene-1")
-        self.assertEqual(self.evening_yaml()["entities"][light], {"state": "on", "brightness": 76})
-        self.assertEqual(self.evening_yaml()["name"], "Late evening")
-        self.assertEqual(self.written(), [])  # nothing sent back
-
-    async def test_renaming_in_the_scene_editor_keeps_the_icon(self):
-        await self.enable_scene_editor()
-        self.hub.server_scenes["scene-1"] = "[libenet:42]Evening"
-        scenes = self.scenes_yaml()
-        scenes[0]["name"] = "Night"
-        self.write_scenes_yaml(scenes)
-        await self.reload_scenes()
-        self.assertEqual(self.hub.server_scenes["scene-1"], "[libenet:42]Night")
-
-    async def test_scene_with_enet_lights_gets_an_enet_scene(self):
-        other, other_channel = self.other_dimmer()
-        await self.enable_scene_editor()
-        scenes = self.scenes_yaml() + [{
-            "id": "1700000000000", "name": "Movie",
-            "entities": {other: {"state": "on", "brightness": 128},
-                         "light.hue_lamp": {"state": "on", "brightness": 10}},
-        }]
-        self.write_scenes_yaml(scenes)
-
-        await self.reload_scenes()
-        self.assertEqual(self.requests("createSceneAction"), [{"sceneActionName": "[libenet:48]Movie"}])
-        self.assertEqual([p["deviceUID"] for p in self.requests("addActorChannelToSceneAction")],
-                         [other_channel.device.uid])
-        new_uid = next(uid for uid, name in self.hub.server_scenes.items() if name.endswith("Movie"))
-        self.assertIn((f"{other_channel.uid}-PT_INDA.SCV1-{new_uid}", 50), self.written())
-        # The Home Assistant scene is not changed, the Hue lamp stays in it
-        movie = next(s for s in self.scenes_yaml() if s["name"] == "Movie")
-        self.assertEqual(set(movie["entities"]), {other, "light.hue_lamp"})
-
-        # Its Enet lamp removed in the scene editor: the Enet scene is deleted
-        movie["entities"].pop(other)
-        self.write_scenes_yaml([s for s in self.scenes_yaml() if s["name"] != "Movie"] + [movie])
-        await self.reload_scenes()
-        self.assertEqual(self.requests("deleteSceneAction"), [{"sceneActionUID": new_uid}])
-
-    async def test_deleting_on_either_side_deletes_the_other(self):
-        await self.enable_scene_editor()
-        # Deleted in the scene editor
-        self.write_scenes_yaml([])
-        await self.reload_scenes()
-        self.assertEqual(self.requests("deleteSceneAction"), [{"sceneActionUID": "scene-1"}])
-
-        # Created again on the server, then deleted in the Enet app
-        self.hub.server_scenes["scene-1"] = "[libenet] Evening"
-        await self.server_event("scene-1", "sceneActionCreated")
-        self.assertEqual([s["id"] for s in self.scenes_yaml()], ["enet_scene-1"])
-        del self.hub.server_scenes["scene-1"]
-        await self.server_event("scene-1", "sceneActionDeleted")
-        self.assertEqual(self.scenes_yaml(), [])
-
-    async def test_scenes_mirrored_before_are_linked_again(self):
-        """The integration removed and added again: the links are gone, the
-        scenes it wrote to scenes.yaml are not (twice, after an earlier bug)"""
-        light, switch, cover = self.scene_members()
-        old = {
-            "id": "enet_scene-1",
-            "name": "Evening",
-            "entities": {light: {"state": "on", "brightness": 51}},  # not the server's
-        }
-        await self.enable_scene_editor([old, {**old, "name": "Evening copy"}])
-
-        # Once, with the server's content; nothing programmed
-        self.assertEqual(len(self.scenes_yaml()), 1)
-        self.assertEqual(self.evening_yaml()["entities"][light],
-                         {"state": "on", "brightness": 153})
-        self.assertIn(switch, self.evening_yaml()["entities"])
-        self.assertEqual(self.requests("createSceneAction"), [])
-        self.assertEqual(self.written(), [])
-        # Deleting it in the scene editor deletes it on the server
-        self.write_scenes_yaml([])
-        await self.reload_scenes()
-        self.assertEqual(self.requests("deleteSceneAction"), [{"sceneActionUID": "scene-1"}])
-        self.assertEqual(self.scenes_yaml(), [])
-
-    async def test_scene_made_in_home_assistant_is_linked_again_by_name(self):
-        """Its Enet scene was made for it before the integration was added again"""
-        light, _, _ = self.scene_members()
-        movie = {"id": "1700000000000", "name": "Evening",
-                 "entities": {light: {"state": "on", "brightness": 51}}}
-        await self.enable_scene_editor([movie])
-
-        self.assertEqual([s["id"] for s in self.scenes_yaml()], ["1700000000000"])
-        self.assertEqual(self.scenes_yaml()[0]["entities"][light],
-                         {"state": "on", "brightness": 153})  # the server's
-        self.assertEqual(self.requests("createSceneAction"), [])
-        self.assertEqual(self.written(), [])
-
-    async def turn_scene_editor_off(self, choice=None):
-        """Untick the option; answer the question about the scenes if asked"""
-        flow = self.hass.config_entries.options
-        result = await flow.async_init(self.entry.entry_id)
-        result = await flow.async_configure(result["flow_id"], {"scene_editor": False})
-        if choice is not None:
-            self.assertEqual((result["type"], result["step_id"]), ("form", "scene_editor_off"))
-            self.assertEqual(result["description_placeholders"], {"count": "1"})
-            result = await flow.async_configure(result["flow_id"], {"leftover_scenes": choice})
-        self.assertEqual(result["type"], "create_entry")
-        await self.sync_done()
-        self.hub = self.entry.runtime_data
-
-    async def test_scene_editor_off_deletes_the_scenes_if_asked(self):
-        evening = self.scene_state().entity_id
-        await self.enable_scene_editor()
-        self.hub.requests.clear()
-        await self.turn_scene_editor_off("delete")
-
-        self.assertEqual(self.scenes_yaml(), [])
-        # Not on the server; the integration's scene is back with its entity id
-        self.assertEqual(self.requests("deleteSceneAction"), [])
-        entry = er.async_get(self.hass).async_get(evening)
-        self.assertEqual((entry.platform, entry.unique_id), ("enet", "scene-1"))
-        self.assert_no_warnings()
-
-    async def test_scene_editor_off_keeps_the_scenes_if_asked(self):
-        await self.enable_scene_editor()
-        before = self.scenes_yaml()
-        self.hub.requests.clear()
-        await self.turn_scene_editor_off("keep")
-
-        self.assertEqual(self.scenes_yaml(), before)
-        self.assertEqual(self.requests("deleteSceneAction"), [])
-        # Without scenes made from the server's, nothing is asked
-        await self.enable_scene_editor()
-        self.write_scenes_yaml([])
-        await self.reload_scenes()  # deletes scene-1 on the server
-        await self.turn_scene_editor_off()
-
-    async def test_removing_the_integration_asks_about_its_scenes(self):
-        from custom_components.enet import repairs  # noqa: PLC0415
-
-        evening = self.scene_state().entity_id
-        await self.enable_scene_editor()
-        title = self.entry.title
-        await self.hass.config_entries.async_remove(self.entry.entry_id)
-        await self.hass.async_block_till_done()
-
-        issue_id = f"leftover_scenes_{self.entry.entry_id}"
-        issue = ir.async_get(self.hass).async_get_issue("enet", issue_id)
-        self.assertTrue(issue.is_fixable)
-        self.assertFalse(issue.is_persistent)
-        self.assertEqual(issue.translation_placeholders, {"count": "1", "title": title})
-        flow = await repairs.async_create_fix_flow(self.hass, issue_id, issue.data)
-        flow.hass = self.hass
-        result = await flow.async_step_init()
-        self.assertEqual(result["step_id"], "init")
-        result = await flow.async_step_init({"leftover_scenes": "delete"})
-        self.assertEqual(result["type"], "create_entry")
-        self.assertEqual(self.scenes_yaml(), [])
-        self.assertIsNone(er.async_get(self.hass).async_get(evening))
-
-    async def run_linked_scene(self, **data):
-        """Turn on Evening with the dimmer and switch off, as Home Assistant sees them"""
-        light, switch, _ = self.scene_members()
-        self.hass.states.async_set(light, "off")
-        self.hass.states.async_set(switch, "off")
-        self.hub.requests.clear()
-        scene = er.async_get(self.hass).async_get_entity_id("scene", "homeassistant", "enet_scene-1")
-        await self.hass.services.async_call(
-            "scene", "turn_on", {"entity_id": scene, **data}, blocking=True
-        )
-        await asyncio.sleep(0.2)  # the correction
-        await self.hass.async_block_till_done(wait_background_tasks=True)
-
-    async def test_running_a_linked_scene_sends_the_enet_scene(self):
-        await self.enable_scene_editor()
-        dimmer, switch, _ = self.hub.scene_channels()
-        await self.run_linked_scene()
-        self.assertEqual(self.requests("executeAction"), [{"actionUID": "scene-1"}])
-        # The scene switched them: Home Assistant's commands are not sent, nothing to correct
-        self.assertEqual(self.light_commands(dimmer), [])
-        self.assertEqual(self.light_commands(switch), [])
-        self.assert_no_warnings()
-
-    async def test_members_that_missed_the_scene_are_switched(self):
-        await self.enable_scene_editor()
-        dimmer, switch, _ = self.hub.scene_channels()
-        dimmer.set_current_value(aioenet.ChannelTypeFunctionName.ON_OFF, False)
-        switch.current_values[switch.get_channel_configuration_entry(
-            "outputDeviceFunctions", aioenet.ChannelTypeFunctionName.ON_OFF)] = {"value": False}
-        self.hub.scene_call_lost = True
-        await self.run_linked_scene()
-        self.assertEqual(self.requests("executeAction"), [{"actionUID": "scene-1"}])
-        self.assertEqual(self.light_commands(dimmer), [60])
-        self.assertEqual(self.light_commands(switch), [True])
-
-    async def test_a_scene_with_a_transition_is_switched_by_home_assistant(self):
-        await self.enable_scene_editor()
-        dimmer, switch, _ = self.hub.scene_channels()
-        await self.run_linked_scene(transition=2)
-        self.assertEqual(self.requests("executeAction"), [])
-        self.assertEqual(self.light_commands(dimmer), [60])
-        self.assertEqual(self.light_commands(switch), [True])
 
     async def test_failed_write_raises_an_error(self):
         light, _, _ = self.scene_members()

@@ -50,14 +50,7 @@ DEFAULT_SCENE_ICON = "lights_on"
 
 def app_scene_name(name, icon=DEFAULT_SCENE_ICON):
     """The name of a scene as the Enet app names it, with its icon"""
-    number = icon if isinstance(icon, int) else SCENE_ICONS.index(icon)
-    return f"[libenet:{number}]{name}"
-
-
-def icon_number(name):
-    """The icon number in the name of a scene made in the Enet app, or None"""
-    match = re.match(r"^\[libenet:(\d+)\]", name)
-    return int(match.group(1)) if match else None
+    return f"[libenet:{SCENE_ICONS.index(icon)}]{name}"
 
 
 def same_scene_value(a, b):
@@ -217,8 +210,6 @@ class EnetScene:
         self.name = raw.get("name", "")
         # The location of the scenes the server makes for locations, else None
         self.location_uid = raw.get("locationUID")
-        # Other actions run by the scene, like other scenes
-        self.additional_actions = raw.get("additionalActionUIDs") or []
         self.members = [SceneMember(self, member) for member in raw.get("deviceChannels", [])]
         self.values_loaded = False
         self._subscribers = []
@@ -447,57 +438,6 @@ class EnetScene:
                                 "programmed after deleting it: %s", self.name, e)
         self.members = []
         self._notify()
-
-    async def rename(self, name):
-        """Change the name of the scene, keeping its icon in the Enet app"""
-        icon = icon_number(self.name)
-        full_name = app_scene_name(name, DEFAULT_SCENE_ICON if icon is None else icon)
-        await self.client.rename_scene_action(self.uid, full_name)
-        self.name = full_name
-        self._notify()
-
-    async def set_values(self, wanted):
-        """Make the values of the members the wanted ones: member uid -> (level,
-        slats), see SceneMember.encode(). Returns the number of members changed.
-
-        When every member is at its wanted state, as after setting them up in
-        a scene editor, the members learn it from one scene telegram (see
-        store_current_values()). Otherwise only the changed members are
-        programmed: learning would store the current state of the others too.
-        """
-        if not self.values_loaded:
-            await self.load_values()
-        changes = []
-        for member in self.members:
-            if member.uid not in wanted:
-                continue
-            level, slats = wanted[member.uid]
-            if member.level is not None and same_scene_value(member.level.value, level):
-                level = None
-            if member.slats is not None and same_scene_value(member.slats.value, slats):
-                slats = None
-            if level is not None or slats is not None:
-                changes.append((member, level, slats))
-        if not changes:
-            return 0
-
-        def at_wanted(member):
-            if member.uid not in wanted or member.channel is None:
-                return False
-            try:
-                level, slats = member.current_values()
-            except ValueError:
-                return False
-            want_level, want_slats = wanted[member.uid]
-            return same_scene_value(level, want_level) and (
-                want_slats is None or same_scene_value(slats, want_slats)
-            )
-
-        if all(at_wanted(member) for member in self.members):
-            return await self.store_current_values()
-        for member, level, slats in changes:
-            await self.set_member_values(member, level, slats)
-        return len(changes)
 
     async def store_current_values(self, states=None):
         """Store the current state of every member in the scene, or the state

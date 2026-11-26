@@ -203,42 +203,22 @@
             "init": {
                 "title": "Enet Smart Home Optionen",
                 "data": {
-                    "scene_editor": "Enet-Szenen im Szeneneditor bearbeiten",
                     "location_scenes": "Licht-ein/aus-Szenen der Räume"
                 },
                 "data_description": {
-                    "scene_editor": "Die Szenen des Enet Servers werden Home-Assistant-Szenen (in scenes.yaml), um sie im Szeneneditor zu bearbeiten, und jede Home-Assistant-Szene mit Enet-Lichtern bekommt eine Szene auf dem Enet Server für die Szenentasten und die Enet App. Änderungen auf beiden Seiten werden abgeglichen.",
                     "location_scenes": "Auch die Szenen hinzufügen, die der Enet Server für jeden Raum, jede Etage und das ganze Haus anlegt und die alle ihre Lichter ein- oder ausschalten. Szenen aus der Enet App werden immer hinzugefügt."
                 }
-            },
-            "scene_editor_off": {
-                "title": "Szenen im Szeneneditor",
-                "description": "{count} Szenen im Szeneneditor wurden aus den Szenen des Enet Servers erstellt. Ohne die Option werden sie nicht mehr abgeglichen. Behalten, sind sie normale Home-Assistant-Szenen, neben den gleichnamigen Szenen der Integration. Gelöscht, bekommen die Szenen der Integration ihre Entitäts-IDs zurück. Die Szenen auf dem Enet Server werden nicht geändert.",
-                "data": {
-                    "leftover_scenes": "Aus Enet-Szenen erstellte Szenen"
-                }
-            }
-        }
-    },
-    "selector": {
-        "leftover_scenes": {
-            "options": {
-                "keep": "Als Home-Assistant-Szenen behalten",
-                "delete": "Aus dem Szeneneditor löschen"
             }
         }
     },
     "issues": {
-        "leftover_scenes": {
-            "title": "Von der Enet-Integration hinterlassene Szenen",
+        "scene_sync_removed": {
+            "title": "Enet-Szenen werden nicht mehr mit dem Szeneneditor synchronisiert",
             "fix_flow": {
                 "step": {
-                    "init": {
-                        "title": "Von der Enet-Integration hinterlassene Szenen",
-                        "description": "{title} wurde entfernt. {count} Szenen im Szeneneditor wurden aus den Szenen seines Enet Servers erstellt und werden nicht mehr abgeglichen. Wähle, ob sie als normale Home-Assistant-Szenen bleiben oder gelöscht werden. Die Szenen auf dem Enet Server werden nicht geändert. Wird die Integration wieder hinzugefügt, werden sie wieder mit den Enet-Szenen verknüpft.",
-                        "data": {
-                            "leftover_scenes": "Aus Enet-Szenen erstellte Szenen"
-                        }
+                    "confirm": {
+                        "title": "Enet-Szenen werden nicht mehr mit dem Szeneneditor synchronisiert",
+                        "description": "Die Option „Enet-Szenen im Szeneneditor bearbeiten“ von {title} wurde entfernt: Eine Integration darf deine `scenes.yaml` nicht ändern. Deine Szenen wurden nicht geändert, werden aber nicht mehr synchronisiert.\n\nDiese Home-Assistant-Szenen wurden aus Enet-Szenen erstellt. Sie sind jetzt normale Home-Assistant-Szenen neben den Szenen-Entitäten der Integration, die eventuell mit `_2`-Entitäts-IDs zurückgekommen sind. Wenn du sie nicht brauchst, lösche sie im Szeneneditor und benenne danach die Entitäts-IDs der Szenen der Integration um:\n{from_enet}\n\nFür diese Home-Assistant-Szenen wurde eine Szene auf dem Enet-Server angelegt. Die Enet-Szenen bleiben und werden als Szenen-Entitäten hinzugefügt; lösche sie mit `enet.delete_scene` oder in der Enet-App, wenn du sie nicht brauchst:\n{to_enet}\n\nDie Enet-Szenen können weiterhin mit den Szenen-Entitäten der Integration und den `enet`-Szenen-Aktionen bearbeitet werden."
                     }
                 }
             }
