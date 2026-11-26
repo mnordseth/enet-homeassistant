@@ -8,18 +8,16 @@ import aiohttp
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
-from homeassistant.helpers import config_validation as cv, issue_registry as ir
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.typing import ConfigType
 
 from .aioenet import AuthError, EnetClient, EnetServerError, normalize_url
 from .const import (
     CONF_LOCATION_SCENES,
-    CONF_SCENE_EDITOR,
     DOMAIN,
-    ISSUE_LEFTOVER_SCENES,
     NAME_ENET_CONTROLLER,
 )
 from .device import async_setup_devices
@@ -97,20 +95,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: EnetConfigEntry) -> bool
         hub.scenes = []
 
     entry.runtime_data = hub
-    hub.scene_sync = None
-    if entry.options.get(CONF_SCENE_EDITOR, False):
-        from .scene_sync import SceneSync  # noqa: PLC0415
-
-        hub.scene_sync = SceneSync(hass, entry, hub)
-        await hub.scene_sync.async_load()
-        _async_delete_leftover_scene_issues(hass)
     await async_setup_devices(hass, entry, hub)
     async_setup_enet_events(hass, entry, hub)
     entry.async_on_unload(entry.add_update_listener(_async_options_updated))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-    if hub.scene_sync is not None:
-        hub.scene_sync.async_start()
-        entry.async_on_unload(hub.scene_sync.async_stop)
     if hub.scenes:
         # The scene values are only shown as attributes, do not delay the setup
         entry.async_create_background_task(
@@ -136,33 +124,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: EnetConfigEntry) -> boo
 async def async_remove_entry(hass: HomeAssistant, entry: EnetConfigEntry) -> None:
     """Remove what the entry stored when the integration is removed"""
     from .device import floors_store  # noqa: PLC0415
-    from .scene_sync import SceneSync, async_mirrored_scenes  # noqa: PLC0415
 
     await floors_store(hass, entry.entry_id).async_remove()
-    # Its scenes in the scene editor stay; the user is asked what to do with them
-    if mirrored := await async_mirrored_scenes(hass, entry.entry_id):
-        ir.async_create_issue(
-            hass,
-            DOMAIN,
-            f"{ISSUE_LEFTOVER_SCENES}_{entry.entry_id}",
-            is_fixable=True,
-            # Gone after a restart: the fix needs the integration loaded
-            is_persistent=False,
-            severity=ir.IssueSeverity.WARNING,
-            translation_key=ISSUE_LEFTOVER_SCENES,
-            translation_placeholders={"count": str(len(mirrored)), "title": entry.title},
-            data={"ha_ids": mirrored, "title": entry.title},
-        )
-    await SceneSync(hass, entry, None).async_remove()
-
-
-@callback
-def _async_delete_leftover_scene_issues(hass: HomeAssistant) -> None:
-    """Added again: the scenes left by a removed entry are linked again"""
-    issues = ir.async_get(hass).issues
-    for domain, issue_id in list(issues):
-        if domain == DOMAIN and issue_id.startswith(f"{ISSUE_LEFTOVER_SCENES}_"):
-            ir.async_delete_issue(hass, DOMAIN, issue_id)
 
 
 async def async_remove_config_entry_device(

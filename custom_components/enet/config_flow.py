@@ -16,23 +16,14 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.service_info.ssdp import SsdpServiceInfo
 from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
-from homeassistant.helpers.selector import (
-    BooleanSelector,
-    SelectSelector,
-    SelectSelectorConfig,
-    SelectSelectorMode,
-)
+from homeassistant.helpers.selector import BooleanSelector
 
 from . import aioenet
 from .aioenet import normalize_url
 from .const import (
-    CONF_LEFTOVER_SCENES,
     CONF_LOCATION_SCENES,
-    CONF_SCENE_EDITOR,
     CONF_SERIAL_NUMBER,
     DOMAIN,
-    LEFTOVER_DELETE,
-    LEFTOVER_KEEP,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -312,68 +303,18 @@ class OptionsFlow(config_entries.OptionsFlow):
     def __init__(self, entry: config_entries.ConfigEntry) -> None:
         # Not self.config_entry: Home Assistant sets that itself in newer versions
         self._entry = entry
-        self._options: dict[str, Any] = {}
-        self._mirrored: list[str] = []
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> config_entries.ConfigFlowResult:
         if user_input is not None:
-            self._options = user_input
-            if self._entry.options.get(CONF_SCENE_EDITOR) and not user_input[CONF_SCENE_EDITOR]:
-                from .scene_sync import async_mirrored_scenes  # noqa: PLC0415
-
-                self._mirrored = await async_mirrored_scenes(self.hass, self._entry.entry_id)
-                if self._mirrored:
-                    return await self.async_step_scene_editor_off()
             return self.async_create_entry(data=user_input)
 
-        options = self._entry.options
+        current = self._entry.options.get(CONF_LOCATION_SCENES, False)
         schema = vol.Schema(
-            {
-                vol.Required(
-                    CONF_SCENE_EDITOR, default=options.get(CONF_SCENE_EDITOR, False)
-                ): BooleanSelector(),
-                vol.Required(
-                    CONF_LOCATION_SCENES, default=options.get(CONF_LOCATION_SCENES, False)
-                ): BooleanSelector(),
-            }
+            {vol.Required(CONF_LOCATION_SCENES, default=current): BooleanSelector()}
         )
         return self.async_show_form(step_id="init", data_schema=schema)
-
-    async def async_step_scene_editor_off(
-        self, user_input: dict[str, Any] | None = None
-    ) -> config_entries.ConfigFlowResult:
-        """Ask what happens with the scenes made from the scenes of the server"""
-        if user_input is not None:
-            if user_input[CONF_LEFTOVER_SCENES] == LEFTOVER_DELETE:
-                from .scene_sync import async_delete_mirrored_scenes  # noqa: PLC0415
-
-                # Stopped first: the sync would delete the Enet scenes with them
-                scene_sync = getattr(self._entry.runtime_data, "scene_sync", None)
-                if scene_sync is not None:
-                    scene_sync.async_stop()
-                await async_delete_mirrored_scenes(self.hass, self._mirrored)
-            return self.async_create_entry(data=self._options)
-
-        return self.async_show_form(
-            step_id="scene_editor_off",
-            data_schema=leftover_scenes_schema(),
-            description_placeholders={"count": str(len(self._mirrored))},
-        )
-
-
-def leftover_scenes_schema() -> vol.Schema:
-    """Keep or delete the Home Assistant scenes made from the scenes of the server"""
-    return vol.Schema({
-        vol.Required(CONF_LEFTOVER_SCENES, default=LEFTOVER_KEEP): SelectSelector(
-            SelectSelectorConfig(
-                options=[LEFTOVER_KEEP, LEFTOVER_DELETE],
-                mode=SelectSelectorMode.LIST,
-                translation_key=CONF_LEFTOVER_SCENES,
-            )
-        ),
-    })
 
 
 class CannotConnect(HomeAssistantError):

@@ -41,15 +41,12 @@ class EnetSwitch(EnetBaseChannelEntity, SwitchEntity):
     async def async_turn_on(self, **kwargs) -> None:
         """Turn the switch on."""
         _LOGGER.debug("async_turn_on: (%s) %s", self.name, kwargs)
-        if self.scene_did_it(True):
-            return
+
         await self.channel.turn_on()
         self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs) -> None:
         """Turn the switch off."""
         _LOGGER.debug("async_turn_off: (%s) %s", self.name, kwargs)
-        if self.scene_did_it(False):
-            return
         await self.channel.turn_off()
         self.async_write_ha_state()

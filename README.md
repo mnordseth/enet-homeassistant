@@ -88,20 +88,6 @@ The scenes can be changed from Home Assistant. The changes are stored on the Ene
 
 Setting a level with `enet.set_scene_level`, adding or removing a member, and creating or deleting a scene program the devices by radio, which takes a few seconds per member (adding a member about 20 seconds). Programming restarts the device, and lights and switches that were on come back off: the integration switches them back on to their level afterwards. The lights on/off scenes the server makes for each room can't be changed or deleted. Scenes can't be edited in Home Assistant's scene editor, which only edits Home Assistant's own scenes.
 
-#### Editing scenes in the scene editor
-
-Turn on **Edit Enet scenes in the scene editor** under **Configure** to edit the Enet scenes in Home Assistant's scene editor, with live edit:
-
-- The scenes of the Enet server become Home Assistant scenes (in `scenes.yaml`), with the levels stored in the scene. They keep their entity id; the integration's scene entity and *Save* button are removed.
-- Every Home Assistant scene with Enet lights, switches or covers gets a scene on the Enet server with those members, shown in the Enet app and usable for the scene buttons. Other entities in the scene, like Hue lamps, stay in the Home Assistant scene only.
-- Saving in the scene editor changes the Enet scene: members are added or removed, and the levels stored. After live edit the lights are at their levels, and they store them themselves in a few seconds; otherwise each changed member is programmed.
-- Changes in the Enet app update the Home Assistant scene. A scene deleted on either side is deleted on the other. When a scene was changed on both sides, Home Assistant's version is kept.
-- Running the scene sends the Enet scene, so its Enet lights switch together with one radio telegram, and Home Assistant switches the other entities. Enet lights that missed the telegram are switched individually a few seconds later. With a `transition`, Home Assistant switches all of them itself.
-
-Scenes that can't be a Home Assistant scene stay scenes of the integration: the lights on/off scenes of rooms, scenes without members or with other actions (like "all off" scenes made of other scenes), and scenes with a member that is not in Home Assistant. `scenes.yaml` must be loaded (`scene: !include scenes.yaml` in `configuration.yaml`, as in a new installation).
-
-When you turn the option off, you are asked whether to keep the scenes made from the Enet scenes as ordinary Home Assistant scenes or delete them from the scene editor. When you remove the integration, the same question shows up under **Settings → Repairs** (until Home Assistant restarts; the scenes are kept otherwise). The scenes on the Enet server are never changed by this. If you add the integration again, the scenes left in `scenes.yaml` are linked to their Enet scenes again instead of being added twice.
-
 ### Motion detectors
 
 The motion sensor turns on when the detector reports motion, and turns off after the time reported by the detector. On startup it is off until the first motion is reported.

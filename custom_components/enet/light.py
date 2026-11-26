@@ -71,19 +71,13 @@ class EnetLight(EnetBaseChannelEntity, LightEntity):
                 (1, 100),
                 brightness,
             )
-            if self.scene_did_it(True, value):
-                return
             await self.channel.set_value(ChannelTypeFunctionName.BRIGHTNESS, value)
         else:
-            if self.scene_did_it(True):
-                return
             await self.channel.turn_on()
         self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs):
         """Turn the light off."""
         _LOGGER.debug("async_turn_off: (%s) %s", self.name, kwargs)
-        if self.scene_did_it(False):
-            return
         await self.channel.turn_off()
         self.async_write_ha_state()

@@ -79,7 +79,6 @@ _stub("homeassistant.helpers.device_registry", DeviceEntry=object,
       async_get=lambda hass: DeviceRegistry())
 _stub("homeassistant.helpers.area_registry", async_get=lambda hass: None)
 _stub("homeassistant.helpers.floor_registry", async_get=lambda hass: None)
-_stub("homeassistant.helpers.issue_registry")
 _stub("homeassistant.helpers.storage", Store=Store)
 
 source = Path(__file__).resolve().parents[1] / "custom_components" / "enet"
