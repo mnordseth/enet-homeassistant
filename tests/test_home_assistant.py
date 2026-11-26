@@ -48,6 +48,7 @@ from homeassistant.helpers import device_registry as dr  # noqa: E402
 from homeassistant.helpers import entity_registry as er  # noqa: E402
 from homeassistant.helpers import floor_registry as fr  # noqa: E402
 from homeassistant.helpers import issue_registry as ir  # noqa: E402
+from homeassistant.helpers.storage import Store  # noqa: E402
 from homeassistant.helpers.service_info.ssdp import SsdpServiceInfo  # noqa: E402
 from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo  # noqa: E402
 
@@ -648,6 +649,54 @@ class HomeAssistantTests(unittest.IsolatedAsyncioTestCase):
         await self.hass.config_entries.async_remove(self.entry.entry_id)
         await self.hass.async_block_till_done()
         self.assertFalse(path.exists())
+
+    async def leave_scene_sync_behind(self, links):
+        """The state left by the scenes.yaml sync of 2026.11.3 and 2026.11.4"""
+        store = Store(self.hass, 1, f"enet_scene_links_{self.entry.entry_id}")
+        await store.async_save(links)
+        self.hass.config_entries.async_update_entry(
+            self.entry, options={"scene_editor": True, "location_scenes": False}
+        )  # reloads the entry
+        await self.hass.async_block_till_done()
+        return Path(self.hass.config.path(".storage", store.key))
+
+    def scene_sync_issue(self):
+        issue_id = f"scene_sync_removed_{self.entry.entry_id}"
+        return ir.async_get(self.hass).async_get_issue("enet", issue_id)
+
+    async def test_scenes_left_by_the_scene_sync_are_reported_not_changed(self):
+        scenes_yaml = Path(self.hass.config.path("scenes.yaml"))
+        scenes_yaml.write_text("- id: enet_scene-1\n  name: Evening\n  entities: {}\n")
+        path = await self.leave_scene_sync_behind({
+            "enet_scene-1": {"enet": "scene-1", "name": "Evening", "content": {}},
+            "1700000000": {"enet": "scene-9", "name": "Movie", "content": {}},
+        })
+        self.assertEqual(self.entry.state, config_entries.ConfigEntryState.LOADED)
+        self.assertEqual(dict(self.entry.options), {"location_scenes": False})
+        self.assertFalse(path.exists())
+        self.assertEqual(
+            scenes_yaml.read_text(), "- id: enet_scene-1\n  name: Evening\n  entities: {}\n"
+        )
+        issue = self.scene_sync_issue()
+        self.assertTrue(issue.is_fixable)
+        self.assertEqual(issue.translation_placeholders, {
+            "title": "Enet Smart Home", "from_enet": "- Evening", "to_enet": "- Movie",
+        })
+        # The scenes are entities of the integration again
+        self.assertEqual(self.scene_entities()[0], ["scene-1", "scene-2"])
+
+        await self.hass.config_entries.async_remove(self.entry.entry_id)
+        await self.hass.async_block_till_done()
+        self.assertIsNone(self.scene_sync_issue())
+
+    async def test_scene_sync_without_scenes_reports_nothing(self):
+        path = await self.leave_scene_sync_behind({})
+        self.assertFalse(path.exists())
+        self.assertNotIn("scene_editor", self.entry.options)
+        self.assertIsNone(self.scene_sync_issue())
+
+    async def test_no_scene_sync_reports_nothing(self):
+        self.assertIsNone(self.scene_sync_issue())
 
     async def test_scenes_are_kept_when_they_cannot_be_read(self):
         await self.set_location_scenes(True)

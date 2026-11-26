@@ -88,6 +88,8 @@ The scenes can be changed from Home Assistant. The changes are stored on the Ene
 
 Setting a level with `enet.set_scene_level`, adding or removing a member, and creating or deleting a scene program the devices by radio, which takes a few seconds per member (adding a member about 20 seconds). Programming restarts the device, and lights and switches that were on come back off: the integration switches them back on to their level afterwards. The lights on/off scenes the server makes for each room can't be changed or deleted. Scenes can't be edited in Home Assistant's scene editor, which only edits Home Assistant's own scenes.
 
+Versions 2026.11.3 and 2026.11.4 had an option to edit the Enet scenes in the scene editor by syncing them with `scenes.yaml`. It was removed, since an integration must not change your configuration files. If you had turned it on, a notice under **Settings → Repairs** lists the scenes it made; they are left as they are, so you can delete the ones you don't need.
+
 ### Motion detectors
 
 The motion sensor turns on when the detector reports motion, and turns off after the time reported by the detector. On startup it is off until the first motion is reported.

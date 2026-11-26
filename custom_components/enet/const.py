@@ -15,6 +15,8 @@ CONF_SERIAL_NUMBER = "serial_number"
 # Option: also add the lights/blinds on/off scenes the server makes for each
 # location. The other scenes are always added.
 CONF_LOCATION_SCENES = "location_scenes"
+# Repair issue: the scenes left by the removed scenes.yaml sync
+ISSUE_SCENE_SYNC_REMOVED = "scene_sync_removed"
 
 ATTR_ENET_EVENT = "enet_event"
 EVENT_TYPE_INITIAL_PRESS = ButtonEventType.INITIAL_PRESS.value

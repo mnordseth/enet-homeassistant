@@ -10,14 +10,16 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
-from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import config_validation as cv, issue_registry as ir
 from homeassistant.helpers.device_registry import DeviceEntry
+from homeassistant.helpers.storage import Store
 from homeassistant.helpers.typing import ConfigType
 
 from .aioenet import AuthError, EnetClient, EnetServerError, normalize_url
 from .const import (
     CONF_LOCATION_SCENES,
     DOMAIN,
+    ISSUE_SCENE_SYNC_REMOVED,
     NAME_ENET_CONTROLLER,
 )
 from .device import async_setup_devices
@@ -95,6 +97,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: EnetConfigEntry) -> bool
         hub.scenes = []
 
     entry.runtime_data = hub
+    await _async_retire_scene_sync(hass, entry)
     await async_setup_devices(hass, entry, hub)
     async_setup_enet_events(hass, entry, hub)
     entry.async_on_unload(entry.add_update_listener(_async_options_updated))
@@ -126,6 +129,54 @@ async def async_remove_entry(hass: HomeAssistant, entry: EnetConfigEntry) -> Non
     from .device import floors_store  # noqa: PLC0415
 
     await floors_store(hass, entry.entry_id).async_remove()
+    ir.async_delete_issue(hass, DOMAIN, f"{ISSUE_SCENE_SYNC_REMOVED}_{entry.entry_id}")
+
+
+# Left by the option "Edit Enet scenes in the scene editor" of 2026.11.3 and
+# 2026.11.4, which synced the Enet scenes with scenes.yaml
+LEGACY_SCENE_EDITOR = "scene_editor"
+LEGACY_SCENE_PREFIX = "enet_"  # id in scenes.yaml of the scenes made from Enet scenes
+
+
+async def _async_retire_scene_sync(hass: HomeAssistant, entry: EnetConfigEntry) -> None:
+    """Forget the scene sync, and tell the user about the scenes it left.
+
+    The scenes in scenes.yaml are the user's: they are not changed, the repair
+    issue lists them so the user can delete them in the scene editor.
+    """
+    store: Store[dict] = Store(hass, 1, f"{DOMAIN}_scene_links_{entry.entry_id}")
+    links = await store.async_load()
+    if LEGACY_SCENE_EDITOR in entry.options:
+        options = {k: v for k, v in entry.options.items() if k != LEGACY_SCENE_EDITOR}
+        hass.config_entries.async_update_entry(entry, options=options)
+    if links is None:
+        return
+    await store.async_remove()
+    if not links:
+        return
+
+    def names(made_from_enet: bool) -> str:
+        found = sorted(
+            str(link.get("name") or ha_id)
+            for ha_id, link in links.items()
+            if ha_id.startswith(LEGACY_SCENE_PREFIX) == made_from_enet
+        )
+        return "\n".join(f"- {name}" for name in found) or "- (none)"
+
+    ir.async_create_issue(
+        hass,
+        DOMAIN,
+        f"{ISSUE_SCENE_SYNC_REMOVED}_{entry.entry_id}",
+        is_fixable=True,
+        is_persistent=True,
+        severity=ir.IssueSeverity.WARNING,
+        translation_key=ISSUE_SCENE_SYNC_REMOVED,
+        translation_placeholders={
+            "title": entry.title,
+            "from_enet": names(True),
+            "to_enet": names(False),
+        },
+    )
 
 
 async def async_remove_config_entry_device(

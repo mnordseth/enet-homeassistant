@@ -210,5 +210,18 @@
                 }
             }
         }
+    },
+    "issues": {
+        "scene_sync_removed": {
+            "title": "Enet-Szenen werden nicht mehr mit dem Szeneneditor synchronisiert",
+            "fix_flow": {
+                "step": {
+                    "confirm": {
+                        "title": "Enet-Szenen werden nicht mehr mit dem Szeneneditor synchronisiert",
+                        "description": "Die Option „Enet-Szenen im Szeneneditor bearbeiten“ von {title} wurde entfernt: Eine Integration darf deine `scenes.yaml` nicht ändern. Deine Szenen wurden nicht geändert, werden aber nicht mehr synchronisiert.\n\nDiese Home-Assistant-Szenen wurden aus Enet-Szenen erstellt. Sie sind jetzt normale Home-Assistant-Szenen neben den Szenen-Entitäten der Integration, die eventuell mit `_2`-Entitäts-IDs zurückgekommen sind. Wenn du sie nicht brauchst, lösche sie im Szeneneditor und benenne danach die Entitäts-IDs der Szenen der Integration um:\n{from_enet}\n\nFür diese Home-Assistant-Szenen wurde eine Szene auf dem Enet-Server angelegt. Die Enet-Szenen bleiben und werden als Szenen-Entitäten hinzugefügt; lösche sie mit `enet.delete_scene` oder in der Enet-App, wenn du sie nicht brauchst:\n{to_enet}\n\nDie Enet-Szenen können weiterhin mit den Szenen-Entitäten der Integration und den `enet`-Szenen-Aktionen bearbeitet werden."
+                    }
+                }
+            }
+        }
     }
 }

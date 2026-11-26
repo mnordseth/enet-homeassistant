@@ -210,5 +210,18 @@
                 }
             }
         }
+    },
+    "issues": {
+        "scene_sync_removed": {
+            "title": "Enet scenes are no longer synced with the scene editor",
+            "fix_flow": {
+                "step": {
+                    "confirm": {
+                        "title": "Enet scenes are no longer synced with the scene editor",
+                        "description": "The option \"Edit Enet scenes in the scene editor\" of {title} was removed: an integration must not change your `scenes.yaml`. Your scenes were not changed, but they are no longer synced.\n\nThese Home Assistant scenes were made from Enet scenes. They are now ordinary Home Assistant scenes next to the integration's scene entities, which may have come back with `_2` entity ids. If you don't need them, delete them in the scene editor and then rename the entity ids of the integration's scenes:\n{from_enet}\n\nThese Home Assistant scenes got a scene on the Enet server. The Enet scenes stay and are added as scene entities; delete them with `enet.delete_scene` or in the Enet app if you don't need them:\n{to_enet}\n\nThe Enet scenes can still be edited with the integration's scene entities and the `enet` scene actions."
+                    }
+                }
+            }
+        }
     }
 }
